@@ -1,0 +1,66 @@
+@{
+    ViewData["Title"] = "Create Pending Report";
+    ViewData["AppVersion"] = "ReportDistMVC v1";
+    ViewData["LogonDetails"] = "Not Authenticated";
+}
+<span class="MediumHeader">Add New Report</span>
+<table cellspacing="0" cellpadding="1" width="100%" border-width="0">
+	<tr>
+		<td class="Highlight" height="24">&nbsp;Create new report number</td>
+	</tr>
+	<tr>
+        <form method="post" id="CreateReport" onsubmit="return validateNDTNo();">
+		<td valign="middle" style="height: 48px">
+			<table cellspacing="0" cellpadding="1" width="100%" border-width="0">
+				<tr>
+					<td valign="top" nowrap="nowrap" colspan="6" height="28">						
+                        <table width="100%">
+                            <tr>
+                                <td class="Label" style="width: 68px">Year:</td>
+                                <td class="Field"><select id="Year" name="Year" class="Field"></select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="Label" style="width: 68px">Type:</td>
+                                <td class="Field"><select id="ReportType" name="ReportType" class="Field" Height="18"></select></td>
+                            </tr>
+                            <tr>
+                                <td class="Label" style="width: 68px" valign="top">Origin:</td>
+                                <td valign="top">
+                                    <div class="Selector"><select id="Division"   name="Division"   class="Field" onclick="onclickDivision();  "></select></div>
+                                    <div class="Selector"><select id="Department" name="Department" class="Field" onclick="onclickDepartment();"></select></div>
+                                    <div class="Selector"><select id="Team"       name="Team"       class="Field" onclick="onclickTeam();      "></select></div>  
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="Field" colspan="2">Report No Preview:<span id="Preview">N/A</span></td>
+                            </tr>                            
+                        </table>
+                        <button id="btnAdd"    class="gFormButton" style="width:55px;" type="submit"                                    >Add</button>&nbsp;&nbsp;
+                        <button id="btnCancel" class="gFormButton" style="width:55px;" type="button"  onclick="window.location.href='/'">Cancel</button>&nbsp;&nbsp;
+                        <input  id="CheckNDT"  name="CheckNDT" type="checkbox" value="" class="Field" onclick="onclickCheckNDT();"/>&nbsp;NDT&nbsp;
+						<select id="Company"   name="Company"  class="Field"></select>
+						<input  id="NDTNo"     name="NDTNo"    class="Field" Width="40px" MaxLength="4" Height="18" />
+						<br />
+                        <br />
+                    </td>
+				</tr>
+			</table>
+            &nbsp;&nbsp;
+        </td>
+        </form>
+	</tr>
+</table>
+
+@section scripts {
+    <script type="text/javascript">
+        let orgTree    = [];
+        let division   = [];
+        let department = [];
+
+        $(document).ready(function () { 
+            getStandingData(displayReportCreate, ""); 
+            getOrgTree(saveOrgTree, "");
+            }); 
+    </script>
+}

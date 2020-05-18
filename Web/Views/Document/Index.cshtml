@@ -1,0 +1,96 @@
+@{
+    ViewData["Title"] = "Streamed Single File Upload with AJAX (Physical)";
+    string pendingId = (string)ViewData["PendingId"];
+}
+
+<table class="communitylinks" cellspacing="0" cellpadding="3" width="100%" border-width="0">
+  <tr>
+    <td class="Highlight" width="15%" colspan="2" height="24">Upload a Document</td>
+  </tr>
+</table>
+
+<p class="Label">Press "Browse" to select a file, and then press "Upload".</p>
+
+<form id="uploadForm" action="/Document/UploadDocument" method="post"
+    enctype="multipart/form-data" onsubmit="AJAXSubmitOld(this);return false;">
+
+    <label for="file" class="custom-file-upload" style="HEIGHT:18px;WIDTH:41px;">Browse
+      <input id="file" type="file" name="file" />
+    </label>
+    <div>&nbsp;</div>
+    <span id="file-selected"></span>
+    <div>&nbsp;</div>
+    <input type="submit" value="Upload" class="gFormButton" style="HEIGHT:24px;WIDTH:55px;"/>&nbsp;&nbsp;
+    <button type="button" id="btnCancel" class="gFormButton" style="HEIGHT:24px;WIDTH:55px;" onclick="window.location.href='/Report/Edit/'+$('#Id').val()">Cancel</button>
+
+    <div style="margin-top:15px">
+        <output form="uploadForm" name="result"></output>
+    </div>
+    <input id="Id" type="hidden" value="@pendingId" />
+</form>
+
+@section Scripts {
+  <script>
+    "use strict";
+
+    async function AJAXSubmit (oFormElement) {
+      const formData = new FormData(oFormElement);
+
+      try {
+        const response = await fetch(oFormElement.action, {
+          method: 'POST',
+          headers: {
+            'RequestVerificationToken': getCookie('RequestVerificationToken')
+          },
+          body: formData
+        });
+
+        if (response.status == 201)
+        {
+          window.location.href='/Report/Edit/@pendingId';
+        }
+        else
+        {
+          oFormElement.elements.namedItem("result").value = 'Result: ' + response.status + ' ' + response.statusText;
+        }
+
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+  function AJAXSubmitOld (oFormElement) {
+    oFormElement.elements.namedItem("result").value = "Uploading ...";
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function(e) { 
+      if (this.status == 201)
+      {
+        window.location.href='/Report/Edit/@pendingId';
+      }
+      else if (this.status == 413)
+      {
+         oFormElement.elements.namedItem("result").value = 'The file was too large - nothing uploaded.';
+      }
+      else if (this.status == 415)
+      {
+         oFormElement.elements.namedItem("result").value = 'The file was the wrong type - nothing uploaded.';
+      }
+    };
+    oReq.open("post", oFormElement.action);
+    oReq.setRequestHeader('RequestVerificationToken', getCookie('RequestVerificationToken'));
+    oReq.send(new FormData(oFormElement));
+  }
+
+    function getCookie(name) {
+      var value = "; " + document.cookie;
+      var parts = value.split("; " + name + "=");
+      if (parts.length == 2) return parts.pop().split(";").shift();
+    }
+
+  $('#file').bind('change', function() { 
+    var fileName = ''; 
+    fileName = $(this).val().split('\\').pop().split('/').pop();
+    $('#file-selected').html("The file selected was: " + fileName); 
+    }) 
+  </script>
+}

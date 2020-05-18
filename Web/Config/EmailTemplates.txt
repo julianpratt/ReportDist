@@ -1,0 +1,118 @@
+%%ESX-Subject
+{Company} Report : {ReportNumber}
+%%ESX-Body
+Please find attached a summary of the {Company} report:
+
+Report Number : {ReportNumber}
+
+Title : {Title}
+
+Author : {Authors}
+
+{Summary}
+
+
+If you would like a full copy of this report, please contact:
+{FromName}
+{FromEmail}
+%%ESI-Subject
+{Company} Report : {ReportNumber}
+%%ESI-Body		
+Please find attached a summary of the {Company} report:
+
+Report Number : {ReportNumber}
+
+Title : {Title}
+
+Author : {Authors}
+
+{Summary}
+
+
+To access the report, please click on this link to the {Company} Catalogue: 
+
+Link to Report : {ReportLink}
+
+
+If you have not already registered to use this Catalogue, or if you experience difficulties using it, please contact:
+{CatalogueSupport}  
+
+This report has been sent to you by:
+{FromName}
+{FromEmail}
+%%EFX-Subject
+{Company} Report : {ReportNumber}
+%%EFX-Body		
+Please find attached the full pdf of the {Company} report:
+
+Report Number : {ReportNumber}
+
+Title : {Title}
+
+Author : {Authors}
+
+Should there be any problems receiving this report or should you require a signed and dated copy for legal reasons please contact:
+{FromName}
+{FromEmail}
+
+
+%%EFI-Subject
+{Company} Report : {ReportNumber}
+%%EFI-Body			
+Please find attached the full pdf of the {Company} report:
+
+Report Number : {ReportNumber}
+
+Title : {Title}
+
+Author : {Authors}
+
+Should there be any problems receiving this report or should you require a signed and dated copy for legal reasons please contact:
+{FromName}
+{FromEmail}
+
+
+%%ECX-Subject
+{Company} Report : {ReportNumber}
+%%ECX-Body
+Please find attached a summary of the {Company} report:
+
+Report Number : {ReportNumber}
+
+Title : {Title}
+
+Author : {Authors}
+
+{Summary}
+
+A CD containing this report has been dispatched to your designated contact as it is too large to send via email.
+
+This report has been sent to you by:
+{FromName}
+{FromEmail} 
+%%ECI-Subject 
+{Company} Report : {ReportNumber}
+%%ECI-Body
+Please find attached a summary of the {Company} report:
+
+Report Number : {ReportNumber}
+
+Title : {Title}
+
+Author : {Authors}
+
+{Summary}
+
+
+To access the report, please click on this link to the {Company} Catalogue: 
+
+Link to Report : {ReportLink}
+
+
+If you have not already registered to use this Catalogue, or if you experience difficulties using it, please contact:
+{CatalogueSupport}
+
+This report has been sent to you by:
+{FromName}
+{FromEmail}
+

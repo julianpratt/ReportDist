@@ -1,0 +1,199 @@
+@model PendingReportViewModel
+
+@{
+    ViewData["Title"] = "Edit Pending Report";
+    ViewData["AppVersion"] = "ReportDistMVC v1";
+    ViewData["LogonDetails"] = "Not Authenticated";
+}
+
+<table cellspacing="0" cellpadding="0" border-width="0" width="750px">
+	<tr>
+		<td>
+			<form method="post" id="EditReport">
+            <span class="MediumHeader">Add / Amend Report</span>&nbsp;
+			<table class="communitylinks" cellspacing="0" cellpadding="2" width="100%" border-width="0">
+				<tr>
+					<td class="gheaderline" valign="bottom" colspan="2" height="1"></td>
+				</tr>
+				<tr>
+					<td class="Highlight" height="24">&nbsp;@Html.DisplayFor(model => model.FullReportNo)</td>
+				</tr>
+				<tr>
+					<td style="PADDING-LEFT: 10px; PADDING-TOP: 5px" valign="top">
+                        <input type="hidden" asp-for="Id" />
+						<table style="WIDTH:100%" cellspacing="0" cellpadding="1" border-width="0">
+							<tr>
+								<td class="Label" style="WIDTH:120px" valign="middle" nowrap="nowrap">Report No</td>
+								<td class="Field" valign="middle" nowrap="nowrap" style="WIDTH: 250px">
+									<table cellspacing="0" cellpadding="0" width="100%" border-width="0">
+										<tr valign="middle">
+											<td class="Field" style="WIDTH: 100px" valign="middle">
+                                                @Html.DisplayFor(model => model.ReportNo)
+											</td>
+											<td class="Field" valign="middle" width="100%">
+                                                <select asp-for="ReportType" asp-items="Model.ReportTypes" class="Field" Height="18" Width="50"></select>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td class="Label" valign="middle">Security</td>
+								<td class="Field" valign="middle"><select asp-for="SecurityLevel" asp-items="Model.SecurityLevels" class="Field"></select></td>
+							</tr>
+							<tr>
+								<td class="Label" style="WIDTH:120px" valign="top" nowrap="nowrap">Title</td>
+								<td class="Field" valign="top" colspan="3">
+                                    <textarea asp-for="Title" class="Field" style="height: 45px; width: 100%" MaxLength="30"></textarea>
+									<span asp-validation-for="Title"></span>
+								</td>
+							</tr>
+                            <tr>
+   								<td class="Label" style="WIDTH:120px" valign="top" nowrap="nowrap">Access Code</td>
+								<td class="Field" valign="top">
+                                    <input asp-for="Axess" class="Field" style="WIDTH:240px;HEIGHT:18px;" ReadOnly="True" />
+									<span asp-validation-for="Axess"></span>
+								</td>
+                                <td class="Field" valign="middle" style="text-align:center">
+                                    <button type="button" id="btnAxessNONE" class="gFormButton" style="HEIGHT:24px;WIDTH:24px;" title="NONE" onclick="setAxessNone();">N</button>
+									&nbsp;<button type="button" id="btnAxessALL"  class="gFormButton" style="HEIGHT:24px;WIDTH:24px;" title="ALL"  onclick="setAxessAll();">A</button>
+                                </td>
+								<td class="Field" valign="middle">
+                                    <select id="AccessCode" class="Field" onclick="setAxess();"></select>
+								</td>
+                            </tr>
+							<tr>
+								<td class="Label" style="WIDTH:120px" valign="middle" nowrap="nowrap">Authors</td>
+								<td class="Field" valign="middle" colspan="3">
+                                    <input asp-for="Author" class="Field" style="width:100%" MaxLength="500" Wrap="False" />
+									<span asp-validation-for="Author"></span>
+								</td>								
+							</tr>
+							<tr>
+								<td class="Label" style="WIDTH:120px" valign="middle" nowrap="nowrap">Job Number(s)</td>
+								<td class="Field" style="HEIGHT:18px;WIDTH:240px;" valign="middle">
+									<input asp-for="JobNo" class="Field" style="WIDTH:240px;HEIGHT:18px;" Wrap="False" />
+									<span asp-validation-for="JobNo"></span>
+								</td>
+								<td class="Field" style="HEIGHT: 18px" valign="middle"></td>
+								<td class="Field" style="HEIGHT: 18px" valign="middle"></td>
+							</tr>
+							<tr>
+								<td class="Label" style="WIDTH:120px" valign="top" nowrap="nowrap">Software</td>
+								<td class="Field" valign="top" nowrap="nowrap" colspan="3">
+                                    <textarea asp-for="Software" class="Field" rows="2" cols="20" style="height:38px;width:100%;"></textarea>
+									<span asp-validation-for="Software"></span>
+								</td>
+							</tr>
+							<tr>
+								<td class="Label" style="WIDTH:120px" valign="top" nowrap="nowrap">Summary</td>
+								<td class="Field" valign="top" colspan="3">
+                                    <textarea asp-for="Abstract" class="Field" rows="12" cols="20" style="height:140px;width:100%;"></textarea>
+									<span asp-validation-for="Abstract"></span>
+								</td>
+							</tr>							
+							<tr>
+								<td class="Label" valign="top" colspan="4"></td>
+							</tr>
+							<tr>
+								<td valign="middle" colspan="4">
+                                    <button type="submit" id="btnSave"   class="gFormButton" style="HEIGHT:24px;WIDTH:55px;" title="Save changes and return to Pending Reports List"                                                                >Save</button>&nbsp;&nbsp;
+                                    <button type="button" id="btnCancel" class="gFormButton" style="HEIGHT:24px;WIDTH:55px;" title="Undo changes on this page."                        onclick="window.location.href='/Report/Edit/'+$('#Id').val()">Undo</button>&nbsp;&nbsp;
+									<button type="button" id="btnReturn" class="gFormButton" style="HEIGHT:24px;WIDTH:55px;" title="Ignore changes and return to Pending Reports List" onclick="window.location.href='/'"                           >Return</button>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+            <br />
+			<table cellspacing="0" cellpadding="0" width="100%" border-width="0">
+				<tr>
+					<td style="PADDING-RIGHT: 3px" width="35%"><span class="MediumHeader">&nbsp;Upload File</span>&nbsp;
+						<table class="communitylinks" cellspacing="0" cellpadding="2" width="100%" border-width="0">
+							<tr>
+								<td class="gheaderline" valign="bottom" colspan="2" height="1"></td>
+							</tr>
+							<tr>
+								<td style="PADDING-LEFT: 10px" valign="top">
+                                    <table cellspacing="0" cellpadding="2" width="100%" border-width="0">
+										<tr>
+											<td class="HighlightText" valign="middle" colspan="20">
+												<button type="button" id="btnUpload"  class="gFormButton" style="HEIGHT:24px;WIDTH:55px;" onclick="window.location.href='/Document/Index/'+$('#Id').val()">Upload</button>&nbsp;&nbsp;
+@if(Model.eFileName != null) 
+{
+												<button type="button" id="btnViewPDF" class="gFormButton" style="HEIGHT:24px;WIDTH:55px;" onclick="window.open('/Report/DocView/'+$('#Id').val(), 'View Document', 'fullscreen=yes,location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');">View</button>
+}												
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td style="PADDING-LEFT: 3px" width="50%"><span class="MediumHeader">Circulation List</span>&nbsp;					
+						<span class="HighlightBoldText">@ViewData["RecipientMessage"]</span>
+						<table class="communitylinks" cellspacing="0" cellpadding="2" width="100%" border-width="0">
+							<tr>
+								<td class="gheaderline" valign="bottom" colspan="2" height="1"></td>
+							</tr>
+							<tr>
+								<td style="PADDING-LEFT: 10px" valign="top">
+                                    <table cellspacing="0" cellpadding="2" width="100%" border-width="0">
+										<tr>
+											<td class="HighlightText" valign="middle" colspan="20">
+												<button type="button" id="btnCircList" class="gFormButton" style="HEIGHT:24px;WIDTH:125px;" onclick="window.location.href='/Circulation/Index/'+$('#Id').val()">Edit List</button>&nbsp;
+												<!--<input type="submit" id="btnPrintCovers" class="gFormButton" Width="125px" CausesValidation="False" title="Print List" Visible="False" />-->
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+            <br />
+			<div id="spCommit"><span class="MediumHeader">&nbsp;Commit Report</span>&nbsp;
+				<table class="communitylinks" id="tblCommit" cellspacing="0" cellpadding="2" width="100%" border-width="0">
+					<tr>
+						<td class="gheaderline" valign="bottom" colspan="2" height="1"></td>
+					</tr>
+					<tr>
+						<td class="Highlight" height="24">&nbsp;Please check that all entries on this page	are correct, and that the correct file has been uploaded.</td>
+					</tr>
+					<tr>
+						<td style="PADDING-LEFT: 10px" valign="top">
+							<table cellspacing="0" cellpadding="1" width="100%" border-width="0">
+								<tr>
+									<td style="WIDTH: 83px" valign="middle" nowrap="nowrap">
+@if(Model.eFileName == null) 
+{										
+                                        <input type="checkbox" id="chkQAConfirm2" class="HighLightBoldText" Width="566px" onclick="onCheck();" title="Nothing Uploaded - check to confirm report is bigger than 12Mb." /><span>&nbsp;Nothing Uploaded - check to confirm report is bigger than 12Mb.</span>
+                                            
+}
+else											
+{
+                                        <input type="checkbox" id="chkQAConfirm" class="HighLightBoldText" Width="566px"  onclick="onCheck();" title="Please check to confirm you have a signed original copy in front of you."/><span>&nbsp;Please check to confirm you have a signed original copy infront of you.</span>
+}								
+									</td>
+								</tr>
+								<tr>
+									<td class="gHighlightText" valign="middle">
+										<button type="submit" id="btnCommit" class="gFormButton" style="HEIGHT:24px;WIDTH:147px;display:none " formaction="/Report/Commit">Commit</button>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+			</form>
+        </td>           
+	</tr>
+</table>
+
+@section scripts {
+     <script type="text/javascript">
+        getStandingData(displayReportEdit, "");
+    </script>
+	@await Html.PartialAsync("_ValidationScriptsPartial")
+}

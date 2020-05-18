@@ -1,0 +1,247 @@
+﻿BODY
+{
+	background-color: #FFFFFF;
+	font-size:        9pt;
+    font-family:      verdana,arial,helvetica;
+	color:            #000000;
+	margin:           0 0 0 0;
+}
+
+#Header
+{
+	width:               100%;
+	height:              93px;
+	background-color:    #0078DC;
+	background-image:    url(../image/UniperLogo.png);
+	background-repeat:   no-repeat;
+	background-position: 0px 0px;
+	margin:              0px 0px 10px 0px;	
+}
+
+#HeaderTitle
+{
+	position:      relative;
+	text-align:    right;
+	font-size:     11pt;
+	font-weight:   bold;
+	height:        15px;
+	text-align:    right;
+	color:         White;
+	float:         right;
+	top:           20px;
+	padding-right: 10px;
+}
+#MenuPanelLeft
+{
+	top:           75px;
+	left:          40px;
+	position:      absolute;
+	text-align:    left;
+}
+
+#MenuPanelRight
+{
+	float:         right;
+	top:           75px;
+	right:         20px;
+	position:      absolute;
+	text-align:    right;
+}
+#EndImage
+{
+	float:         right;
+	right:         0px;
+}
+
+#PageFooter
+{
+	font-size:        8pt;
+	color:            #808080;
+	border-top-color: #DEDEDE;
+	border-top-style: solid;
+	border-top-width: 1px;	
+	padding:          5px 0px 2px 0px;
+	float:            left;
+	width:            100%;
+	text-align:       center;
+}
+
+#PageFooter .Right
+{
+	float:            right;
+	padding-right:    15px;
+	
+}
+
+#PageFooter .Left
+{
+	float: left;
+	padding-left:5px;
+}
+
+#Content
+{
+   	margin-top:    20px;
+	margin-left:   40px;
+	margin-bottom: 20px;
+    margin-right:  40px;
+}
+
+A.MenuButtonLink
+{
+	color:           #FFFFFF;
+	font-weight:     bold;
+	text-decoration: none;
+	padding-right:   10px;
+}
+A.MenuButtonLink:link
+{
+	color:           #FFFFFF;
+	font-weight:     bold;
+	text-decoration: none;
+}
+A.MenuButtonLink:visited
+{
+	color:           #FFFFFF;
+	font-weight:     bold;
+	text-decoration: none;
+}
+A.MenuButtonLink:hover
+{
+	color:           #990000;
+	font-weight:     bold;
+	text-decoration: none;
+}
+
+.MediumHeader 
+{
+    color:            #000000;
+	font-weight:     bold;
+	text-decoration: none;
+}
+
+.Highlight 
+{
+	background-color: #0078DC;
+	color:            #FFFFFF;	
+}
+
+.Highlight A 
+{
+  	color:            #FFFFFF;	
+	text-decoration:  underline;
+}
+
+.Label 
+{
+	color:            #000000;	
+	font-weight:      bold;
+}
+
+.Field 
+{
+	color:            #000000;
+    font-size:        9pt;
+    font-family:      verdana,arial,helvetica;	
+}
+
+.Selector 
+{ 
+    display:          inline-block; 
+    vertical-align:   top; 
+    overflow:         hidden; 
+    border:           solid grey 1px; 
+    margin:           5px; 
+
+}
+ .Selector select 
+ { 
+     padding:         10px 30px 10px 10px; 
+     margin:          -5px -25px -5px -5px; 
+ } 
+
+.HighlightText 
+{
+	color:            #0078DC;	
+}
+.HighlightText A 
+{
+	text-decoration:  underline;
+}
+
+.HighlightBoldText 
+{
+ 	color:            #000000;	
+	font-weight:      bold;
+}
+
+.HighlightBoldText A 
+{
+ 	color:            #000000;	
+	font-weight:      bold;
+	text-decoration:  underline;
+}
+
+/*
+.gContentSection
+{
+    FONT-SIZE: 11px;
+    COLOR: #000000;
+    FONT-FAMILY: arial,helvetica
+}
+.gContentSection a
+{
+    FONT-SIZE: 11px;
+    COLOR: #0000FF;
+    FONT-FAMILY: arial,helvetica
+}
+*/
+
+.gContentSection 
+{
+	/*font-size:        x-small;*/
+    COLOR:            #000000;
+    FONT-FAMILY:      verdana,arial,helvetica
+}
+.gContentSection A 
+{
+    color:            #000000;
+    /*COLOR: #006666;*/ 
+	text-decoration:  underline;
+}
+.ReportDistGrid TH
+{
+		/*font-size:        x-small;*/
+		COLOR:            #000000;
+		FONT-FAMILY:      verdana,arial,helvetica
+}
+
+.gFormButton 
+{
+    FONT-WEIGHT:      bold;
+	font-size:        x-small;
+    COLOR:            #FFFFFF;
+    FONT-FAMILY:      Arial, Helvetica;
+    BACKGROUND-COLOR: #0078DC;
+}
+
+
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    display: inline-block;
+	cursor: pointer;
+	FONT-WEIGHT:      bold;
+	font-size:        x-small;
+	text-align:       center;
+    COLOR:            #FFFFFF;
+    FONT-FAMILY:      Arial, Helvetica;
+	BACKGROUND-COLOR: #0078DC;
+	
+  padding: 3px 6px 1px 6px;
+  border-top: 1px solid #CCCCCC;
+  border-right: 1px solid #333333;
+  border-bottom: 1px solid #333333;
+  border-left: 1px solid #CCCCCC;
+}

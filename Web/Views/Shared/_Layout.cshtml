@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Report Distribution - @ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/Uniper.css" type="text/css" />
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" />
+</head>
+<body>
+    <div id="Header">
+        <span id="HeaderTitle">UTG Report Distribution</span>
+        <div id="MenuPanelRight" class="menustyle">
+            <a asp-controller="Home" asp-action="Index" class="MenuButtonLink">Home</a>
+            <a asp-controller="Recipient" asp-action="ShowGrid" class="MenuButtonLink">Recipients</a>
+        </div>
+    </div>
+    <div id="Content">
+        @RenderBody()
+    </div>
+    <div id="PageFooter">
+        <div class="Left">
+            @ViewData["AppVersion"]
+        </div>
+        <div class="Right">
+            @ViewData["LogonDetails"]
+        </div>
+    </div>
+   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+            asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+            asp-fallback-test="window.jQuery"
+            crossorigin="anonymous"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+    </script>
+    <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

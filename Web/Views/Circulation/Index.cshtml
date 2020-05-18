@@ -1,0 +1,173 @@
+@model List<Circulation> 
+
+@{
+    ViewData["Title"] = "Edit Circulation";
+    ViewData["AppVersion"] = "ReportDistMVC v1";
+    ViewData["LogonDetails"] = "Not Authenticated";
+    string pendingId = (string)ViewData["pendingId"];
+}
+
+<span class="MediumHeader" id="spMainTitle" runat="server">Report Circulation&nbsp;</span> 
+<table class="communitylinks" id="tbFindRecip" cellspacing="0" cellpadding="2" width="100%" border-width="0" runat="server">
+    <tr>
+        <td class="gheaderline" valign="bottom" colspan="2" height="1" rowspan="1"></td>
+    </tr>
+    <tr>
+        <td class="Highlight" height="24">&nbsp;Select Recipients</td>
+    </tr>
+    <tr>
+        <td style="PADDING-LEFT: 3px" valign="top">
+            <a asp-controller="Circulation" asp-action="Create" asp-route-id="@pendingId" class="gContentSection">Blank Record</a>
+            <div id="spCustContact" runat="server">
+                <table id="dgContacts" class="compact stripe" width="100%" cellspacing="0">  
+                    <thead>  
+                        <tr>  
+                            <th>RecipientID</th>  
+                            <th>First Name</th>  
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Job Title</th>    
+                            <th>Address</th>
+                            <th>&nbsp;</th>  
+                            <th>&nbsp;</th>  
+                        </tr>  
+                    </thead>  
+                </table>  
+            </div>
+        </td>
+    </tr>
+</table>
+
+
+<table id="tbReturn" cellspacing="0" cellpadding="0" border-width="0">
+	<tr>
+		<td style="PADDING-BOTTOM: 5px; PADDING-TOP: 5px">
+            <button type="button" id="btnReturn" class="gFormButton" style="HEIGHT:24px;WIDTH:180px;" onclick="window.location.href='/Report/Edit/@pendingId'">Return to Report Details</button>
+		</td>
+	</tr>
+</table>
+
+<div id="spCircList">
+        <br />
+        <span class="MediumHeader" id="Span1" runat="server">Report Circulation List</span>
+	    <table class="communitylinks" id="Table6" cellspacing="0" cellpadding="2" width="100%" border="0">
+		    <tr>
+			    <td class="gheaderline" valign="bottom" colspan="2" height="1" rowspan="1"></td>
+		    </tr>
+		    <tr>
+			    <td class="Highlight" height="24">&nbsp;Current Circulation List</td>
+		    </tr>
+		    <tr>
+			    <td>
+                    <table id="dgCircList" class="compact stripe" width="100%" cellspacing="0">  
+                        <thead>  
+                            <tr>  
+                                <th>RecipientID</th>  
+                                <th>&nbsp;</th>  
+                                <th>Name</th>  
+                                <th>Type</th>  
+                                <th>Address</th>  
+                                <th>&nbsp;</th>  
+                                <th>&nbsp;</th>  
+                            </tr>  
+                        </thead>  
+                    </table>  
+	    		</td>
+		    </tr>
+ 	    </table>
+    </div>
+
+@section scripts {
+
+<script>  
+
+    $(document).ready(function ()  
+    {  
+            recipList = $("#dgContacts").DataTable({  
+            "processing": true,  // for show progress bar  
+            "serverSide": true,  // for process server side  
+            "filter": true,     // this is for disable filter (search box)  
+            "ordering": true,   // disable column ordering
+            "lengthChange": false, // fix the rows per page
+            "pageLength": 5,
+            "orderMulti": false, // for disable multiple column at once  
+            "ajax": {  
+                "url": "/Recipient/LoadData",  
+                "type": "POST",  
+                "datatype": "json"  
+            },  
+            "columnDefs":  
+            [{  
+                "targets": [0],  
+                "visible": false,  
+                "searchable": false  
+            }],  
+            "columns": [  
+                { "data": "recipientID",  "name": "RecipientID", "autoWidth": true },  
+                { "data": "firstName",    "name": "FirstName",   "autoWidth": true },  
+                { "data": "lastName",     "name": "LastName",    "autoWidth": true },  
+                { "data": "email",        "name": "Email",       "autoWidth": true },  
+                { "data": "jobTitle",     "name": "JobTitle",    "autoWidth": true }, 
+                { "data": "addressTrunc", "name": "Address",     "autoWidth": true },    
+                {  
+                    "render": function (data, type, full, meta)  
+                    { return '<a href="/Circulation/Add?pendingId=@pendingId&recipientId=' + full.recipientID + '">Add</a>'; },
+                    "orderable": false   
+                }, 
+                {  
+                    "render": function (data, type, full, meta)  
+                    { return '<a href="/Recipient/Delete?pendingId=@pendingId&recipientId=' + full.recipientID + '">Delete</a>'; },
+                    "orderable": false   
+                } 
+            ]  
+
+        });
+
+        recipList.columns([1, 2, 3, 4, 5, 6, 7]).header().to$().css("text-align", "left"); 
+
+
+        circList = $("#dgCircList").DataTable({  
+            "processing": true,  // for show progress bar  
+            "serverSide": true,  // for process server side  
+            "filter": false,     // this is for disable filter (search box)  
+            "ordering": false,   // disable column ordering
+            "lengthChange": false, // fix the rows per page
+            "pageLength": 10,
+            "orderMulti": false, // for disable multiple column at once  
+            "ajax": {  
+                "url": "/Circulation/LoadData",  
+                "type": "POST",  
+                "data": { "id" : "@pendingId" },
+                "datatype": "json"  
+            },  
+            "columnDefs":  
+            [{  
+                "targets": [0],  
+                "visible": false,  
+                "searchable": false  
+            }],  
+            "columns": [  
+                { "data": "circulationId", "name": "circulationId", "autoWidth": true },  
+                { "data": "toCcBccText",   "name": "toCcBccText",   "autoWidth": true },  
+                { "data": "name",          "name": "name",          "autoWidth": true },  
+                { "data": "delivery",      "name": "delivery",      "autoWidth": true },  
+                { "data": "addressTrunc",  "name": "addressTrunc",  "autoWidth": true },  
+                {  
+                    "render": function (data, type, full, meta)  
+                    { return '<a href="/Circulation/Edit/' + full.circulationId + '">Edit</a>'; }  
+                },
+                {  
+                    "render": function (data, type, full, meta)  
+                    { return '<a href="/Circulation/Delete/' + full.circulationId + '">Delete</a>'; }  
+                }  
+            
+            ]  
+
+        });
+
+        circList.columns([1, 2, 3, 4, 5, 6]).header().to$().css("text-align", "left"); 
+    });  
+
+</script> 
+}
+    

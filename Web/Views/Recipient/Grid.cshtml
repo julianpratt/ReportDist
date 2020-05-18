@@ -1,0 +1,105 @@
+@{  
+    ViewData["Title"]        = "Recipient List";
+    ViewData["AppVersion"]   = "ReportDistMVC v1";
+    ViewData["LogonDetails"] = "Not Authenticated";
+}  
+
+<div class="container">  
+    <br />  
+    <div style="width:90%; margin:0 auto;">  
+        <table id="example" class="compact stripe" width="100%" cellspacing="0">  
+            <thead>  
+                <tr>  
+                    <th>RecipientID</th>  
+                    <th>UserName</th>  
+                    <th>First Name</th>  
+                    <th>Last Name</th>  
+                    <th>Email</th>  
+                    <th>Edit</th>  
+                    <th>Delete</th>  
+                </tr>  
+            </thead>  
+        </table>  
+    </div>  
+</div>  
+
+@section scripts {
+
+<script>  
+
+        $(document).ready(function ()  
+        {  
+            table = $("#example").DataTable({  
+                "processing": true, // for show progress bar  
+                "serverSide": true, // for process server side  
+                "filter": true, // this is for disable filter (search box)  
+                "orderMulti": false, // for disable multiple column at once  
+                "ajax": {  
+                    "url": "/Recipient/LoadData",  
+                    "type": "POST",  
+                    "data": { "id" : "12345" },
+                    "datatype": "json"  
+                },  
+                "columnDefs":  
+                [{  
+                    "targets": [0],  
+                    "visible": false,  
+                    "searchable": false  
+                }],  
+                "columns": [  
+                    { "data": "recipientID", "name": "RecipientID", "autoWidth": true },  
+                    { "data": "userName",    "name": "UserName",    "autoWidth": true },  
+                    { "data": "firstName",   "name": "FirstName",   "autoWidth": true },  
+                    { "data": "lastName",    "name": "LastName",    "autoWidth": true },  
+                    { "data": "email",       "name": "Email",       "autoWidth": true },  
+                    {  
+                        "render": function (data, type, full, meta)  
+                        { return '<a class="btn btn-info" href="/Recipient/Edit/' + full.recipientID + '">Edit</a>'; }  
+                    },  
+                    {  
+                        data: null, render: function (data, type, row)  
+                        {  
+                            return "<a href='#' class='btn btn-danger' onclick=DeleteData('" + row.RecipientID + "'); >Delete</a>";  
+                        }  
+                    },  
+                ]  
+
+            });
+
+            table.columns([1, 2, 3, 4]).header().to$().css("text-align", "left"); 
+        });  
+
+
+    function DeleteData(RecipientID)  
+        {  
+            if (confirm("Are you sure you want to delete ...?"))  
+            {  
+                Delete(RecipientID);  
+            }  
+            else  
+            {  
+                return false;  
+            }  
+        }  
+
+
+        function Delete(RecipientID)  
+    {  
+        var url = '@Url.Content("~/")' + "Recipient/Delete";  
+
+            $.post(url, { ID: RecipientID }, function (data)  
+                {  
+                    if (data)  
+                    {  
+                        oTable = $('#example').DataTable();  
+                        oTable.draw();  
+                    }  
+                    else  
+                    {  
+                        alert("Something Went Wrong!");  
+                    }  
+                });  
+    }  
+
+</script> 
+}
