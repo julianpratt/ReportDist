@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Mistware.Files;
 using Mistware.Utils;
 using ReportDist.Data;
@@ -21,18 +22,30 @@ namespace ReportDist
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             Env = env;
         }
 
         public IConfiguration Configuration { get; }
-        public IHostingEnvironment Env { get; }
+        public IWebHostEnvironment Env { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            string conn = Config.Get("AzureConnectionString");
+     		string cont = Config.Get("AzureContainer");
+            string root = Config.Get("LocalFilesRoot");
+            string logs = Config.Get("Logs");
+		    IFile fsys = FileBootstrap.SetupFileSys(conn,cont,root,logs);
+            services.AddSingleton<IFile>(fsys);
+            Log.Me.LogFile = "ReportDist.log"; // Overide default from Boostrap
+            
+            Log.Me.Info("==================================================================================================");
+            Log.Me.Info("Report Distribution Starting");
+            Log.Me.Info("Configuration: " + Config.DebugConfig());
      
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -45,7 +58,7 @@ namespace ReportDist
 
             services.AddSession(options =>
             {
-                options.Cookie.Name = ".TestMVC.Session";
+                options.Cookie.Name = ".ReportDist.Session";
                 options.IdleTimeout = TimeSpan.FromSeconds(60);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
@@ -54,7 +67,7 @@ namespace ReportDist
             if (!Env.IsDevelopment())
             {
                 services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
-                .AddAzureAD(options => Configuration.Bind("AzureAd", options));
+                .AddAzureAD(options => AzureADConfig());
             }
            
             services.AddMvc(options =>
@@ -71,21 +84,26 @@ namespace ReportDist
                     options.Filters.Add(new AuthorizeFilter(policy));
                 }
             })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
                 
             services.AddDbContext<DataContext>();
-
-            string conn = Config.Get("AzureConnectionString");
-     		string cont = Config.Get("AzureContainer");
-            string root = Config.Get("LocalFilesRoot");
-            string logs = Config.Get("Logs");
-		    IFile fsys = FileBootstrap.SetupFileSys(conn,cont,root,logs);
-            services.AddSingleton<IFile>(fsys);
-            Log.Me.LogFile = "ReportDist.log"; // Overide default from Boostrap
         }
 
+        public AzureADOptions AzureADConfig()
+        {
+            AzureADOptions options = new AzureADOptions();
+            options.Instance     = Config.Get("AAD_Instance");
+            options.Domain       = Config.Get("AAD_Domain");
+            options.TenantId     = Config.Get("AAD_TenantId");
+            options.ClientId     = Config.Get("AAD_ClientId");
+            options.CallbackPath = Config.Get("AAD_CallbackPath"); 
+
+            return options;
+        }
+        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
