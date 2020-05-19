@@ -88,6 +88,8 @@ namespace ReportDist
             .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
                 
             services.AddDbContext<DataContext>();
+
+            Log.Me.Info("Successfully through ConfigureServices");
         }
 
         public AzureADOptions AzureADConfig()
@@ -106,6 +108,7 @@ namespace ReportDist
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            Log.Me.Info("Just in Configure");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
