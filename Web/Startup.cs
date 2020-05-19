@@ -67,7 +67,8 @@ namespace ReportDist
             if (!Env.IsDevelopment())
             {
                 services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
-                .AddAzureAD(options => AzureADConfig());
+                //.AddAzureAD(options => Configuration.Bind("AzureAd", options));
+                .AddAzureAD(options => AzureADConfig(options));
             }
            
             services.AddMvc(options =>
@@ -92,16 +93,19 @@ namespace ReportDist
             Log.Me.Info("Successfully through ConfigureServices");
         }
 
-        public AzureADOptions AzureADConfig()
+        public void AzureADConfig(AzureADOptions options)
         {
-            AzureADOptions options = new AzureADOptions();
             options.Instance     = Config.Get("AAD_Instance");
             options.Domain       = Config.Get("AAD_Domain");
             options.TenantId     = Config.Get("AAD_TenantId");
             options.ClientId     = Config.Get("AAD_ClientId");
-            options.CallbackPath = Config.Get("AAD_CallbackPath"); 
+            options.CallbackPath = Config.Get("AAD_CallbackPath");
 
-            return options;
+            Log.Me.Info("AAD_Instance    : " + options.Instance);
+            Log.Me.Info("AAD_Domain      : " + options.Domain);
+            Log.Me.Info("AAD_TenantId    : " + options.TenantId);
+            Log.Me.Info("AAD_ClientId    : " + options.ClientId);
+            Log.Me.Info("AAD_CallbackPath: " + options.CallbackPath); 
         }
         
 
