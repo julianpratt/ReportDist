@@ -120,7 +120,7 @@ namespace ReportDist.Data
         [NotMapped]
         private string   reportType    { get; set; }
 
-        [Required, Column(TypeName = "char"), StringLength(10)]
+        [Required, Column(TypeName = "char(10)"), StringLength(10)]
         public string    ReportType    
         { 
             get { return reportType; } 
@@ -130,7 +130,7 @@ namespace ReportDist.Data
         [NotMapped]
         private string   reportYear    { get; set; }
 
-        [Required, Column(TypeName = "char"), StringLength(10)]
+        [Required, Column(TypeName = "char(10)"), StringLength(10)]
         public string    ReportYear    
         { 
             get { return reportYear; } 

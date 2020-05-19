@@ -81,7 +81,7 @@ namespace ReportDist.Data
 
         public string[] ToCcBccList = new[] { "To", "CC", "BCC" };
        
-        [Required, Column(TypeName = "char"), StringLength(8)]
+        [Required, Column(TypeName = "char(8)"), StringLength(8)]
         public string   Delivery
         {
             get
