@@ -109,6 +109,7 @@ namespace ReportDist
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                Log.Me.Info("In Development mode");
             }
             else
             {

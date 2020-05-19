@@ -23,6 +23,7 @@ namespace ReportDist.Controllers
         }
         public IActionResult Index(string sortOrder, string searchString, string currentFilter, int? pageNumber)
         {
+            Log.Me.Info("In HomeController.Index");
             string userid = "16"; // TODO!!!
             var userClaims = User.Identity as System.Security.Claims.ClaimsIdentity;
             // string firstName = userClaims?.FindFirst("name")?.Value;
