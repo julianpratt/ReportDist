@@ -119,14 +119,20 @@ namespace ReportDist
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                Log.Me.Info("Not in Development mode");
             }
 
             app.UseHttpsRedirection();
+            Log.Me.Info("In Configure and past UseHttpsRedirection");
             app.UseStaticFiles();
+            Log.Me.Info("In Configure and past UseStaticFiles");
             app.UseCookiePolicy();
+            Log.Me.Info("In Configure and past UseCookiePolicy");
             app.UseSession();
+            Log.Me.Info("In Configure and past UseSession");
 
             if (!env.IsDevelopment()) app.UseAuthentication();
+            Log.Me.Info("In Configure and past UseAuthentication");
 
             app.UseMvc(routes =>
             {
