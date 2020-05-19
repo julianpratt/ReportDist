@@ -83,6 +83,7 @@ namespace ReportDist
                     .Build();
                     options.Filters.Add(new AuthorizeFilter(policy));
                 }
+                options.EnableEndpointRouting = false;
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
                 

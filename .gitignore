@@ -17,3 +17,4 @@ Web/obj/**
 Web/wwwroot/lib/**
 Web/appsettings.json
 .vs
+Config/**
