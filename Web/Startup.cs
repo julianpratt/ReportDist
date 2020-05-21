@@ -140,6 +140,7 @@ namespace ReportDist
 
         public void CheckConfiguration()
         {
+            Log.Me.Info("");
             Log.Me.Info("==================================================================================================");
             Log.Me.Info("Report Distribution Starting");
 
@@ -177,14 +178,14 @@ namespace ReportDist
             }
 
             string delimiter = System.IO.Path.DirectorySeparatorChar.ToString();
-            Log.Me.Info("ContentRoot: " + Config.ContentRoot);
-            /*
+            Log.Me.Info("configure.json: " + Config.ContentRoot + delimiter + "Config/configure.json");
+            
             if (!System.IO.Directory.Exists(Config.ContentRoot + delimiter + "Config/configure.json"))
             {
-                Log.Me.Fatal("Could not find Config/configure.json. Use ASPNETCORE_ENVIRONMENT='Development' to see what is wrong.");
-                System.Environment.Exit(8);
+                Log.Me.Info("Could not find Config/configure.json. Use ASPNETCORE_ENVIRONMENT='Development' to see what is wrong.");
+                //System.Environment.Exit(8);
             }
-            */
+            
 
             if (!filesysok || !othersok || !CatalogueAPI.Me.IsValid() || !EmailConfig.Me.IsValid())
             {
@@ -201,9 +202,9 @@ namespace ReportDist
             string logs = Config.Get("Logs");
 		    IFile fsys = FileBootstrap.SetupFileSys(conn,cont,root,logs);
             Log.Me.LogFile = "ReportDist.log"; // Overide default from Boostrap
-            string logging = Config.Get("Logging");
-            Log.Me.DebugOn = logging == "Debug";
-            Log.Me.DebugOn = true;
+            Log.Me.DebugOn = false;
+            if (Config.Get("Logging") == "Debug") Log.Me.DebugOn = true;
+            if (Config.Debug)                     Log.Me.DebugOn = true;
 
             return fsys;
         }
