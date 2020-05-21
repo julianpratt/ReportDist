@@ -52,12 +52,10 @@ namespace ReportDist
                     options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(2);
                     options.Limits.MaxRequestBodySize = 52428800; 
                 })
-                /*
                 .ConfigureServices(services =>
                 {
                     services.AddHostedService<CatalogueCheckService>();
                 })
-                */
                 .UseStartup<Startup>();
         }  
     }
