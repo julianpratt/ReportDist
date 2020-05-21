@@ -34,10 +34,10 @@ namespace ReportDist.Data
 
         public bool IsValid()
         {
-            if (PostmasterEmail     == null || PostmasterName   == null) return false;
-            if (InternalEmailDomain == null || PortalLinkURL    == null) return false;
-            if (Company             == null || CatalogueSupport == null || SendGridKey == null) return false;
-            return true;
+            bool ok = PostmasterEmail.HasValue()      && PostmasterName.HasValue();
+            ok = ok && InternalEmailDomain.HasValue() && PortalLinkURL.HasValue();
+            ok = ok && Company.HasValue() && CatalogueSupport.HasValue() && SendGridKey.HasValue();
+            return ok;
         }
 
         public void Debug()

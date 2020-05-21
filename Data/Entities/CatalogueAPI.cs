@@ -29,9 +29,9 @@ namespace ReportDist.Data
 
         public bool IsValid()
         {
-            if (SearchCataloguesAPI == null || GetCatalogueAPI == null || ReportNoXpath == null) return false;
-            if (CIDXpath == null || eFileNameXpath == null || AttachmentXpath == null) return false;
-            return true;
+            bool ok = SearchCataloguesAPI.HasValue() && GetCatalogueAPI.HasValue() && ReportNoXpath.HasValue();
+            ok = ok && CIDXpath.HasValue() && eFileNameXpath.HasValue() && AttachmentXpath.HasValue();
+            return ok;
         }
 
         public void Debug()

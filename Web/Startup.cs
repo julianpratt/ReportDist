@@ -167,6 +167,7 @@ namespace ReportDist
                 filesysok = DebugFileSystemConfig();
                 CatalogueAPI.Me.Debug();
                 EmailConfig.Me.Debug();
+                DebugDeployment();
             }
             else
             {
@@ -219,6 +220,15 @@ namespace ReportDist
             else    Log.Me.Warn("Some File System configuration is missing");
 
             return ok;
+        }
+
+        public void DebugDeployment()
+        {
+            string here = System.IO.Directory.GetCurrentDirectory();
+            foreach (string folder in System.IO.Directory.GetDirectories(here))
+            {
+                Log.Me.Debug(folder);
+            }
         }
     }
 }
