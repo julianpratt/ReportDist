@@ -188,7 +188,7 @@ namespace ReportDist
             string logs = Config.Get("Logs");
 		    IFile fsys = FileBootstrap.SetupFileSys(conn,cont,root,logs);
             Log.Me.LogFile = "ReportDist.log"; // Overide default from Boostrap
-            Log.Me.DebugOn = false; //Config.Debug;
+            Log.Me.DebugOn = Config.Debug;
 
             return fsys;
         }
