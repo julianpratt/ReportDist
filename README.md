@@ -20,3 +20,4 @@ Having installed the SDK: download the application from GitHub (either using git
 
 Testing
 ---------------------
+..
