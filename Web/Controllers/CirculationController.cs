@@ -21,6 +21,7 @@ namespace ReportDist.Controllers
         {
             string method = "Circulation/Index";
             Log.Me.Debug(method + " - User: " + CheckIdentity() + ", PendingId: " + (id ?? 0).ToString());
+            ApplicationVersion();
 
             if (NullId(id, "PendingId", "Circulation/Index")) return RedirectToAction("Error", "Home"); 
             
@@ -63,6 +64,7 @@ namespace ReportDist.Controllers
         {
             string method = "Circulation/Create";
             Log.Me.Debug(method + " - User: " + CheckIdentity() + ", PendingId: " + (id ?? 0).ToString());
+            ApplicationVersion();
 
             if (NullId(id, "PendingId", method)) return RedirectToAction("Error", "Home"); 
 
@@ -146,6 +148,7 @@ namespace ReportDist.Controllers
             string method = "Circulation/Edit";
 
             Log.Me.Debug(method + " - User: " + CheckIdentity() + ", CirculationId: " + (id ?? 0).ToString());
+            ApplicationVersion();
 
             if (NullId(id, "CirculationId", method)) return RedirectToAction("Error", "Home"); 
 

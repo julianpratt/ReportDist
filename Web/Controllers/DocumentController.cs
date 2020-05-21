@@ -33,6 +33,7 @@ namespace ReportDist.Controllers
         {
             string method = "Document/Index";
             Log.Me.Debug(method + " - User: " + CheckIdentity() + ", PendingId: " + (id ?? 0).ToString());
+            ApplicationVersion();
 
             if (NullId(id, "PendingId", method)) return RedirectToAction("Error", "Home"); 
             PendingReport report = _context.PendingReportRepo.Read(id);

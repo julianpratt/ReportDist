@@ -18,6 +18,7 @@ namespace ReportDist.Controllers
             string user = CheckIdentity();
             if (user == null) return RedirectToAction("Error", "Home");
             Log.Me.Debug("Home/Index - User: " + user + ", SortOrder: " + sortOrder + ", SearchString: " + searchString + ", CurrentFilter: " + currentFilter + ", PageNumber: " + pageNumber.ToString());
+            ApplicationVersion();
 
             string userid = HttpContext.Session.GetString("UserId");
             

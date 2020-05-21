@@ -24,6 +24,7 @@ namespace ReportDist.Controllers
             string method = "Report/Edit";
 
             Log.Me.Debug(method + " - User: " + CheckIdentity() + ", PendingId: " + (id ?? 0).ToString());
+            ApplicationVersion();
 
             if (NullId(id, "PendingId", method))  return RedirectToAction("Error", "Home");
 
@@ -144,6 +145,7 @@ namespace ReportDist.Controllers
         {
             string method = "Report/Create";
             Log.Me.Debug(method + " - User: " + CheckIdentity());
+            ApplicationVersion();
 
             ViewData["Feature"] = "Create Report";
             return View();

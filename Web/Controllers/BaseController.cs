@@ -14,7 +14,6 @@ namespace ReportDist.Controllers
         public BaseController(DataContext context)
         {
             _context = context;
-            ApplicationVersion();
         }
 
         protected string CheckIdentity()

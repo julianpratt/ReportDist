@@ -176,7 +176,7 @@ namespace ReportDist
 
             if (!System.IO.Directory.Exists("Config/configure.json"))
             {
-                Log.Me.Fatal("Could not find Config/appsettings.json. Use ASPNETCORE_ENVIRONMENT='Development' to see what is wrong.");
+                Log.Me.Fatal("Could not find Config/configure.json. Use ASPNETCORE_ENVIRONMENT='Development' to see what is wrong.");
                 System.Environment.Exit(8);
             }
 
@@ -195,7 +195,8 @@ namespace ReportDist
             string logs = Config.Get("Logs");
 		    IFile fsys = FileBootstrap.SetupFileSys(conn,cont,root,logs);
             Log.Me.LogFile = "ReportDist.log"; // Overide default from Boostrap
-            Log.Me.DebugOn = Config.Debug;
+            string logging = Config.Get("Logging");
+            Log.Me.DebugOn = Config.Debug || (logging == "Debug");
 
             return fsys;
         }
