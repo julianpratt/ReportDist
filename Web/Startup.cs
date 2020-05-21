@@ -155,7 +155,7 @@ namespace ReportDist
             bool othersok = conn.HasValue() && type.HasValue() && devuid.HasValue();
             if (othersok) if (type != "MySQL" && type != "SQLServer") othersok=false;
             
-            if (Config.Debug)
+            if (Log.Me.DebugOn)
             {
                 Log.Me.Debug("Configuration: ");
                 Log.Me.Debug("");
@@ -163,6 +163,8 @@ namespace ReportDist
                 Log.Me.Debug("SQLServerType:   " + (type ?? ""));
                 Log.Me.Debug("AppVersion:      " + (appver ?? ""));
                 Log.Me.Debug("DeveloperUserId: " + (devuid ?? ""));
+                Log.Me.Debug("Logging:         " + (Config.Get("Logging") ?? ""));
+                Log.Me.Debug("Env:             " + (Config.Get("Env") ?? ""));
 
                 filesysok = DebugFileSystemConfig();
                 CatalogueAPI.Me.Debug();
@@ -175,11 +177,14 @@ namespace ReportDist
             }
 
             string delimiter = System.IO.Path.DirectorySeparatorChar.ToString();
+            Log.Me.Info("ContentRoot: " + Config.ContentRoot);
+            /*
             if (!System.IO.Directory.Exists(Config.ContentRoot + delimiter + "Config/configure.json"))
             {
                 Log.Me.Fatal("Could not find Config/configure.json. Use ASPNETCORE_ENVIRONMENT='Development' to see what is wrong.");
                 System.Environment.Exit(8);
             }
+            */
 
             if (!filesysok || !othersok || !CatalogueAPI.Me.IsValid() || !EmailConfig.Me.IsValid())
             {
@@ -197,7 +202,8 @@ namespace ReportDist
 		    IFile fsys = FileBootstrap.SetupFileSys(conn,cont,root,logs);
             Log.Me.LogFile = "ReportDist.log"; // Overide default from Boostrap
             string logging = Config.Get("Logging");
-            Log.Me.DebugOn = Config.Debug || (logging == "Debug");
+            Log.Me.DebugOn = logging == "Debug";
+            Log.Me.DebugOn = true;
 
             return fsys;
         }
