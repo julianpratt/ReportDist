@@ -225,9 +225,15 @@ namespace ReportDist
         public void DebugDeployment()
         {
             string here = System.IO.Directory.GetCurrentDirectory();
+            ListFolders(here);
+        }
+
+        public void ListFolders(string here)
+        {
             foreach (string folder in System.IO.Directory.GetDirectories(here))
             {
                 Log.Me.Debug(folder);
+                ListFolders(folder);
             }
         }
     }
