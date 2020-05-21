@@ -167,11 +167,17 @@ namespace ReportDist
                 filesysok = DebugFileSystemConfig();
                 CatalogueAPI.Me.Debug();
                 EmailConfig.Me.Debug();
-                DebugDeployment();
+                //DebugDeployment();
             }
             else
             {
                 filesysok = DebugFileSystemConfig();
+            }
+
+            if (!System.IO.Directory.Exists("Config/appsettings.json"))
+            {
+                Log.Me.Fatal("Could not find Config/appsettings.json. Use ASPNETCORE_ENVIRONMENT='Development' to see what is wrong.");
+                System.Environment.Exit(8);
             }
 
             if (!filesysok || !othersok || !CatalogueAPI.Me.IsValid() || !EmailConfig.Me.IsValid())
