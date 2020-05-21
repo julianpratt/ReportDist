@@ -174,7 +174,7 @@ namespace ReportDist
                 filesysok = DebugFileSystemConfig();
             }
 
-            if (!System.IO.Directory.Exists("Config/appsettings.json"))
+            if (!System.IO.Directory.Exists("Config/configure.json"))
             {
                 Log.Me.Fatal("Could not find Config/appsettings.json. Use ASPNETCORE_ENVIRONMENT='Development' to see what is wrong.");
                 System.Environment.Exit(8);
