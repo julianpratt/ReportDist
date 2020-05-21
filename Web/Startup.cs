@@ -34,19 +34,10 @@ namespace ReportDist
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            string conn = Config.Get("AzureConnectionString");
-     		string cont = Config.Get("AzureContainer");
-            string root = Config.Get("LocalFilesRoot");
-            string logs = Config.Get("Logs");
-		    IFile fsys = FileBootstrap.SetupFileSys(conn,cont,root,logs);
-            services.AddSingleton<IFile>(fsys);
-            Log.Me.LogFile = "ReportDist.log"; // Overide default from Boostrap
+            services.AddSingleton<IFile>(ConfigureFileSystem());
+         
+            CheckConfiguration();
             
-            Log.Me.Info("==================================================================================================");
-            Log.Me.Info("Report Distribution Starting");
-            Log.Me.Info("Configuration: " + Config.DebugConfig());
-     
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -89,54 +80,55 @@ namespace ReportDist
             .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
                 
             services.AddDbContext<DataContext>();
-
-            Log.Me.Info("Successfully through ConfigureServices");
         }
 
-        public void AzureADConfig(AzureADOptions options)
+        public void AzureADConfig(AzureADOptions opts)
         {
-            options.Instance     = Config.Get("AAD_Instance");
-            options.Domain       = Config.Get("AAD_Domain");
-            options.TenantId     = Config.Get("AAD_TenantId");
-            options.ClientId     = Config.Get("AAD_ClientId");
-            options.CallbackPath = Config.Get("AAD_CallbackPath");
+            opts.Instance     = Config.Get("AAD_Instance");
+            opts.Domain       = Config.Get("AAD_Domain");
+            opts.TenantId     = Config.Get("AAD_TenantId");
+            opts.ClientId     = Config.Get("AAD_ClientId");
+            opts.CallbackPath = Config.Get("AAD_CallbackPath");
 
-            Log.Me.Info("AAD_Instance    : " + options.Instance);
-            Log.Me.Info("AAD_Domain      : " + options.Domain);
-            Log.Me.Info("AAD_TenantId    : " + options.TenantId);
-            Log.Me.Info("AAD_ClientId    : " + options.ClientId);
-            Log.Me.Info("AAD_CallbackPath: " + options.CallbackPath); 
+            Log.Me.Debug("----------------------------------------------------------------------------------------------");
+            Log.Me.Debug("Azure Active Directory (aka authentication) Configuration:");
+            Log.Me.Debug("");
+            Log.Me.Debug("AAD_Instance    : " + (opts.Instance     ?? ""));
+            Log.Me.Debug("AAD_Domain      : " + (opts.Domain       ?? ""));
+            Log.Me.Debug("AAD_TenantId    : " + (opts.TenantId     ?? ""));
+            Log.Me.Debug("AAD_ClientId    : " + (opts.ClientId     ?? ""));
+            Log.Me.Debug("AAD_CallbackPath: " + (opts.CallbackPath ?? "")); 
+
+            bool ok = opts.Instance.HasValue() && opts.Domain.HasValue() && opts.TenantId.HasValue();
+            ok = ok && opts.ClientId.HasValue() && opts.CallbackPath.HasValue();
+
+            if (!ok)
+            {
+                Log.Me.Fatal("Missing AzureAD Configuration. Use ASPNETCORE_ENVIRONMENT='Development' to see what is wrong.");
+                System.Environment.Exit(8);
+            }
         }
         
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            Log.Me.Info("Just in Configure");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                Log.Me.Info("In Development mode");
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-                Log.Me.Info("Not in Development mode");
             }
 
             app.UseHttpsRedirection();
-            Log.Me.Info("In Configure and past UseHttpsRedirection");
             app.UseStaticFiles();
-            Log.Me.Info("In Configure and past UseStaticFiles");
             app.UseCookiePolicy();
-            Log.Me.Info("In Configure and past UseCookiePolicy");
             app.UseSession();
-            Log.Me.Info("In Configure and past UseSession");
 
             if (!env.IsDevelopment()) app.UseAuthentication();
-            Log.Me.Info("In Configure and past UseAuthentication");
 
             app.UseMvc(routes =>
             {
@@ -144,6 +136,89 @@ namespace ReportDist
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        public void CheckConfiguration()
+        {
+            Log.Me.Info("==================================================================================================");
+            Log.Me.Info("Report Distribution Starting");
+
+            bool filesysok = false;
+            
+
+            // Check SQL Config, AppVersion and Developer Id
+            string conn   = Config.Get("SQLConnection");
+            string type   = Config.Get("SQLServerType");
+            string appver = Config.Get("AppVersion");
+            if (!appver.HasValue()) Config.Set("AppVersion", "ReportDist (unknown version)");
+            string devuid = Config.Get("DeveloperUserId");
+            bool othersok = conn.HasValue() && type.HasValue() && devuid.HasValue();
+            if (othersok) if (type != "MySQL" && type != "SQLServer") othersok=false;
+            
+            if (Config.Debug)
+            {
+                Log.Me.Debug("Configuration: ");
+                Log.Me.Debug("");
+                Log.Me.Debug("SQLConnection:   " + (conn ?? ""));
+                Log.Me.Debug("SQLServerType:   " + (type ?? ""));
+                Log.Me.Debug("AppVersion:      " + (appver ?? ""));
+                Log.Me.Debug("DeveloperUserId: " + (devuid ?? ""));
+
+                filesysok = DebugFileSystemConfig();
+                CatalogueAPI.Me.Debug();
+                EmailConfig.Me.Debug();
+            }
+            else
+            {
+                filesysok = DebugFileSystemConfig();
+            }
+
+            if (!filesysok || !othersok || !CatalogueAPI.Me.IsValid() || !EmailConfig.Me.IsValid())
+            {
+                Log.Me.Fatal("Missing/invalid configuration. Use ASPNETCORE_ENVIRONMENT='Development' to see what is wrong.");
+                System.Environment.Exit(8);
+            }
+        }
+
+        public IFile ConfigureFileSystem()
+        {
+            string conn = Config.Get("AzureConnectionString");
+     		string cont = Config.Get("AzureContainer");
+            string root = Config.Get("LocalFilesRoot");
+            string logs = Config.Get("Logs");
+		    IFile fsys = FileBootstrap.SetupFileSys(conn,cont,root,logs);
+            Log.Me.LogFile = "ReportDist.log"; // Overide default from Boostrap
+            Log.Me.DebugOn = false; //Config.Debug;
+
+            return fsys;
+        }
+
+        public bool DebugFileSystemConfig()
+        {
+            string conn   = Config.Get("AzureConnectionString");
+     		string cont   = Config.Get("AzureContainer");
+            string root   = Config.Get("LocalFilesRoot");
+            string logs   = Config.Get("Logs");
+            string upload = Config.Get("UploadDirectory");
+            string outbox = Config.Get("OutboxDirectory");
+            string maxlen = Config.Get("FileSizeLimit");
+
+            Log.Me.Debug("----------------------------------------------------------------------------------------------");
+            Log.Me.Debug("File System Configuration:");
+            Log.Me.Debug("");
+            Log.Me.Debug("AzureConnectionString: " + (conn ?? ""));
+            Log.Me.Debug("AzureContainer:        " + (cont ?? ""));
+            Log.Me.Debug("LocalFilesRoot:        " + (root ?? ""));
+            Log.Me.Debug("Logs:                  " + (logs ?? ""));
+            Log.Me.Debug("UploadDirectory:       " + (upload ?? ""));
+            Log.Me.Debug("OutboxDirectory:       " + (outbox ?? ""));
+            Log.Me.Debug("FileSizeLimit:         " + (maxlen ?? ""));
+            bool ok = root.HasValue() || (conn.HasValue() && cont.HasValue());
+            ok = ok && logs.HasValue() && upload.HasValue() && outbox.HasValue() && maxlen.HasValue();
+            if (ok) Log.Me.Debug("Everything is configured.");
+            else    Log.Me.Warn("Some File System configuration is missing");
+
+            return ok;
         }
     }
 }

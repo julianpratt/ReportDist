@@ -12,19 +12,18 @@ using Mistware.Utils;
 
 namespace ReportDist.Controllers
 {
-    public class CirculationController : Controller
+    public class CirculationController : BaseController
     {
-        protected readonly DataContext _context;
-
-        public CirculationController(DataContext context)
-        {
-            _context = context;
-        }
+        public CirculationController(DataContext context) : base(context) {}
 
         // GET: /Circulation/Index/n
         public IActionResult Index(int? id)
         {
-            if (!id.HasValue || id == null) throw new Exception("No id passed to Circulation/Index");
+            string method = "Circulation/Index";
+            Log.Me.Debug(method + " - User: " + CheckIdentity() + ", PendingId: " + (id ?? 0).ToString());
+
+            if (NullId(id, "PendingId", "Circulation/Index")) return RedirectToAction("Error", "Home"); 
+            
             ViewData["pendingId"] = (id.Value.ToString());
             return View();
         }
@@ -33,11 +32,12 @@ namespace ReportDist.Controllers
         [HttpPost]
         public IActionResult LoadData()  
         {  
+            string method = "Circulation/LoadData[Post]";
             try  
             { 
                 DataTableHelper helper = new DataTableHelper(Request);
                 int pendingId = helper.Id;
-                if (pendingId == 0) pendingId = 20;
+                if (ZeroId(pendingId, "PendingId", method)) return RedirectToAction("Error", "Home");
       
                 PaginatedList<Circulation> list = PaginatedList<Circulation>.Create(
                                     _context.CirculationRepo.List(pendingId), helper);
@@ -52,22 +52,24 @@ namespace ReportDist.Controllers
             }  
             catch (Exception ex)  
             {                
-                Log.Me.Error("Exception in /Circulation/LoadData[Post]: " + ex.Message);
+                Log.Me.Error("Exception in " + method + ": " + ex.Message);
                 return RedirectToAction("Error", "Home"); 
             }
-
         }  
 
 
         // GET: /Circulation/Create/pendingId
         public IActionResult Create(int? id)
         {
-            if (id == null) return NotFound();
+            string method = "Circulation/Create";
+            Log.Me.Debug(method + " - User: " + CheckIdentity() + ", PendingId: " + (id ?? 0).ToString());
+
+            if (NullId(id, "PendingId", method)) return RedirectToAction("Error", "Home"); 
 
             Circulation circ = new Circulation();
             circ.Id          = 0;
             circ.RecipientID = 0;
-            circ.PendingId   = id ?? 0;
+            circ.PendingId   = id.Value;
             circ.Name        = "";
             circ.Email       = "";
             circ.Address     = "";
@@ -79,110 +81,172 @@ namespace ReportDist.Controllers
         [HttpPost]
         public ActionResult Create(Circulation circ)
         {
+            string method = "Circulation/Create[Post]";
 
-            int pendingId = circ.PendingId;
-            /* TODO
-            if (!ModelState.IsValid) return View(report);
-            */
+            if (ZeroId(circ.PendingId, "PendingId", method)) return RedirectToAction("Error", "Home");
+
+            //if (!ModelState.IsValid) return View(new CirculationViewModel(circ));
+           
             try
-            {
-                // TODO Test Id is valid (i.e. not zero)!       
+            {   
                 _context.CirculationRepo.Create(circ);
+
+                Log.Me.Info(CheckIdentity() + " added circulation to report " + circ.PendingId.ToString());
+
+                return RedirectToAction("Index", "Circulation", new { id = circ.PendingId });   
             }
             catch (Exception ex)
             {
-            
-                Log.Me.Error("Exception in /Circulation/Create[Post]: " + ex.Message);
+                Log.Me.Error("Exception in " + method + ": " + ex.Message);
                 return RedirectToAction("Error", "Home"); 
             }
-            
-            if (pendingId > 0 ) return RedirectToAction("Index", "Circulation", new { id = pendingId });   
-            else                return RedirectToAction("Index", "Home");   
         }
 
 
         // GET: /Circulation/Add?pendingId=x&recipientId=y
         public IActionResult Add(int? recipientId, int? pendingId)
         {
-            if (recipientId == null || pendingId == null) return NotFound();
+            string method = "Circulation/Add";
 
+            if (NullId(recipientId, "RecipientId", method)) return RedirectToAction("Error", "Home"); 
+            if (NullId(pendingId,   "PendingId",   method)) return RedirectToAction("Error", "Home"); 
+        
             Recipient r = _context.RecipientRepo.Read(recipientId);
+            if (r==null)
+            {
+                Log.Me.Fatal("Recipient with id " + recipientId.ToString() + " could not be read in Circulation/Add");
+                return RedirectToAction("Error", "Home"); 
+            }
 
-            Circulation circ = new Circulation();
-            circ.RecipientID = recipientId;
-            circ.PendingId   = pendingId ?? 0;
-            circ.Name        = r.Name;
-            circ.Email       = r.Email;
-            circ.Address     = r.Address;
-            int circId = _context.CirculationRepo.Create(circ);
+            try
+            {    
+                Circulation circ = new Circulation();
+                circ.RecipientID = recipientId;
+                circ.PendingId   = pendingId ?? 0;
+                circ.Name        = r.Name;
+                circ.Email       = r.Email;
+                circ.Address     = r.Address;
+                int? circId = _context.CirculationRepo.Create(circ);
 
-            return RedirectToAction("Edit", "Circulation", new { id = circId });
+                Log.Me.Info(CheckIdentity() + " added circulation to report " + circ.PendingId.ToString());
+
+                return RedirectToAction("Edit", "Circulation", new { id = circId });
+            }
+            catch (Exception ex)
+            {
+                Log.Me.Error("Exception in " + method + ": " + ex.Message);
+                return RedirectToAction("Error", "Home"); 
+            }
         }
 
 
         // GET: /Circulation/Edit/n
         public IActionResult Edit(int? id)
         {
-            Circulation circ = _context.CirculationRepo.Read(id);
-            if (circ == null) return NotFound();        
-            return View(new CirculationViewModel(circ));
+            string method = "Circulation/Edit";
+
+            Log.Me.Debug(method + " - User: " + CheckIdentity() + ", CirculationId: " + (id ?? 0).ToString());
+
+            if (NullId(id, "CirculationId", method)) return RedirectToAction("Error", "Home"); 
+
+            try
+            {
+                Circulation circ = null;
+                if ((circ = Read(id.Value, method)) == null) return RedirectToAction("Error", "Home"); 
+               
+                return View(new CirculationViewModel(circ));
+            }
+            catch (Exception ex)
+            {
+                Log.Me.Error("Exception in " + method + ": " + ex.Message);
+                return RedirectToAction("Error", "Home"); 
+            }
         }
 
         // POST: /Circulation/Edit
         [HttpPost]
         public ActionResult Edit(Circulation update)
         {
+            string method = "Circulation/Edit[Post]";
 
-            int pendingId = 0;
-            /*
-            if (!ModelState.IsValid) return View(report);
-            */
+            if (IsNull(update,    "Circulation",   method)) return RedirectToAction("Error", "Home");     
+            if (NullId(update.Id, "CirculationId", method)) return RedirectToAction("Error", "Home"); 
+           
+            //if (!ModelState.IsValid) return View(new CirculationViewModel(update));
+
             try
             {
-                // TODO Test Id is valid (i.e. not zero)!
-                Circulation circ = _context.CirculationRepo.Read(update.Id);
+                Circulation circ = null;
+                if ((circ = Read(update.Id, method)) == null)    return RedirectToAction("Error", "Home");
+                if (ZeroId(circ.PendingId, "PendingId", method)) return RedirectToAction("Error", "Home");
+
                 circ.Name     = update.Name;
                 circ.Email    = update.Email;
                 circ.Address  = update.Address;
                 circ.ToCcBcc  = update.ToCcBcc;
                 circ.Delivery = update.Delivery;
-            
                 _context.CirculationRepo.Update(circ);
 
-                pendingId = circ.PendingId;
+                Log.Me.Info(CheckIdentity() + " updated circulation on report " + circ.PendingId.ToString());
+
+                return RedirectToAction("Index", "Circulation", new { id = circ.PendingId });
             }
-            catch
+           catch (Exception ex)
             {
+                Log.Me.Error("Exception in " + method + ": " + ex.Message);
                 return RedirectToAction("Error", "Home"); 
             }
-            
-            if (pendingId > 0 ) return RedirectToAction("Index", "Circulation", new { id = pendingId });   
-            else                return RedirectToAction("Index", "Home");   
         }
 
         // POST: /Circulation/Cancel
         [HttpPost]
         public ActionResult Cancel(Circulation update)
         {
-
-            int pendingId = update.PendingId;
+            string method = "Circulation/Cancel";
+            
+            if (IsNull(update,           "Circulation", method)) return RedirectToAction("Error", "Home"); 
+            if (ZeroId(update.PendingId, "PendingId",   method)) return RedirectToAction("Error", "Home");
                         
-            if (pendingId > 0 ) return RedirectToAction("Index", "Circulation", new { id = pendingId });   
-            else                return RedirectToAction("Index", "Home");   
+            return RedirectToAction("Index", "Circulation", new { id = update.PendingId });
         }
 
 
         // GET: /Circulation/Delete/n
         public IActionResult Delete(int? id)
         {
-            Circulation circ = _context.CirculationRepo.Read(id);
-            int pendingId = circ.PendingId;
+            string method = "Circulation/Delete";
 
-            _context.CirculationRepo.Delete(id);
+            if (NullId(id, "CirculationId", method)) return RedirectToAction("Error", "Home"); 
+
+            try
+            {
+                Circulation circ = null;
+                if ((circ = Read(id.Value, method)) == null) return RedirectToAction("Error", "Home"); 
+               
+                if (ZeroId(circ.PendingId, "PendingId", method)) return RedirectToAction("Error", "Home");
+
+                _context.CirculationRepo.Delete(id);
+
+                Log.Me.Info(CheckIdentity() + " deleted circulation from report " + circ.PendingId.ToString());
     
-            return RedirectToAction("Index", "Circulation", new { id = pendingId });  
+                return RedirectToAction("Index", "Circulation", new { id = circ.PendingId });
+            }
+            catch (Exception ex)
+            {
+                Log.Me.Error("Exception in " + method + ": " + ex.Message);
+                return RedirectToAction("Error", "Home"); 
+            }
         }
 
+        public Circulation Read(int id, string method)
+        {
+            Circulation circ = _context.CirculationRepo.Read(id);
+            if (circ==null)
+            {
+                Log.Me.Fatal("Circulation with id " + id.ToString() + " could not be read in " + method); 
+            }
+            return circ;
+        }
     }
 }
      

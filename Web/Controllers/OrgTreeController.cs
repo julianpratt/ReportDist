@@ -13,12 +13,10 @@ namespace ReportDist.Controllers
     public class OrgTreeController : ControllerBase
     {
         protected readonly DataContext _context;
-        private readonly ILogger<OrgTreeController> _logger;
-
-        public OrgTreeController(DataContext context, ILogger<OrgTreeController> logger)
+     
+        public OrgTreeController(DataContext context)
         {
             _context = context;
-            _logger  = logger;
         }
 
         [HttpGet]

@@ -1,38 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Primitives;
 using ReportDist.Models;
 using ReportDist.Data;
 using Mistware.Utils;
 
 namespace ReportDist.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        protected readonly DataContext _context;
-
-        public HomeController(DataContext context)
-        {
-            _context = context;
-        }
+        public HomeController(DataContext context) : base(context) {}
+       
         public IActionResult Index(string sortOrder, string searchString, string currentFilter, int? pageNumber)
         {
-            Log.Me.Info("In HomeController.Index");
-            string userid = "16"; // TODO!!!
-            var userClaims = User.Identity as System.Security.Claims.ClaimsIdentity;
-            // string firstName = userClaims?.FindFirst("name")?.Value;
-            // string lastName  = userClaims?.FindFirst("preferred_username")?.Value; 
-            string emailAddress  = userClaims?.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
-            string firstName     = userClaims?.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value; 
-            string lastName      = userClaims?.FindFirst(System.Security.Claims.ClaimTypes.Surname)?.Value; 
-            //userid = emailAddress;
+            string user = CheckIdentity();
+            if (user == null) return RedirectToAction("Error", "Home");
+            Log.Me.Debug("Home/Index - User: " + user + ", SortOrder: " + sortOrder + ", SearchString: " + searchString + ", CurrentFilter: " + currentFilter + ", PageNumber: " + pageNumber.ToString());
 
+            string userid = HttpContext.Session.GetString("UserId");
+            
             // Sorting
             if (sortOrder == null) sortOrder = HttpContext.Session.GetString("CurrentSort");
             if (sortOrder == null) sortOrder = "creationdate desc"; // default sort order
@@ -48,7 +36,7 @@ namespace ReportDist.Controllers
             if (searchString != null) HttpContext.Session.SetString("CurrentFilter", searchString);
 
             int pageSize = 10;
-            ViewData["UserId"] = userid; 
+
             return View(PaginatedList<PendingReport>.Create(
                         _context.PendingReportRepo.List(sortOrder, searchString), pageNumber ?? 1, pageSize));
         }
@@ -57,6 +45,8 @@ namespace ReportDist.Controllers
         [HttpPost]
         public IActionResult Search(HomeIndexSearchModel vm)
         {
+            string method = "Home/Search[Post]";
+
             try
             {
                 if (vm.Number != null && !vm.Number.IsInteger()) return RedirectToAction("Error", "Home"); 
@@ -64,13 +54,14 @@ namespace ReportDist.Controllers
                 if (vm.Code != null) start += "/" + vm.Code;
                 string filter = "search-" + start + "-" + (vm.Number ?? "") + "-" + (vm.ReportType ?? "");
                 HttpContext.Session.SetString("CurrentFilter", filter);
+
+                return RedirectToAction("Index", "Home");   
             }
-            catch
+            catch (Exception ex)
             {
+                Log.Me.Error("Exception in " + method + ": " + ex.Message);
                 return RedirectToAction("Error", "Home"); 
-            }
-            
-            return RedirectToAction("Index", "Home");        
+            }     
         }
 
         [AllowAnonymous]

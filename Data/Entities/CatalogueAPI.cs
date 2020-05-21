@@ -6,7 +6,6 @@ namespace ReportDist.Data
     {
         private static CatalogueAPI _me = new CatalogueAPI();
 
-        /// Returns singleton instance of Log class. 
         public static CatalogueAPI Me { get { return _me; } }
         private CatalogueAPI()
         {
@@ -33,6 +32,21 @@ namespace ReportDist.Data
             if (SearchCataloguesAPI == null || GetCatalogueAPI == null || ReportNoXpath == null) return false;
             if (CIDXpath == null || eFileNameXpath == null || AttachmentXpath == null) return false;
             return true;
+        }
+
+        public void Debug()
+        {
+            Log.Me.Debug("----------------------------------------------------------------------------------------------");
+            Log.Me.Debug("Catalogue API Configuration:");
+            Log.Me.Debug("");
+            Log.Me.Debug("SearchCataloguesAPI: " + (SearchCataloguesAPI ?? ""));
+            Log.Me.Debug("GetCataloguesAPI:    " + (GetCatalogueAPI     ?? ""));
+            Log.Me.Debug("ReportNoXpath:       " + (ReportNoXpath       ?? ""));
+            Log.Me.Debug("CIDXpath:            " + (CIDXpath            ?? ""));
+            Log.Me.Debug("eFileNameXpath:      " + (eFileNameXpath      ?? ""));
+            Log.Me.Debug("AttachmentXpath:     " + (AttachmentXpath     ?? ""));
+            if (IsValid()) Log.Me.Debug("Everything is configured.");
+            else           Log.Me.Warn("Some Catalogue API configuration is missing");
         }
 
     }

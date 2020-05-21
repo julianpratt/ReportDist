@@ -287,6 +287,7 @@ namespace ReportDist.Data
             if (xmlout == null) throw new Exception("Cannot Commit Report - failed to create xml metadata");
             filesys.ChangeDirectory(outbox);
             filesys.FileUpload(metadatafile, xmlout.ToStream());
+            Log.Me.Info("Uploaded XML");
 
             //--------------------------------------------------------------------------------
             // Copy pdf to Outbox
@@ -401,8 +402,8 @@ namespace ReportDist.Data
         {
             EmailBatch batch = new EmailBatch();
             batch.Recipients = new List<EmailRecipient>();
-            string emailDomain = Config.Get("InternalEmailDomain");
-            batch.Postmaster = new MailAddress(Config.Get("PostmasterEmail"), Config.Get("PostmasterName"));
+            string emailDomain = EmailConfig.Me.InternalEmailDomain;
+            batch.Postmaster   = EmailConfig.Me.Postmaster;
 
             PendingReport pr = this.Read(pendingId);
 
@@ -446,10 +447,10 @@ namespace ReportDist.Data
             //------------------------------------------------------------------------------------------------
             // If we find a ReportLink tag we need to replace it with a link to the PTOPAC_Link project
             //------------------------------------------------------------------------------------------------
-            string company = Config.Get("Company");
-            string support = Config.Get("CatalogueSupport");
+            string company = EmailConfig.Me.Company;
+            string support = EmailConfig.Me.CatalogueSupport;
 
-            string linkPath = Config.Get("PortalLinkURL");
+            string linkPath = EmailConfig.Me.PortalLinkURL;
             if (linkPath != null) linkPath += cid.ToString();
             Log.Me.Debug("Portal Link = " + (linkPath ?? "(empty)"));
 
@@ -535,7 +536,7 @@ namespace ReportDist.Data
                 Log.Me.Info("About to kick off the Emailing Thread");
                 filesys.ChangeDirectory(Config.Get("UploadDirectory"));
                 MailEngine engine = new MailEngine();
-                engine.SendGridKey = Config.Get("SendGridKey");
+                engine.SendGridKey = EmailConfig.Me.SendGridKey;
                 engine.FileSys = filesys;
                 string sepchar = Path.DirectorySeparatorChar.ToString();
                 engine.LoadTemplates(Config.ContentRoot + sepchar + "Config" + sepchar, "EmailTemplates.txt");

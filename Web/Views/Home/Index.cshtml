@@ -2,8 +2,6 @@
 
 @{
     ViewData["Title"] = "Home Page";
-    ViewData["AppVersion"] = "ReportDistMVC v1";
-    ViewData["LogonDetails"] = "Not Authenticated";
 
     string userid = (string)ViewData["UserId"];
     string sortReportNo = ((string)ViewData["CurrentSort"] == "reportno")       ? "reportno desc"     : "reportno";

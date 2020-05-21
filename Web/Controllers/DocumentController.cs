@@ -16,16 +16,14 @@ using Mistware.Utils;
 
 namespace ReportDist.Controllers
 {
-    public class DocumentController : Controller
+    public class DocumentController : BaseController
     {
-        protected readonly DataContext _context;
         protected readonly IFile       _fsys;
         private readonly long          _sizeLimit;
         private readonly string[]      _extensions = { ".pdf" };
 
-        public DocumentController(DataContext context, IFile filesys)
+        public DocumentController(DataContext context, IFile filesys) : base(context)
         {
-            _context   = context;
             _fsys      = filesys;
             _sizeLimit = Config.Get("FileSizeLimit").ToLong();
         }
@@ -33,9 +31,13 @@ namespace ReportDist.Controllers
         [GenerateAntiforgeryTokenCookie]
         public IActionResult Index(int? id)
         {
-            if (id == null) return RedirectToAction("Error", "Home"); 
+            string method = "Document/Index";
+            Log.Me.Debug(method + " - User: " + CheckIdentity() + ", PendingId: " + (id ?? 0).ToString());
+
+            if (NullId(id, "PendingId", method)) return RedirectToAction("Error", "Home"); 
             PendingReport report = _context.PendingReportRepo.Read(id);
-            if (report == null) return NotFound();
+
+            if (IsNull(report, "PendingReport", method)) return RedirectToAction("Error", "Home");
            
             HttpContext.Session.SetString("PendingId", report.PendingId.ToString());
             ViewData["PendingId"] = report.PendingId.ToString();
@@ -52,7 +54,7 @@ namespace ReportDist.Controllers
             // Generate Filename
             int pendingId = HttpContext.Session.GetString("PendingId").ToInteger();
             string filename = _context.PendingReportRepo.GenerateFilename(pendingId);
-            Log.Me.Info("DocumenController.UploadDocument: Filename is " + filename);
+            Log.Me.Debug("DocumentController.UploadDocument: Filename is " + filename);
 
             string uploadDir = Config.Get("UploadDirectory");
             _fsys.ChangeDirectory(uploadDir);
@@ -75,6 +77,7 @@ namespace ReportDist.Controllers
                     PendingReport report = _context.PendingReportRepo.Read(pendingId);
                     report.eFileName = filename;
                     _context.PendingReportRepo.Update(report);
+                    Log.Me.Info(CheckIdentity() + " uploaded file " + filename + " to report " + pendingId.ToString());
                 }
             }
             catch (Exception ex)

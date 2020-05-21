@@ -12,22 +12,10 @@ using Mistware.Utils;
 
 namespace ReportDist.Controllers
 {
-    public class RecipientController : Controller
+    public class RecipientController : BaseController
     {
-        protected readonly DataContext _context;
-
-        public RecipientController(DataContext context)
-        {
-            _context = context;
-        }
-/*
-        public IActionResult Index()
-        {
-            IEnumerable<Recipient> recipients = _context.RecipientRepo.All().ToList();
-            return View(recipients);
-        }
-*/    
-      
+        public RecipientController(DataContext context) : base(context) {}
+            
         // GET: /Recipient/ShowGrid 
         public IActionResult ShowGrid()  
         {  

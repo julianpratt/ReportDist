@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using Mistware.Utils;
 
 namespace ReportDist.Data
@@ -25,11 +26,74 @@ namespace ReportDist.Data
             return _context.Set<Recipient>().ToList();
         }
 
+        public Recipient Identify(ClaimsIdentity identity)
+        {
+            Recipient r = null;
+
+            if (Config.Env == "Development")
+            {
+                string id = Config.Get("DeveloperUserId");
+                if (id == null) 
+                {
+                    Log.Me.Fatal("In Development (so no authentication). DeveloperUserId not in configuration.");
+                    return null;
+                }
+                if (!id.IsInteger()) 
+                {
+                    Log.Me.Fatal("In Development (so no authentication). DeveloperUserId is not an integer.");
+                    return null;
+                }
+                r = _context.RecipientRepo.Read(id.ToInteger(0));
+                if (r == null) 
+                {
+                    Log.Me.Fatal("In Development (so no authentication). DeveloperUserId does not match a Recipient.");
+                }
+                return r;
+            } 
+            else if (identity == null)
+            {
+                Log.Me.Fatal("User must be authenticated.");
+                return null;
+            }
+            
+            string email     = identity.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+            string firstName = identity.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value; 
+            string lastName  = identity.FindFirst(System.Security.Claims.ClaimTypes.Surname)?.Value;
+
+            r = FindRecipient(email);
+            if (r != null)
+            {
+                // User Identity found. Check it
+                if (r.FirstName != firstName || r.LastName != lastName)
+                {
+                    string tail = ", but First or Last Name do not match (from AAD " + firstName + " " + lastName + ")";
+                    Log.Me.Warn("User " + email + " has authenticated, and is identified as Recipient " + r.Id.ToString() + tail);
+                } 
+            }
+            else
+            {
+                // Identity not found. So add it.
+                r = new Recipient();
+                r.UserName  = email; 
+                r.FirstName = firstName;
+                r.LastName  = lastName;   
+                r.Id = _context.RecipientRepo.Create(r);
+            }
+
+            return r;
+        }
+
         public override int Find(string email)
         {
-            IQueryable<Recipient> recips = _context.Recipients.Where(r => r.Email == email);
-            if (recips.Count() > 0) return recips.Select(e => e.RecipientID).FirstOrDefault();
-            else return 0;
+            Recipient r = FindRecipient(email);
+            return (r == null) ? 0 : r.RecipientID;
+        }
+
+        public Recipient FindRecipient(string email)
+        {
+            IQueryable<Recipient> recips = _context.Recipients.Where(r => (r.Email == email) || (r.UserName == email));
+            if (recips.Count() > 0) return recips.FirstOrDefault();
+            else return null;
         }
 
         public IQueryable<Recipient> List(string sort, string filter, string option = null )

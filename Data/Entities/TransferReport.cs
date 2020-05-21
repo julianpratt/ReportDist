@@ -53,8 +53,8 @@ namespace ReportDist.Data
             AddElement(sb, "JobNumber",     (this.JobNumber == null) ? "" : EncodeChars(this.JobNumber));
             AddElement(sb, "DateIssued",    this.DateIssued.ToString("yyyy-MM-dd"));
             AddElement(sb, "ReportYear",    this.ReportYear.ToString());
-            AddElement(sb, "Title",         EncodeChars(this.Title));
-            AddElement(sb, "Abstract",      EncodeChars(this.Abstract));
+            AddElement(sb, "Title",         (this.Title == null) ? "" :EncodeChars(this.Title));
+            AddElement(sb, "Abstract",      (this.Abstract == null) ? "" : EncodeChars(this.Abstract));
             foreach (string author in this.Authors) AddElement(sb, "Author", EncodeChars(author));
             AddElement(sb, "SecurityLevel", this.SecurityLevel.ToString());
             AddElement(sb, "Software",      (this.Software == null) ? "None" : EncodeChars(this.Software));

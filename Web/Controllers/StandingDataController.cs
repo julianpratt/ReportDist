@@ -13,12 +13,10 @@ namespace ReportDist.Controllers
     public class StandingDataController : ControllerBase
     {
         protected readonly DataContext _context;
-        private readonly ILogger<StandingDataController> _logger;
-
-        public StandingDataController(DataContext context, ILogger<StandingDataController> logger)
+    
+        public StandingDataController(DataContext context)
         {
             _context = context;
-            _logger  = logger;
         }
 
         [HttpGet]
