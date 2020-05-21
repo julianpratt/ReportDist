@@ -174,7 +174,8 @@ namespace ReportDist
                 filesysok = DebugFileSystemConfig();
             }
 
-            if (!System.IO.Directory.Exists("Config/configure.json"))
+            string delimiter = System.IO.Path.DirectorySeparatorChar.ToString();
+            if (!System.IO.Directory.Exists(Config.ContentRoot + delimiter + "Config/configure.json"))
             {
                 Log.Me.Fatal("Could not find Config/configure.json. Use ASPNETCORE_ENVIRONMENT='Development' to see what is wrong.");
                 System.Environment.Exit(8);
