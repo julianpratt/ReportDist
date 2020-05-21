@@ -225,6 +225,7 @@ namespace ReportDist
         public void DebugDeployment()
         {
             string here = System.IO.Directory.GetCurrentDirectory();
+            ListFiles(here);
             ListFolders(here);
         }
 
@@ -232,8 +233,16 @@ namespace ReportDist
         {
             foreach (string folder in System.IO.Directory.GetDirectories(here))
             {
-                Log.Me.Debug(folder);
+                Log.Me.Debug("Folder: "+ folder);
+                ListFiles(folder);
                 ListFolders(folder);
+            }
+        }
+        public void ListFiles(string folder)
+        {
+            foreach (string file in System.IO.Directory.EnumerateFiles(folder))
+            {
+                Log.Me.Debug("File  : "+ file);
             }
         }
     }
