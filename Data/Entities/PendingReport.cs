@@ -124,7 +124,7 @@ namespace ReportDist.Data
         public string    ReportType    
         { 
             get { return reportType; } 
-            set { reportType = Convert.ToString(value); } 
+            set { reportType = Convert.ToString(value).TrimEnd(); } 
         }
 
         [NotMapped]
@@ -134,7 +134,7 @@ namespace ReportDist.Data
         public string    ReportYear    
         { 
             get { return reportYear; } 
-            set { reportYear = Convert.ToString(value); } 
+            set { reportYear = Convert.ToString(value).TrimEnd(); } 
         }
 
         [MaxLength(155, ErrorMessage="The Software field cannot have more than 155 characters.")]

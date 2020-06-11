@@ -133,7 +133,7 @@ namespace ReportDist.Data
                     AddressLine3 = AddressParseLine(addresslines, 3);
                     AddressLine4 = AddressParseLine(addresslines, 4);
                     AddressLine5 = AddressParseLine(addresslines, 5);
-                    PostCode     = AddressParseLine(addresslines, 99);
+                    PostCode     = AddressParseLine(addresslines, 99).Left(10);
                 }
             }
 

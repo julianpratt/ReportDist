@@ -75,6 +75,10 @@
       {
          oFormElement.elements.namedItem("result").value = 'The file was the wrong type - nothing uploaded.';
       }
+      else
+      {
+        oFormElement.elements.namedItem("result").value = 'Return status was ' + this.status.toString() + ' - something may have been uploaded.';
+      }
     };
     oReq.open("post", oFormElement.action);
     oReq.setRequestHeader('RequestVerificationToken', getCookie('RequestVerificationToken'));

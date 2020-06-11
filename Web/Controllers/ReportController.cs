@@ -40,8 +40,8 @@ namespace ReportDist.Controllers
 
                 PendingReportViewModel report = new PendingReportViewModel(pr, sd);
 
-                Log.Me.Info("ReportType='" + report.ReportType + "'");
-                foreach (SelectListItem item in report.ReportTypes) Log.Me.Info("ReportTypeSelect: '" + item.Text + "' = '" + item.Value + "'");
+                //Log.Me.Info("ReportType='" + report.ReportType + "'");
+                //foreach (SelectListItem item in report.ReportTypes) Log.Me.Info("ReportTypeSelect: '" + item.Text + "' = '" + item.Value + "'");
             
                 return View(report);
             }

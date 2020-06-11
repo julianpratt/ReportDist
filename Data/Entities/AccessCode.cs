@@ -16,8 +16,15 @@ namespace ReportDist.Data
         [Key, Column("AccessLookupID")]
         public int    Id           { get; set; }
 
+        [NotMapped]
+        private string accessKey   { get; set; }
+
         [Required, Column("AccessKey", TypeName = "char(4)"), MaxLength(4)]
-        public string Code         { get; set; }
+        public string Code         
+        { 
+            get { return accessKey; } 
+            set { accessKey = value.TrimEnd(); } 
+        }
 
         [Required, MaxLength(50)]
         public string Title         { get; set; }
