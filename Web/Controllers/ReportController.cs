@@ -213,6 +213,41 @@ namespace ReportDist.Controllers
             }
         }
 
+        // POST: /Report/DocUpload
+        [HttpPost]
+        public ActionResult DocUpload(PendingReport update)
+        {
+            string method = "Report/DocUpload";
+
+            if (IsNull(update,    "PendingReport(update)", method)) return RedirectToAction("Error", "Home");
+            if (ZeroId(update.Id, "PendingId",             method)) return RedirectToAction("Error", "Home");
+            
+            try
+            {
+                PendingReport report = _context.PendingReportRepo.Read(update.Id);
+                if (IsNull(report, "PendingReport(read))", method)) return RedirectToAction("Error", "Home");
+                report.Abstract      = update.Abstract;
+                report.Author        = update.Author;
+                report.Axess         = update.Axess;
+                report.JobNo         = update.JobNo;
+                report.ReportType    = update.ReportType;
+                report.SecurityLevel = update.SecurityLevel;
+                report.Software      = update.Software; 
+                report.Title         = update.Title;
+                int pendingId = update.Id;
+
+                _context.PendingReportRepo.Update(report);
+
+                return RedirectToAction("Index", "Document", new { id = pendingId });
+            }
+            catch (Exception ex)
+            {
+                Log.Me.Error("Exception in " + method + ": " + ex.Message);
+                return RedirectToAction("Error", "Home"); 
+            }
+        }
+
+
         // GET: /Report/DocView/n
         public IActionResult DocView(int? id)
         {

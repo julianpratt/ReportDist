@@ -115,7 +115,7 @@
                                     <table cellspacing="0" cellpadding="2" width="100%" border-width="0">
 										<tr>
 											<td class="HighlightText" valign="middle" colspan="20">
-												<button type="button" id="btnUpload"  class="gFormButton" style="HEIGHT:24px;WIDTH:55px;" onclick="window.location.href='/Document/Index/'+$('#Id').val()">Upload</button>&nbsp;&nbsp;
+												<button type="submit" id="btnUpload" class="gFormButton" style="HEIGHT:24px;WIDTH:55px;" formaction="/Report/DocUpload">Upload</button>
 @if(Model.eFileName != null) 
 {
 												<button type="button" id="btnViewPDF" class="gFormButton" style="HEIGHT:24px;WIDTH:55px;" onclick="window.open('/Report/DocView/'+$('#Id').val(), 'View Document', 'fullscreen=yes,location=no,menubar=no,scrollbars=yes,status=no,toolbar=no');">View</button>
