@@ -125,7 +125,7 @@ function isValidCirculation() {
 
 
 function setAxess() {
-  var vs = $("#AccessCode").val();
+  var vs = $("#AccessCode").val().trim();
   var v  = $("#Axess").val();
 
   if (vs == "!")
@@ -140,7 +140,7 @@ function setAxess() {
   }
   else 
   {
-    var codes = v.split("/");
+    var codes = v.trim().split("/");
     if (!codes.includes(vs)) codes.push(vs);
     $("#Axess").val(codes.sort().join("/"));
   }

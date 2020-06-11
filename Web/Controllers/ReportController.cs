@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using ReportDist.Models;
 using ReportDist.Data;
@@ -38,6 +39,9 @@ namespace ReportDist.Controllers
                 ViewData["RecipientMessage"] = "- " + _context.CirculationRepo.RecipientMessage(id.Value);
 
                 PendingReportViewModel report = new PendingReportViewModel(pr, sd);
+
+                Log.Me.Info("ReportType='" + report.ReportType + "'");
+                foreach (SelectListItem item in report.ReportTypes) Log.Me.Info("ReportTypeSelect: '" + item.Text + "' = '" + item.Value + "'");
             
                 return View(report);
             }
