@@ -311,3 +311,20 @@ function onclickCheckNDT() {
   }
 
 }
+
+function detectExploder()
+{
+  var ua = window.navigator.userAgent;
+
+  var msie = ua.indexOf('MSIE ');
+  if (msie > 0) {
+      // IE 10 or older 
+      alert("Warning: You are using Internet Explorer 10 (or older). Please use a more recent browser for running this application.");
+  }
+
+  var trident = ua.indexOf('Trident/');
+  if (trident > 0) {
+      // IE 11 => return version number
+      alert("Warning: You are using Internet Explorer 11. Please use a more recent browser for running this application.");
+  }
+} 

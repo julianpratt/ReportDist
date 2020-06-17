@@ -177,7 +177,7 @@ else
                                             @Html.DisplayFor(modelItem => item.FullReportNo)
                                         </td>
                                         <td valign="top">
-                                            @{string authTrunc = item.Author.IsNull("").Trim().Length >= 25 ? (item.Author.Trim().Substring(25) + "...") : item.Author.IsNull("").Trim();}
+                                            @{string authTrunc = item.Author.IsNull("").Trim().Length >= 25 ? (item.Author.Trim().Substring(0,25) + "...") : item.Author.IsNull("").Trim();}
                                             @authTrunc
                                         </td>
                                         <td valign="top">
@@ -255,6 +255,6 @@ else
 
 @section scripts {
      <script type="text/javascript">
-        $(document).ready(function () { getStandingData(displayHomeIndex, "@filter"); }); 
+        $(document).ready(function () { getStandingData(displayHomeIndex, "@filter"); detectExploder(); }); 
     </script>
 }

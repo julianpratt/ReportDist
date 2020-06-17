@@ -40,7 +40,7 @@
 							<tr>
 								<td class="Label" style="WIDTH:120px" valign="top" nowrap="nowrap">Title</td>
 								<td class="Field" valign="top" colspan="3">
-                                    <textarea asp-for="Title" class="Field" style="height: 45px; width: 100%" MaxLength="30"></textarea>
+                                    <textarea asp-for="Title" class="Field" style="height: 45px; width: 100%" MaxLength="1500"></textarea>
 									<span asp-validation-for="Title"></span>
 								</td>
 							</tr>
@@ -68,7 +68,7 @@
 							<tr>
 								<td class="Label" style="WIDTH:120px" valign="middle" nowrap="nowrap">Job Number(s)</td>
 								<td class="Field" style="HEIGHT:18px;WIDTH:240px;" valign="middle">
-									<input asp-for="JobNo" class="Field" style="WIDTH:240px;HEIGHT:18px;" Wrap="False" />
+									<input asp-for="JobNo" class="Field" style="WIDTH:240px;HEIGHT:18px;" MaxLength="55" Wrap="False" />
 									<span asp-validation-for="JobNo"></span>
 								</td>
 								<td class="Field" style="HEIGHT: 18px" valign="middle"></td>
@@ -77,14 +77,14 @@
 							<tr>
 								<td class="Label" style="WIDTH:120px" valign="top" nowrap="nowrap">Software</td>
 								<td class="Field" valign="top" nowrap="nowrap" colspan="3">
-                                    <textarea asp-for="Software" class="Field" rows="2" cols="20" style="height:38px;width:100%;"></textarea>
+                                    <textarea asp-for="Software" class="Field" rows="2" cols="20" MaxLength="155" style="height:38px;width:100%;"></textarea>
 									<span asp-validation-for="Software"></span>
 								</td>
 							</tr>
 							<tr>
 								<td class="Label" style="WIDTH:120px" valign="top" nowrap="nowrap">Summary</td>
 								<td class="Field" valign="top" colspan="3">
-                                    <textarea asp-for="Abstract" class="Field" rows="12" cols="20" style="height:140px;width:100%;"></textarea>
+                                    <textarea asp-for="Abstract" class="Field" rows="12" cols="20" MaxLength="3000" style="height:140px;width:100%;"></textarea>
 									<span asp-validation-for="Abstract"></span>
 								</td>
 							</tr>							

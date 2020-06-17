@@ -30,7 +30,7 @@ namespace ReportDist.Data
             sd.SecurityLevels = _context.Set<SecurityLevel>().OrderBy(s => s.Code).ToList();
             List<string> years = new List<string>();
             List<string> shortYears = new List<string>();
-            for (int iYr = DateTime.Today.Year; iYr > (DateTime.Today.Year - 5); --iYr)
+            for (int iYr = DateTime.Today.Year; iYr > (DateTime.Today.Year - 6); --iYr)
             {
                 years.Add(iYr.ToString());
                 shortYears.Add(iYr.ToString().Right(2));

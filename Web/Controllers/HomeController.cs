@@ -36,7 +36,7 @@ namespace ReportDist.Controllers
             ViewData["CurrentFilter"] = searchString;
             if (searchString != null) HttpContext.Session.SetString("CurrentFilter", searchString);
 
-            int pageSize = 10;
+            int pageSize = 25;
 
             return View(PaginatedList<PendingReport>.Create(
                         _context.PendingReportRepo.List(sortOrder, searchString), pageNumber ?? 1, pageSize));
