@@ -215,8 +215,16 @@ function onCheck() {
     }
   }
   else {
-    $("#CannotCommit").show();
     $("#btnCommit").hide();
+    if ($("#chkQAConfirm").is(":checked")) {
+      $("#CannotCommit").show();
+    }
+    else if ($("#chkQAConfirm2").is(":checked")) {
+      $("#CannotCommit").show();
+    }
+    else {
+      $("#CannotCommit").hide();
+    }
   }
 }
 
@@ -348,5 +356,9 @@ function readOnlyEditReport() {
   state = $("#State").val();
   if (state > 0) {
     $('.Field').attr('disabled', true);
+    $('#btnAxessNONE').attr('disabled', true);
+    $('#btnAxessALL').attr('disabled', true);
+    $('#btnUpload').hide();
+    $('#spCommit').hide();
   }
 }
