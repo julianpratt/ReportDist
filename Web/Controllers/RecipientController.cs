@@ -61,6 +61,21 @@ namespace ReportDist.Controllers
             return RedirectToAction("Index", "Circulation", new { id = pendingId });  
         } 
 
+        // POST: /Recipient/Delete?Id=x
+        [HttpPost]
+        public bool Delete(int? Id)
+        {
+            try
+            {
+                _context.RecipientRepo.Delete(Id);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Me.Error("Failed to delete recipient " + Id.ToString() + ". Error was: " + ex.Message);
+                return false;
+            }             
+        } 
 
     }
 }

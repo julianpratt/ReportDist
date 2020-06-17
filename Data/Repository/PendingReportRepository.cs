@@ -258,7 +258,7 @@ namespace ReportDist.Data
             if (report.RecipientID <= 0)  throw new Exception("Cannot Commit Report - Zero RecipientId!");
 
             long maxFileSize = 0L;
-            if (!long.TryParse(Config.Get("FileSizeLimit"), out maxFileSize)) 
+            if (!long.TryParse(Config.Get("AttachmentSizeLimit"), out maxFileSize)) 
                 throw new Exception("Unable to parse FileSizeLimit as a long");
             string upload = Config.Get("UploadDirectory");
             string outbox = Config.Get("OutboxDirectory");
@@ -267,7 +267,7 @@ namespace ReportDist.Data
                                                     .Where(c => c.ElecDeliveryCode == "EF");
             if (circlist.Count() > 0)
             {
-                if (report.eFileName == null) throw new Exception("Cannot Commit Report - no pdf for EFs" );
+                if (report.eFileName == null) return "Cannot Commit Report - no pdf for EF circulation";
 
                 //-------------------------------------------
                 // We have some EF recipients (check the file size of the PDF file - if it's Too big - Tell the user)
