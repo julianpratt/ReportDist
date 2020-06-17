@@ -55,7 +55,7 @@ namespace ReportDist.Data
 
         public IQueryable<Circulation> List(int pendingId)
         {
-            return _context.Circulations.Where(c => c.PendingId==pendingId);
+            return _context.Circulations.Where(c => c.PendingId==pendingId).OrderBy(c => c.ToCcBccDB);
         }
 
         public string RecipientMessage(int pendingId)
