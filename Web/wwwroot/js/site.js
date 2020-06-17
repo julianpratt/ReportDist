@@ -202,16 +202,32 @@ function reportDelete(id) {
 }
 
 function onCheck() {
-  if ($("#chkQAConfirm").is(":checked")) {
-    $("#btnCommit").show();
-  }
-  else if ($("#chkQAConfirm2").is(":checked")) {
-    $("#btnCommit").show();
+  if (canCommit()) {
+    $("#CannotCommit").hide();
+    if ($("#chkQAConfirm").is(":checked")) {
+      $("#btnCommit").show();
+    }
+    else if ($("#chkQAConfirm2").is(":checked")) {
+      $("#btnCommit").show();
+    }
+    else {
+      $("#btnCommit").hide();
+    }
   }
   else {
+    $("#CannotCommit").show();
     $("#btnCommit").hide();
   }
 }
+
+function canCommit() {
+  title    = $("#Title").val().trim();
+  abstract = $("#Abstract").val().trim();
+  author   = $("#Author").val().trim();
+  axess    = $("#Axess").val().trim();
+  if (title.length > 0 && abstract.length > 0 && author.length > 0 && axess.length > 0 ) return true;
+  else                                                                                   return false;
+} 
 
 function saveOrgTree(data, dummy) {
   orgTree = data;
@@ -312,8 +328,7 @@ function onclickCheckNDT() {
 
 }
 
-function detectExploder()
-{
+function detectExploder() {
   var ua = window.navigator.userAgent;
 
   var msie = ua.indexOf('MSIE ');
@@ -328,3 +343,10 @@ function detectExploder()
       alert("Warning: You are using Internet Explorer 11. Please use a more recent browser for running this application.");
   }
 } 
+
+function readOnlyEditReport() {
+  state = $("#State").val();
+  if (state > 0) {
+    $('.Field').attr('disabled', true);
+  }
+}

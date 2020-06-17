@@ -19,6 +19,7 @@
 				<tr>
 					<td style="PADDING-LEFT: 10px; PADDING-TOP: 5px" valign="top">
                         <input type="hidden" asp-for="Id" />
+						<input type="hidden" asp-for="State" />
 						<table style="WIDTH:100%" cellspacing="0" cellpadding="1" border-width="0">
 							<tr>
 								<td class="Label" style="WIDTH:120px" valign="middle" nowrap="nowrap">Report No</td>
@@ -177,6 +178,7 @@ else
 								<tr>
 									<td class="gHighlightText" valign="middle">
 										<button type="submit" id="btnCommit" class="gFormButton" style="HEIGHT:24px;WIDTH:147px;display:none " formaction="/Report/Commit">Commit</button>
+										<div id="CannotCommit" style="display:none;color:red;">Cannot commit because Author, Title, Access Code or Summary has been left empty.</div>
 									</td>
 								</tr>
 							</table>
@@ -192,6 +194,7 @@ else
 @section scripts {
      <script type="text/javascript">
         getStandingData(displayReportEdit, "");
+		readOnlyEditReport();
     </script>
 	@await Html.PartialAsync("_ValidationScriptsPartial")
 }
