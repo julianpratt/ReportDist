@@ -123,16 +123,19 @@ namespace ReportDist.Controllers
             try
             {    
                 Circulation circ = new Circulation();
+                circ.Id          = 0; 
                 circ.RecipientID = recipientId;
                 circ.PendingId   = pendingId ?? 0;
                 circ.Name        = r.Name;
                 circ.Email       = r.Email;
                 circ.Address     = r.Address;
-                int? circId = _context.CirculationRepo.Create(circ);
+                //int? circId = _context.CirculationRepo.Create(circ);
 
-                Log.Me.Info(CheckIdentity() + " added circulation to report " + circ.PendingId.ToString());
+                //Log.Me.Info(CheckIdentity() + " added circulation to report " + circ.PendingId.ToString());
 
-                return RedirectToAction("Edit", "Circulation", new { id = circId });
+                //return RedirectToAction("Edit", "Circulation", new { id = circId });
+
+                return View("Edit", new CirculationViewModel(circ));
             }
             catch (Exception ex)
             {
