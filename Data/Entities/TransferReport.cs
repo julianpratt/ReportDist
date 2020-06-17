@@ -78,7 +78,7 @@ namespace ReportDist.Data
 
         private string EncodeChars(string s)
         {
-            char[] chars = { '&', '<', '>', '"', '\'' };
+            char[] chars = { '&', '<', '>', '"', '\'', '\n' };
             string sout = s;
             int i = 0;
             int j = 0;
@@ -88,10 +88,11 @@ namespace ReportDist.Data
             {
                 char c = sout[j];
                 if (c == '&') rep = "&amp;";
-                else if (c == '<') rep = "&lt;";
-                else if (c == '>') rep = "&gt;";
-                else if (c == '"') rep = "&quot;";
+                else if (c == '<')  rep = "&lt;";
+                else if (c == '>')  rep = "&gt;";
+                else if (c == '"')  rep = "&quot;";
                 else if (c == '\'') rep = "&apos;";
+                else if (c == '\n') rep = "&#13;";
                 sout = sout.Left(j) + rep + sout.Substring(j + 1);
                 i = j + 1;
             }

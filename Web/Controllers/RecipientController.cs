@@ -19,6 +19,11 @@ namespace ReportDist.Controllers
         // GET: /Recipient/ShowGrid 
         public IActionResult ShowGrid()  
         {  
+            string user = CheckIdentity();
+            if (user == null) return RedirectToAction("Error", "Home");
+            Log.Me.Debug("Recipient/Index - User: " + user);
+            ApplicationVersion();
+
             return View("Grid");  
         } 
 

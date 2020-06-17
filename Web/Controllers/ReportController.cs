@@ -52,27 +52,32 @@ namespace ReportDist.Controllers
             }  
         }
 
-        // POST: /Report/Edit/n
-        [HttpPost]
-        public ActionResult Edit(PendingReport update)
+        private bool SaveChanges(PendingReport update, string method)
         {
-            string method = "Report/Edit[Post]";
+            if (IsNull(update,    "PendingReport(update)", method)) return false;
+            if (ZeroId(update.Id, "PendingId",             method)) return false;
 
-            /* 
-            if (!ModelState.IsValid) 
-            {
-                StandingData sd = _context.StandingDataRepo.Load();
-                return View(new PendingReportViewModel(update, sd));
-            }
-            */
-            
-            if (IsNull(update,    "PendingReport(update)", method)) return RedirectToAction("Error", "Home");
-            if (ZeroId(update.Id, "PendingId",             method)) return RedirectToAction("Error", "Home");
-            
             try
             {
                 PendingReport report = _context.PendingReportRepo.Read(update.Id);
-                if (IsNull(report, "PendingReport(read))", method)) return RedirectToAction("Error", "Home");
+                if (IsNull(report, "PendingReport(read))", method)) return false;
+
+                if (report.State > 0) return true; // If we're committed, then not saving changes is the OK path
+
+                if (report.RecipientID <= 0) 
+                {
+                    Log.Me.Warn("Report had zero RecipientId in ReportController.SaveChanges(). Report: " + update.Id.ToString());
+                }
+                string userid = HttpContext.Session.GetString("UserId");
+                if (!userid.HasValue() || userid.ToInteger() <= 0)
+                {
+                    Log.Me.Warn("Null or Zero userid from Session in ReportController.SaveChanges(). Report: " + update.Id.ToString());
+                }
+                else
+                {
+                    report.RecipientID = userid.ToInteger();
+                }
+                
                 report.Abstract      = update.Abstract;
                 report.Author        = update.Author;
                 report.Axess         = update.Axess;
@@ -86,60 +91,51 @@ namespace ReportDist.Controllers
 
                 Log.Me.Info(CheckIdentity() + " updated report " + update.Id.ToString());
 
-                return RedirectToAction("Index", "Home");     
+                return true;     
             }
             catch (Exception ex)
             {
                 Log.Me.Error("Exception in " + method + ": " + ex.Message);
-                return RedirectToAction("Error", "Home"); 
-            }   
+                return false; 
+            } 
+
+        }
+
+        // POST: /Report/Edit/n
+        [HttpPost]
+        public ActionResult Edit(PendingReport update)
+        {
+            string method = "Report/Edit[Post]";
+
+            if (SaveChanges(update, method)) return RedirectToAction("Index", "Home");  
+            else                             return RedirectToAction("Error", "Home"); 
         }
 
         // POST: /Report/Commit
         [HttpPost]
         public ActionResult Commit(PendingReport update)
         {
-            string method = "Report/Commit[Post]";
-            string stage = "";
-            
-            /* 
-            if (!ModelState.IsValid) 
+            if (update.State > 0) 
             {
-                StandingData sd = _context.StandingDataRepo.Load();
-                return View(new PendingReportViewModel(update, sd));
+                Log.Me.Error("There shouldn't even be a Commit button on the form!");
+                return RedirectToAction("Error", "Home"); 
             }
-            */
 
-            if (IsNull(update,    "PendingReport(update)", method)) return RedirectToAction("Error", "Home");
-            if (ZeroId(update.Id, "PendingId",             method)) return RedirectToAction("Error", "Home");
-            
+            string method = "Report/Commit[Post]";
+
+            if (!SaveChanges(update, method)) return RedirectToAction("Error", "Home"); 
+          
             try
             {
-                PendingReport report = _context.PendingReportRepo.Read(update.Id);
-                if (IsNull(report, "PendingReport(read))", method)) return RedirectToAction("Error", "Home");
-                stage = "Read OK";
-                report.Abstract      = update.Abstract;
-                report.Author        = update.Author;
-                report.Axess         = update.Axess;
-                report.JobNo         = update.JobNo;
-                report.ReportType    = update.ReportType;
-                report.SecurityLevel = update.SecurityLevel;
-                report.Software      = update.Software; 
-                report.Title         = update.Title;
-
-                _context.PendingReportRepo.Update(report);
-                stage = "Updated OK";
-
                 string dump = _context.PendingReportRepo.CommitReport(_filesys, update.Id);
-                stage = "Committed OK";
-
+                
                 Log.Me.Info(CheckIdentity() + " committed report " + update.Id.ToString());
 
                 return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
-                Log.Me.Error("Exception in " + method + " (at stage " + stage + "): " + ex.Message);
+                Log.Me.Error("Exception in " + method + " (at stage Commit): " + ex.Message);
                 return RedirectToAction("Error", "Home"); 
             }
         }
@@ -162,6 +158,10 @@ namespace ReportDist.Controllers
             string method = "Report/Create[Post]";
 
             string userid = HttpContext.Session.GetString("UserId");
+            if (!userid.HasValue() || userid.ToInteger() <= 0)
+            {
+                Log.Me.Warn("Null or Zero userid in ReportController.Create() for Report " + vm.ReportNo);
+            }
             
             try
             {
@@ -219,32 +219,8 @@ namespace ReportDist.Controllers
         {
             string method = "Report/CirculationEdit";
 
-            if (IsNull(update,    "PendingReport(update)", method)) return RedirectToAction("Error", "Home");
-            if (ZeroId(update.Id, "PendingId",             method)) return RedirectToAction("Error", "Home");
-            
-            try
-            {
-                PendingReport report = _context.PendingReportRepo.Read(update.Id);
-                if (IsNull(report, "PendingReport(read))", method)) return RedirectToAction("Error", "Home");
-                report.Abstract      = update.Abstract;
-                report.Author        = update.Author;
-                report.Axess         = update.Axess;
-                report.JobNo         = update.JobNo;
-                report.ReportType    = update.ReportType;
-                report.SecurityLevel = update.SecurityLevel;
-                report.Software      = update.Software; 
-                report.Title         = update.Title;
-                int pendingId = update.Id;
-
-                _context.PendingReportRepo.Update(report);
-
-                return RedirectToAction("Index", "Circulation", new { id = pendingId });
-            }
-            catch (Exception ex)
-            {
-                Log.Me.Error("Exception in " + method + ": " + ex.Message);
-                return RedirectToAction("Error", "Home"); 
-            }
+            if (SaveChanges(update, method)) return RedirectToAction("Index", "Circulation", new { id = update.Id });
+            else                             return RedirectToAction("Error", "Home");
         }
 
         // POST: /Report/DocUpload
@@ -253,32 +229,8 @@ namespace ReportDist.Controllers
         {
             string method = "Report/DocUpload";
 
-            if (IsNull(update,    "PendingReport(update)", method)) return RedirectToAction("Error", "Home");
-            if (ZeroId(update.Id, "PendingId",             method)) return RedirectToAction("Error", "Home");
-            
-            try
-            {
-                PendingReport report = _context.PendingReportRepo.Read(update.Id);
-                if (IsNull(report, "PendingReport(read))", method)) return RedirectToAction("Error", "Home");
-                report.Abstract      = update.Abstract;
-                report.Author        = update.Author;
-                report.Axess         = update.Axess;
-                report.JobNo         = update.JobNo;
-                report.ReportType    = update.ReportType;
-                report.SecurityLevel = update.SecurityLevel;
-                report.Software      = update.Software; 
-                report.Title         = update.Title;
-                int pendingId = update.Id;
-
-                _context.PendingReportRepo.Update(report);
-
-                return RedirectToAction("Index", "Document", new { id = pendingId });
-            }
-            catch (Exception ex)
-            {
-                Log.Me.Error("Exception in " + method + ": " + ex.Message);
-                return RedirectToAction("Error", "Home"); 
-            }
+            if (SaveChanges(update, method)) return RedirectToAction("Index", "Document", new { id = update.Id });
+            else                             return RedirectToAction("Error", "Home");
         }
 
 

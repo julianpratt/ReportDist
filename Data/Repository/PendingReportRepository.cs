@@ -255,6 +255,7 @@ namespace ReportDist.Data
             if (pendingId <= 0)  throw new Exception("Cannot Commit Report - invalid report id!");
             PendingReport report = this.Read(pendingId);
             if (report == null)  throw new Exception("Cannot Commit Report - Pending Report not found!");
+            if (report.RecipientID <= 0)  throw new Exception("Cannot Commit Report - Zero RecipientId!");
 
             long maxFileSize = 0L;
             if (!long.TryParse(Config.Get("FileSizeLimit"), out maxFileSize)) 

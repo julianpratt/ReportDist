@@ -68,36 +68,29 @@
         });  
 
 
-    function DeleteData(RecipientID)  
-        {  
-            if (confirm("Are you sure you want to delete ...?"))  
-            {  
-                Delete(RecipientID);  
+    function DeleteData(RecipientID) {  
+        if (confirm("Are you sure you want to delete ...?")) {  
+            Delete(RecipientID);  
             }  
-            else  
-            {  
-                return false;  
+        else {  
+            return false;  
             }  
         }  
 
 
-        function Delete(RecipientID)  
-    {  
+    function Delete(RecipientID) {  
         var url = '@Url.Content("~/")' + "Recipient/Delete";  
 
-            $.post(url, { ID: RecipientID }, function (data)  
-                {  
-                    if (data)  
-                    {  
-                        oTable = $('#example').DataTable();  
-                        oTable.draw();  
-                    }  
-                    else  
-                    {  
-                        alert("Something Went Wrong!");  
-                    }  
-                });  
-    }  
+        $.post(url, { ID: RecipientID }, function (data) {  
+            if (data) {  
+                oTable = $('#example').DataTable();  
+                oTable.draw();  
+                }  
+            else {  
+                alert("Something Went Wrong!");  
+                }  
+            });  
+        }  
 
 </script> 
 }
