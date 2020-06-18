@@ -116,24 +116,28 @@ namespace ReportDist.Data
             }
             set
             {
-                if (value == null)
-                {
-                    AddressLine1 = null;
-                    AddressLine2 = null;
-                    AddressLine3 = null;
-                    AddressLine4 = null;
-                    AddressLine5 = null;
-                    PostCode     = null;
-                }
-                else
+                AddressLine1 = null;
+                AddressLine2 = null;
+                AddressLine3 = null;
+                AddressLine4 = null;
+                AddressLine5 = null;
+                PostCode     = null;
+                if (value.HasValue())
                 {
                     string[] addresslines = value.Split('\n');
-                    AddressLine1 = AddressParseLine(addresslines, 1);
-                    AddressLine2 = AddressParseLine(addresslines, 2);
-                    AddressLine3 = AddressParseLine(addresslines, 3);
-                    AddressLine4 = AddressParseLine(addresslines, 4);
-                    AddressLine5 = AddressParseLine(addresslines, 5);
-                    PostCode     = AddressParseLine(addresslines, 99).Left(10);
+                    int n = addresslines.Length;
+                    for (int i=0; i<n; ++i) addresslines[i]=TrimComma(addresslines[i]);
+                    if (addresslines[n-1].Length <= 10) 
+                    {
+                        // Final line is 10 char or less, so it is assumed to be the postcode
+                        PostCode = addresslines[n-1];
+                        --n; // We've used the final line, so don't give it to an address line
+                    }
+                    if (n > 0) AddressLine1 = addresslines[0];
+                    if (n > 1) AddressLine2 = addresslines[1];
+                    if (n > 2) AddressLine2 = addresslines[2];
+                    if (n > 3) AddressLine2 = addresslines[3];
+                    if (n > 4) AddressLine2 = addresslines[4];
                 }
             }
 
@@ -167,17 +171,6 @@ namespace ReportDist.Data
             }
             return address;
         }
-        private static string AddressParseLine(string[] addresslines, int lineno)
-        {
-            string s = "";
-
-            // N.B. Last line is always assumed to be the PostCode
-            if (addresslines.Length > lineno) s = addresslines[lineno-1];
-            else if (lineno == 99)            s = addresslines[addresslines.Length-1];
-
-            return TrimComma(s.Trim());
-        }
-
         private static string TrimComma(string s)
         {
             if (s.Right(1) == ",") return s.Left(s.Length - 1);

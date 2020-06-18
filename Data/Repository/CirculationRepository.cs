@@ -58,6 +58,16 @@ namespace ReportDist.Data
             return _context.Circulations.Where(c => c.PendingId==pendingId).OrderBy(c => c.ToCcBccDB);
         }
 
+        public void SetState(int pendingId, int state)
+        {
+            IQueryable<Circulation> list = _context.Circulations.Where(c => c.PendingId==pendingId);
+            foreach (Circulation circ in list.ToList())
+            {
+                circ.State = state;
+                _context.Circulations.Update(circ);
+            }
+        }
+
         public string RecipientMessage(int pendingId)
         {
             int addressees = List(pendingId).Where(c => c.ToCcBcc == Circulation.eToCcBcc.TO).Count();

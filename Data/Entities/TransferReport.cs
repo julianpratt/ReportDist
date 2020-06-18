@@ -58,9 +58,9 @@ namespace ReportDist.Data
             foreach (string author in this.Authors) AddElement(sb, "Author", EncodeChars(author));
             AddElement(sb, "SecurityLevel", this.SecurityLevel.ToString());
             AddElement(sb, "Software",      (this.Software == null) ? "None" : EncodeChars(this.Software));
-            AddElement(sb, "Publisher",    "Uniper Technologies");
+            AddElement(sb, "Publisher",    EmailConfig.Me.Company);
             foreach (string axess in this.Axess) AddElement(sb, "Axess", (axess == "UKEM") ? "GEN": axess);
-            AddElement(sb, "eFileName",    this.eFileName);
+            AddElement(sb, "eFileName",    (this.eFileName == null) ? "" : EncodeChars(this.eFileName));
             AddElement(sb, "LastUpdated",  this.DateIssued.ToString("yyyy-MM-dd"));
             sb.Append("  </Report>\n");
             sb.Append("</root>\n");

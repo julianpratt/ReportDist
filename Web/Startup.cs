@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -180,16 +181,16 @@ namespace ReportDist
             string delimiter = System.IO.Path.DirectorySeparatorChar.ToString();
             Log.Me.Info("configure.json: " + Config.ContentRoot + delimiter + "Config/configure.json");
             
-            if (!System.IO.Directory.Exists(Config.ContentRoot + delimiter + "Config/configure.json"))
+            if (!File.Exists(Config.ContentRoot + delimiter + "Config/configure.json"))
             {
-                Log.Me.Info("Could not find Config/configure.json. Use ASPNETCORE_ENVIRONMENT='Development' to see what is wrong.");
-                //System.Environment.Exit(8);
+                Log.Me.Info("Could not find Config/configure.json. Set environmental variable Logging='Debug' to see what is wrong.");
+                System.Environment.Exit(8);
             }
             
 
             if (!filesysok || !othersok || !CatalogueAPI.Me.IsValid() || !EmailConfig.Me.IsValid())
             {
-                Log.Me.Fatal("Missing/invalid configuration. Use ASPNETCORE_ENVIRONMENT='Development' to see what is wrong.");
+                Log.Me.Fatal("Missing/invalid configuration. Set environmental variable Logging='Debug' to see what is wrong.");
                 System.Environment.Exit(8);
             }
         }
@@ -211,26 +212,29 @@ namespace ReportDist
 
         public bool DebugFileSystemConfig()
         {
-            string conn   = Config.Get("AzureConnectionString");
-     		string cont   = Config.Get("AzureContainer");
-            string root   = Config.Get("LocalFilesRoot");
-            string logs   = Config.Get("Logs");
-            string upload = Config.Get("UploadDirectory");
-            string outbox = Config.Get("OutboxDirectory");
-            string maxlen = Config.Get("FileSizeLimit");
+            string conn    = Config.Get("AzureConnectionString");
+     		string cont    = Config.Get("AzureContainer");
+            string root    = Config.Get("LocalFilesRoot");
+            string logs    = Config.Get("Logs");
+            string upload  = Config.Get("UploadDirectory");
+            string outbox  = Config.Get("OutboxDirectory");
+            string maxlen  = Config.Get("FileSizeLimit");
+            string maxmail = Config.Get("AttachmentSizeLimit");
 
             Log.Me.Debug("----------------------------------------------------------------------------------------------");
             Log.Me.Debug("File System Configuration:");
             Log.Me.Debug("");
-            Log.Me.Debug("AzureConnectionString: " + (conn ?? ""));
-            Log.Me.Debug("AzureContainer:        " + (cont ?? ""));
-            Log.Me.Debug("LocalFilesRoot:        " + (root ?? ""));
-            Log.Me.Debug("Logs:                  " + (logs ?? ""));
-            Log.Me.Debug("UploadDirectory:       " + (upload ?? ""));
-            Log.Me.Debug("OutboxDirectory:       " + (outbox ?? ""));
-            Log.Me.Debug("FileSizeLimit:         " + (maxlen ?? ""));
+            Log.Me.Debug("AzureConnectionString: " + (conn    ?? ""));
+            Log.Me.Debug("AzureContainer:        " + (cont    ?? ""));
+            Log.Me.Debug("LocalFilesRoot:        " + (root    ?? ""));
+            Log.Me.Debug("Logs:                  " + (logs    ?? ""));
+            Log.Me.Debug("UploadDirectory:       " + (upload  ?? ""));
+            Log.Me.Debug("OutboxDirectory:       " + (outbox  ?? ""));
+            Log.Me.Debug("FileSizeLimit:         " + (maxlen  ?? ""));
+            Log.Me.Debug("AttachmentSizeLimit:   " + (maxmail ?? ""));
             bool ok = root.HasValue() || (conn.HasValue() && cont.HasValue());
-            ok = ok && logs.HasValue() && upload.HasValue() && outbox.HasValue() && maxlen.HasValue();
+            ok = ok && logs.HasValue()   && upload.HasValue() && outbox.HasValue();
+            ok = ok && maxlen.HasValue() && maxmail.HasValue();
             if (ok) Log.Me.Debug("Everything is configured.");
             else    Log.Me.Warn("Some File System configuration is missing");
 

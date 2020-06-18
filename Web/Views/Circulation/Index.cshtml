@@ -110,12 +110,14 @@
                 { "data": "addressTrunc", "name": "Address",     "autoWidth": true },    
                 {  
                     "render": function (data, type, full, meta)  
-                    { return '<a href="/Circulation/Add?pendingId=@pendingId&recipientId=' + full.recipientID + '">Add</a>'; },
+                    {   if (full.state > 1) return '&nbsp;';
+                        else return '<a href="/Circulation/Add?pendingId=@pendingId&recipientId=' + full.recipientID + '">Add</a>'; },
                     "orderable": false   
                 }, 
                 {  
                     "render": function (data, type, full, meta)  
-                    { return '<a href="/Recipient/Delete?pendingId=@pendingId&recipientId=' + full.recipientID + '">Delete</a>'; },
+                    {   if (full.state > 1) return '&nbsp;';
+                        else return '<a href="/Recipient/Delete?pendingId=@pendingId&recipientId=' + full.recipientID + '">Delete</a>'; },
                     "orderable": false   
                 } 
             ]  

@@ -523,7 +523,9 @@ namespace ReportDist.Data
             pr.State = 2; // Set State to "Sent" 
             pr.DateSent = DateTime.Now;               
             this.Update(pr);  // Update Record
-            
+            // Also update the state of Circulation
+            _context.CirculationRepo.SetState(pr.PendingId, 2);
+
             return batch;
         }
 
