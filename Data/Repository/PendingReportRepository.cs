@@ -196,7 +196,13 @@ namespace ReportDist.Data
 
         public string GenerateFilename(int pendingId)
         {
-            PendingReport report = this.Read(pendingId);
+            return GenerateFilename(this.Read(pendingId), ".pdf");
+        }
+
+        /// Generate a filename for a report
+
+        public string GenerateFilename(PendingReport report, string ext)
+        {
 
             string reportYear;
             string filename;
@@ -212,7 +218,7 @@ namespace ReportDist.Data
             {
                 // Its a PT Report so make PT file name
                 // Check param 3 - should start with 2 characters then some numbers
-                filename = reportYear + "_" + "DX" + split[2].Substring(0, 2) + "_" + split[2] + ".pdf";
+                filename = reportYear + "_" + "DX" + split[2].Substring(0, 2) + "_" + split[2] + ext;
             }
             else if (org == "EEN" || org == "ENT" || org == "ETG" || org == "UTG")
             {
@@ -220,12 +226,12 @@ namespace ReportDist.Data
                 if (split.Length == 6)
                 {
                     // Report number contains a team code so we need to deal with the /
-                    filename = reportYear + "_" + split[2] + "_" + split[3] + "_" + split[4] + ".pdf";
+                    filename = reportYear + "_" + split[2] + "_" + split[3] + "_" + split[4] + ext;
                 }
                 else
                 {
                     // Report number does not contain a team code so we dont need to deal with the /
-                    filename = reportYear + "_" + split[2] + "_" + split[3] + ".pdf";
+                    filename = reportYear + "_" + split[2] + "_" + split[3] + ext;
                 }
 
             }
@@ -282,7 +288,7 @@ namespace ReportDist.Data
             //--------------------------------------------------------------------------------
             // Create the xml metadata file and upload it to Outbox. 
             //--------------------------------------------------------------------------------
-            string metadatafile = Path.ChangeExtension(report.eFileName, ".xml");
+            string metadatafile = GenerateFilename(report, ".xml");
             TransferReport transfer = new TransferReport(report);
             string xmlout = transfer.ToXML();
             if (xmlout == null) throw new Exception("Cannot Commit Report - failed to create xml metadata");
