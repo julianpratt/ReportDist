@@ -56,27 +56,29 @@ namespace ReportDist.Data
                 return null;
             }
             
+            string username  = identity.FindFirst(System.Security.Claims.ClaimTypes.Upn)?.Value;
             string email     = identity.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
             string firstName = identity.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value; 
             string lastName  = identity.FindFirst(System.Security.Claims.ClaimTypes.Surname)?.Value;
 
-            r = FindRecipient(email);
+            r = FindRecipient(username);
             if (r != null)
             {
                 // User Identity found. Check it
                 if (r.FirstName != firstName || r.LastName != lastName)
                 {
                     string tail = ", but First or Last Name do not match (from AAD " + firstName + " " + lastName + ")";
-                    Log.Me.Warn("User " + email + " has authenticated, and is identified as Recipient " + r.Id.ToString() + tail);
+                    Log.Me.Warn("User " + username + " has authenticated, and is identified as Recipient " + r.Id.ToString() + tail);
                 } 
             }
             else
             {
                 // Identity not found. So add it.
                 r = new Recipient();
-                r.UserName  = email; 
+                r.UserName  = username; 
                 r.FirstName = firstName;
                 r.LastName  = lastName;   
+                r.Email     = email;
                 r.Id = _context.RecipientRepo.Create(r);
             }
 
@@ -89,9 +91,9 @@ namespace ReportDist.Data
             return (r == null) ? 0 : r.RecipientID;
         }
 
-        public Recipient FindRecipient(string email)
+        public Recipient FindRecipient(string username)
         {
-            IQueryable<Recipient> recips = _context.Recipients.Where(r => (r.Email == email) || (r.UserName == email));
+            IQueryable<Recipient> recips = _context.Recipients.Where(r => r.UserName == username);
             if (recips.Count() > 0) return recips.FirstOrDefault();
             else return null;
         }
