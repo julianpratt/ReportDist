@@ -73,7 +73,7 @@ namespace ReportDist.Data
             }
             else
             {
-                // Identity not found. So add it.
+                // Identity not found. So add it.vvv
                 r = new Recipient();
                 r.UserName  = username; 
                 r.FirstName = firstName;
