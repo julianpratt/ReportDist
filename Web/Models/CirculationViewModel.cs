@@ -21,7 +21,7 @@ namespace ReportDist.Models
                 this.RecipientID = c.RecipientID;
                 this.State       = c.State;
 
-                this.OverSize    = true; //oversize;
+                //this.OverSize    = true; //oversize;
                 
 
                 this.ElecDeliveryTypes   = new List<SelectListItem>();
@@ -42,7 +42,7 @@ namespace ReportDist.Models
 
         public List<SelectListItem> PaperDeliveryTypes { get; set; } 
 
-        public bool OverSize                           { get; set; }
+        //public bool OverSize                           { get; set; }
  
     }
 }
