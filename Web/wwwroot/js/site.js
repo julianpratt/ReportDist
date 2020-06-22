@@ -378,6 +378,8 @@ function viewTemplate(internalEmailDomain) {
   email = document.getElementById('Email').value.trim();
   n = internalEmailDomain.length;
 
+  alert('email is >' + email + '<' );
+  alert('internalEmailDomain is >' + internalEmailDomain + '<' );
   alert(email.substring(email.length-n, n).toLowerCase());
 
   if (email.substring(email.length-n, n).toLowerCase() == internalEmailDomain.toLowerCase()) code = code + 'I';
