@@ -77,6 +77,8 @@ namespace ReportDist.Controllers
                     // Save filename
                     PendingReport report = _context.PendingReportRepo.Read(pendingId);
                     report.eFileName = filename;
+                    string check = _context.PendingReportRepo.CheckFileSize(_fsys, report, Config.Get("UploadDirectory"));
+                    if (check != null) report.eFilePath = "OVERSIZE";
                     _context.PendingReportRepo.Update(report);
                     Log.Me.Info(CheckIdentity() + " uploaded file " + filename + " to report " + pendingId.ToString());
                 }

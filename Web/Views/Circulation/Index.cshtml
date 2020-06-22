@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Edit Circulation";
     string pendingId = (string)ViewData["pendingId"];
+    string oversize  = (string)ViewData["Oversize"];
+    string editable  = (string)ViewData["Editable"];   
+}   
 }
 
 <span class="MediumHeader" id="spMainTitle" runat="server">Report Circulation&nbsp;</span> 
@@ -47,7 +50,7 @@
 
 <div id="spCircList">
         <br />
-        <span class="MediumHeader" id="Span1" runat="server">Report Circulation List</span>
+        <span class="MediumHeader" id="Span1" runat="server">Report Circulation List (Editable @editable Oversize @oversize)</span>
 	    <table class="communitylinks" id="Table6" cellspacing="0" cellpadding="2" width="100%" border="0">
 		    <tr>
 			    <td class="gheaderline" valign="bottom" colspan="2" height="1" rowspan="1"></td>
@@ -110,13 +113,13 @@
                 { "data": "addressTrunc", "name": "Address",     "autoWidth": true },    
                 {  
                     "render": function (data, type, full, meta)  
-                    {   if (full.state > 1) return '&nbsp;';
+                    {   if ("@editable" == "No") return '&nbsp;';
                         else return '<a href="/Circulation/Add?pendingId=@pendingId&recipientId=' + full.recipientID + '">Add</a>'; },
                     "orderable": false   
                 }, 
                 {  
                     "render": function (data, type, full, meta)  
-                    {   if (full.state > 1) return '&nbsp;';
+                    {   if ("@editable" == "No") return '&nbsp;';
                         else return '<a href="/Recipient/Delete?pendingId=@pendingId&recipientId=' + full.recipientID + '">Delete</a>'; },
                     "orderable": false   
                 } 

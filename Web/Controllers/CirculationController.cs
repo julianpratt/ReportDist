@@ -32,6 +32,11 @@ namespace ReportDist.Controllers
             if (NullId(id, "PendingId", "Circulation/Index")) return RedirectToAction("Error", "Home"); 
             
             ViewData["pendingId"] = (id.Value.ToString());
+
+            PendingReport report = _context.PendingReportRepo.Read(id.Value);
+            ViewData["Oversize"] = (report.eFilePath ?? "") == "OVERSIZE" ? "Yes" : "No"; 
+            ViewData["Editable"] = report.State > 1 ? "No" : "Yes"; 
+
             return View();
         }
 
@@ -82,7 +87,7 @@ namespace ReportDist.Controllers
             circ.Email       = "";
             circ.Address     = "";
 
-            return View("Edit", new CirculationViewModel(circ, AttachmentTooLarge(id.Value)));
+            return View("Edit", new CirculationViewModel(circ));
         }
 
         // POST: /Circulation/Create
@@ -141,7 +146,7 @@ namespace ReportDist.Controllers
 
                 //return RedirectToAction("Edit", "Circulation", new { id = circId });
 
-                return View("Edit", new CirculationViewModel(circ, AttachmentTooLarge(pendingId ?? 0)));
+                return View("Edit", new CirculationViewModel(circ));
             }
             catch (Exception ex)
             {
@@ -166,7 +171,7 @@ namespace ReportDist.Controllers
                 Circulation circ = null;
                 if ((circ = Read(id.Value, method)) == null) return RedirectToAction("Error", "Home"); 
                
-                return View(new CirculationViewModel(circ, AttachmentTooLarge(circ.PendingId)));
+                return View(new CirculationViewModel(circ));
             }
             catch (Exception ex)
             {
@@ -260,10 +265,6 @@ namespace ReportDist.Controllers
             return circ;
         }
 
-        private bool AttachmentTooLarge(int pendingId)
-        {
-            return false; //_context.PendingReportRepo.CheckFileSize(_filesys, pendingId) != null;
-        }
     }
 }
      
