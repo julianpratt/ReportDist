@@ -133,22 +133,22 @@ function setAxess() {
   var vs = $("#AccessCode").val().trim();
   var v  = $("#Axess").val();
 
-  if (vs == "!")
-  {}
-  else if (vs == "ALL" || vs == "NONE")
-  {
+  if (v.length==0) {
     $("#Axess").val(vs);
-  }
-  else if (v == "ALL" || v == "NONE")
-  {
+    }
+  else if (vs == "!") {}
+  else if (vs == "ALL" || vs == "NONE") {
     $("#Axess").val(vs);
-  }
-  else 
-  {
+    }
+  else if (v == "ALL" || v == "NONE") {
+    $("#Axess").val(vs);
+    }
+  else {
     var codes = v.trim().split("/");
     if (!codes.includes(vs)) codes.push(vs);
     $("#Axess").val(codes.sort().join("/"));
-  }
+    }
+
   $("#AccessCode").val("!");
   $("#btnAxessNONE").prop('disabled', false);
   $("#btnAxessALL").prop('disabled', false)

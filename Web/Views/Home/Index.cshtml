@@ -69,8 +69,20 @@
                                         <a  asp-action="Index"
                                             asp-route-sortOrder="creationdate desc"
                                             asp-route-pageNumber="1"
+                                            asp-route-currentFilter="committed"
+                                            class="gContentSection">All Committed Reports
+                                        </a>&nbsp;&nbsp;
+                                        <a  asp-action="Index"
+                                            asp-route-sortOrder="creationdate desc"
+                                            asp-route-pageNumber="1"
                                             asp-route-currentFilter="unsent-@userid"
-                                            class="gContentSection">UnSent Reports
+                                            class="gContentSection">My UnSent Reports
+                                        </a>&nbsp;&nbsp;
+                                        <a  asp-action="Index"
+                                            asp-route-sortOrder="creationdate desc"
+                                            asp-route-pageNumber="1"
+                                            asp-route-currentFilter="sent"
+                                            class="gContentSection">All Sent Reports
                                         </a>
 									</td>
 									<td align="right">
@@ -161,10 +173,7 @@ else
                                             </a>
                                         </th>
                                         <th style="width:3%;">&nbsp;</th>
-@if (mode == "normal") 
-{                                       
-                                        <th style="width:3%;">&nbsp;</th>
-}                                        
+                                        <th style="width:3%;">&nbsp;</th>                                        
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -188,7 +197,7 @@ else
                                             @{string date = item.CreationDate.ToDateString();}
                                             @date
                                         </td>
-@if (mode == "normal") 
+@if (item.State == 0) 
 {                                        
                                         <td valign="top">
                                             <a asp-controller="Report" asp-action="Edit"    asp-route-id="@item.Id">Edit</a>
@@ -197,12 +206,24 @@ else
                                             <a href="javascript:void();" onclick="reportDelete(@item.Id)">Del</a>
                                         </td>
 }
-else
+else if (item.State == 1 && item.CID > 0)
 {
-                                         <td valign="top">
+                                        <td valign="top">
+                                            <a asp-controller="Report" asp-action="Edit"    asp-route-id="@item.Id">View</a>
+                                        </td>
+                                        <td valign="top">
                                             <a asp-controller="Report" asp-action="Send"    asp-route-id="@item.Id">Send</a>
                                         </td>
-}                                        
+} 
+else 
+{
+                                        <td valign="top">
+                                            <a asp-controller="Report" asp-action="Edit"    asp-route-id="@item.Id">View</a>
+                                        </td>
+                                        <td valign="top">
+                                            &nbsp;
+                                        </td>
+}
                                     </tr>
 }                                   
                                     <tr class="gContentSection" align="center">
