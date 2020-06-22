@@ -75,7 +75,7 @@ namespace ReportDist.Controllers
 
                 Log.Me.Info(CheckIdentity() + " added recipient " + r.Name + " (" + r.Email + ")");
 
-                return RedirectToAction("Index", "Recipient");   
+                return RedirectToAction("ShowGrid", "Recipient");   
             }
             catch (Exception ex)
             {
@@ -137,7 +137,7 @@ namespace ReportDist.Controllers
 
                 Log.Me.Info(CheckIdentity() + " updated recipient " + r.Name + " (" + r.Email + ")");
 
-                return RedirectToAction("Index", "Recipient");
+                return RedirectToAction("ShowGrid", "Recipient");
             }
            catch (Exception ex)
             {
@@ -150,31 +150,24 @@ namespace ReportDist.Controllers
         [HttpPost]
         public ActionResult Cancel()
         {                      
-            return RedirectToAction("Index", "Recipient");
+            return RedirectToAction("ShowGrid", "Recipient");
         }
 
         // GET: /Recipient/Delete?pendingId=x&recipientId=y
         public IActionResult Delete(int? recipientId, int? pendingId)
         {
-            _context.RecipientRepo.Delete(recipientId);
-    
-            return RedirectToAction("Index", "Circulation", new { id = pendingId });  
-        } 
-
-        // POST: /Recipient/Delete?Id=x
-        [HttpPost]
-        public bool Delete(int? Id)
-        {
-            try
+             try
             {
-                _context.RecipientRepo.Delete(Id);
-                return true;
+                _context.RecipientRepo.Delete(recipientId);
+    
+                if (pendingId.HasValue && pendingId > 0) return RedirectToAction("Index", "Circulation", new { id = pendingId });
+                else return RedirectToAction("ShowGrid", "Recipient");
             }
             catch (Exception ex)
             {
-                Log.Me.Error("Failed to delete recipient " + Id.ToString() + ". Error was: " + ex.Message);
-                return false;
-            }             
+                Log.Me.Error("Failed to delete recipient " + recipientId.ToString() + ". Error was: " + ex.Message);
+                return RedirectToAction("Error", "Home"); 
+            } 
         } 
 
         public Recipient Read(int id, string method)

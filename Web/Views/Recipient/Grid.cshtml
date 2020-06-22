@@ -57,7 +57,7 @@
                     {  
                         "render": function (data, type, full, meta)  
                         { if (full.userName != null && full.userName.length > 10) return '&nbsp;';
-                          else return '<a href="/Recipient/Delete?recipientId=' + full.recipientID + '">Delete</a>'; }   
+                          else return '<a href="/Recipient/Delete?pendingId=0&recipientId=' + full.recipientID + '">Delete</a>'; }   
                     }   
                 ]  
 
