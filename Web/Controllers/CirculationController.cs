@@ -153,6 +153,8 @@ namespace ReportDist.Controllers
                 PendingReport report = _context.PendingReportRepo.Read(circ.PendingId);
                 string oversize = (report.eFilePath ?? "") == "OVERSIZE" ? "Yes" : "No"; 
 
+                ViewData["InternalEmailDomain"] = EmailConfig.Me.InternalEmailDomain;
+
                 return View("Edit", new CirculationViewModel(circ, oversize));
             }
             catch (Exception ex)
@@ -180,6 +182,8 @@ namespace ReportDist.Controllers
 
                 PendingReport report = _context.PendingReportRepo.Read(circ.PendingId);
                 string oversize = (report.eFilePath ?? "") == "OVERSIZE" ? "Yes" : "No"; 
+
+                ViewData["InternalEmailDomain"] = EmailConfig.Me.InternalEmailDomain;
                
                 return View(new CirculationViewModel(circ, oversize));
             }
