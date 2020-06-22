@@ -378,12 +378,8 @@ function viewTemplate(internalEmailDomain) {
   email = document.getElementById('Email').value.trim();
   n = internalEmailDomain.length;
 
-  alert('email is >' + email + '<' );
-  alert('internalEmailDomain is >' + internalEmailDomain + '<' );
-  alert(email.substring(email.length-n, n).toLowerCase());
-
-  if (email.substring(email.length-n, n).toLowerCase() == internalEmailDomain.toLowerCase()) code = code + 'I';
-  else                                                                                       code = code + 'X';
+  if (email.substr(email.length-n, n).toLowerCase() == internalEmailDomain.toLowerCase()) code = code + 'I';
+  else                                                                                    code = code + 'X';
 
   options = 'height=300,left=50,top=50,width=550,location=no,resizable=yes,titlebar=no,status=yes,menubar=yes';
   options = options + ',toolbar=no,scrollbars=yes';
