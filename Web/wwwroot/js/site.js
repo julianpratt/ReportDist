@@ -117,6 +117,11 @@ function isValidCirculation() {
     $("#ValidationMessage").text("A valid postal address is required for this recipient, in order to distribute the report.");
     return false;
   }
+  else if (document.getElementById("drpAddElecType").selectedIndex == 2 && $("#Oversize").val().trim() == "Yes")
+  {
+    $("#ValidationMessage").text("Cannot report as attachment to email, because it is too big.");
+    return false;
+  }
   
   $("#ValidationMessage").text("");
   return true;

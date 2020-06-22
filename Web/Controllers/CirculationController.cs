@@ -34,7 +34,6 @@ namespace ReportDist.Controllers
             ViewData["pendingId"] = (id.Value.ToString());
 
             PendingReport report = _context.PendingReportRepo.Read(id.Value);
-            ViewData["Oversize"] = (report.eFilePath ?? "") == "OVERSIZE" ? "Yes" : "No"; 
             ViewData["Editable"] = report.State > 1 ? "No" : "Yes"; 
 
             return View();
@@ -87,7 +86,10 @@ namespace ReportDist.Controllers
             circ.Email       = "";
             circ.Address     = "";
 
-            return View("Edit", new CirculationViewModel(circ));
+            PendingReport report = _context.PendingReportRepo.Read(circ.PendingId);
+            string oversize = (report.eFilePath ?? "") == "OVERSIZE" ? "Yes" : "No"; 
+
+            return View("Edit", new CirculationViewModel(circ, oversize));
         }
 
         // POST: /Circulation/Create
@@ -146,7 +148,10 @@ namespace ReportDist.Controllers
 
                 //return RedirectToAction("Edit", "Circulation", new { id = circId });
 
-                return View("Edit", new CirculationViewModel(circ));
+                PendingReport report = _context.PendingReportRepo.Read(circ.PendingId);
+                string oversize = (report.eFilePath ?? "") == "OVERSIZE" ? "Yes" : "No"; 
+
+                return View("Edit", new CirculationViewModel(circ, oversize));
             }
             catch (Exception ex)
             {
@@ -170,8 +175,11 @@ namespace ReportDist.Controllers
             {
                 Circulation circ = null;
                 if ((circ = Read(id.Value, method)) == null) return RedirectToAction("Error", "Home"); 
+
+                PendingReport report = _context.PendingReportRepo.Read(circ.PendingId);
+                string oversize = (report.eFilePath ?? "") == "OVERSIZE" ? "Yes" : "No"; 
                
-                return View(new CirculationViewModel(circ));
+                return View(new CirculationViewModel(circ, oversize));
             }
             catch (Exception ex)
             {
