@@ -138,7 +138,7 @@ namespace ReportDist.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("Edit", "Report", new { id = update.PendingId, msg = commiterror });
+                    return RedirectToAction("Edit", "Report", new { id = update.PendingId, commiterror = commiterror });
                 }
 
             }
