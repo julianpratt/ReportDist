@@ -48,7 +48,9 @@ namespace ReportDist
                 result = context.PendingReportRepo.GetCIDs();
             }
             
-            Log.Me.Info("Catalogue Check Service working. Count: " + count.ToString() + " Result: " + result);
+            if (result.Left(7) == "WARNING") 
+                Log.Me.Error("Catalogue Check Service encountered problem. Count: " + count.ToString() + " Result: " + result);    
+            else Log.Me.Info("Catalogue Check Service working. Count: " + count.ToString() + " Result: " + result);
         }
 
         public Task StopAsync(CancellationToken stoppingToken)

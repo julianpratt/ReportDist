@@ -33,12 +33,26 @@ namespace ReportDist.Data
 
             // Get Next Number
             IQueryable<NextNumbers> q = _context.NextNumberSet.Where(n => n.ReportYear == year);
-            if (q.Count() == 0) 
+            int rows = q.Count();
+            if (rows == 0) 
             {
                 NextNumbers n = new NextNumbers();
                 n.ReportYear = year;
                 n.NextNumber = nextNum;
                 _context.NextNumberSet.Add(n);
+                _context.SaveChanges();
+            }
+            else if (rows > 1) 
+            {
+                NextNumbers n = q.First();
+                nextNum = n.NextNumber + 1;
+                foreach (NextNumbers n2 in q.ToList()) _context.NextNumberSet.Remove(n2);
+                _context.SaveChanges();
+
+                NextNumbers n3 = new NextNumbers();
+                n3.ReportYear = year;
+                n3.NextNumber = nextNum;
+                _context.NextNumberSet.Add(n3);
                 _context.SaveChanges();
             }
             else
@@ -255,6 +269,30 @@ namespace ReportDist.Data
             return longYear.ToString();
         }
 
+        public string CheckFileSize(IFile filesys, int pendingId)
+        {
+            string upload = Config.Get("UploadDirectory");
+
+            PendingReport report = this.Read(pendingId);
+            if (report == null)  throw new Exception("Cannot CheckFileSize - Pending Report not found!");
+
+            return CheckFileSize(filesys, report, upload);
+        }
+
+        public string CheckFileSize(IFile filesys, PendingReport report, string upload)
+        {
+            long maxFileSize = 0L;
+            if (!long.TryParse(Config.Get("AttachmentSizeLimit"), out maxFileSize)) 
+                throw new Exception("Unable to parse FileSizeLimit as a long");
+
+            filesys.ChangeDirectory(upload);
+            if (filesys.FileLength(report.eFileName) > maxFileSize)
+            {
+                return "The Report's PDF File is too large to send as an email attachment. Please amend the circulation list and amend all recipients that have been marked for Full Electronic distribution. Full Electronic distribution is NOT available for this report.";
+            }
+            return null;
+        }
+
         public string CommitReport(IFile filesys, int pendingId)
         {
             if (filesys == null) throw new Exception("Cannot Commit Report - no file system!");
@@ -263,9 +301,6 @@ namespace ReportDist.Data
             if (report == null)  throw new Exception("Cannot Commit Report - Pending Report not found!");
             if (report.RecipientID <= 0)  throw new Exception("Cannot Commit Report - Zero RecipientId!");
 
-            long maxFileSize = 0L;
-            if (!long.TryParse(Config.Get("AttachmentSizeLimit"), out maxFileSize)) 
-                throw new Exception("Unable to parse FileSizeLimit as a long");
             string upload = Config.Get("UploadDirectory");
             string outbox = Config.Get("OutboxDirectory");
 
@@ -278,11 +313,8 @@ namespace ReportDist.Data
                 //-------------------------------------------
                 // We have some EF recipients (check the file size of the PDF file - if it's Too big - Tell the user)
                 //-------------------------------------------
-                filesys.ChangeDirectory(upload);
-                if (filesys.FileLength(report.eFileName) > maxFileSize)
-                {
-                    return "The Report's PDF File is too large to send as an email attachment. Please amend the circulation list and amend all recipients that have been marked for Full Electronic distribution. Full Electronic distribution is NOT available for this report.";
-                }
+                string msg = CheckFileSize(filesys, report, upload);
+                if (msg != null) return msg;
             }
 
             //--------------------------------------------------------------------------------
@@ -317,25 +349,33 @@ namespace ReportDist.Data
         /// <param name="api">API urls and xpaths</param>
         public string GetCIDs()
         {
-            List<PendingReport> reports = _context.PendingReports.
+            try
+            {
+                 List<PendingReport> reports = _context.PendingReports.
                                     Where(r => (!r.Deleted) && (r.State == 1) && (r.CID <= 0)).ToList();
 
-            int todo = reports.Count();
-            if (todo <= 0) return "Nothing to check";
+                int todo = reports.Count();
+                if (todo <= 0) return "Nothing to check";
 
-            int updated = 0;
-            foreach (PendingReport report in reports)
-            {
-                // Get CID
-                report.CID = GetCID(report.FullReportNo);
-                if (report.CID.HasValue && report.CID > 0)
+                int updated = 0;
+                foreach (PendingReport report in reports)
                 {
-                    // Update the record to record the CID.
-                    this.Update(report);
-                    ++updated;
+                    // Get CID
+                    report.CID = GetCID(report.FullReportNo);
+                    if (report.CID.HasValue && report.CID > 0)
+                    {
+                        // Update the record to record the CID.
+                        this.Update(report);
+                        ++updated;
+                    }
                 }
+                return todo.ToString() + " reports checked. " + updated.ToString() + " CIDs found.";
             }
-            return todo.ToString() + " reports checked. " + updated.ToString() + " CIDs found.";
+            catch (Exception ex)
+            {
+                return "WARNING! GetCIDs() failed this time because of exception: " + ex.Message; 
+            }
+           
         }
         
         public int? GetCID(string reportNumber)
@@ -370,8 +410,11 @@ namespace ReportDist.Data
 
             string eFileName  = XML.ReadXmlNode(xml2, api.eFileNameXpath);
             string attachment = XML.ReadXmlNode(xml2, api.AttachmentXpath);
-            if (eFileName == null || attachment == null) return null;
-            if (eFileName.Trim().ToLower() != attachment.Trim().ToLower()) return null;
+            // We'll only accept reports with an attachment (but we don't care about what it is called)
+            if (!attachment.HasValue()) return null;
+            // For the time being, we'll stop trying to get a match on the filename
+            // if (eFileName == null || attachment == null) return null;
+            // if (eFileName.Trim().ToLower() != attachment.Trim().ToLower()) return null;
 
             return cid.ToInteger(0); 
         }

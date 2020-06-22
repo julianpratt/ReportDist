@@ -8,13 +8,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using ReportDist.Models;
 using ReportDist.Data;
+using Mistware.Files;
 using Mistware.Utils;
 
 namespace ReportDist.Controllers
 {
     public class CirculationController : BaseController
     {
-        public CirculationController(DataContext context) : base(context) {}
+        private   readonly IFile _filesys;
+
+        public CirculationController(DataContext context, IFile filesys) : base(context) 
+        {
+            _filesys = filesys;
+        }
 
         // GET: /Circulation/Index/n
         public IActionResult Index(int? id)
@@ -76,7 +82,7 @@ namespace ReportDist.Controllers
             circ.Email       = "";
             circ.Address     = "";
 
-            return View("Edit", new CirculationViewModel(circ));
+            return View("Edit", new CirculationViewModel(circ, AttachmentTooLarge(id.Value)));
         }
 
         // POST: /Circulation/Create
@@ -135,7 +141,7 @@ namespace ReportDist.Controllers
 
                 //return RedirectToAction("Edit", "Circulation", new { id = circId });
 
-                return View("Edit", new CirculationViewModel(circ));
+                return View("Edit", new CirculationViewModel(circ, AttachmentTooLarge(pendingId ?? 0)));
             }
             catch (Exception ex)
             {
@@ -160,7 +166,7 @@ namespace ReportDist.Controllers
                 Circulation circ = null;
                 if ((circ = Read(id.Value, method)) == null) return RedirectToAction("Error", "Home"); 
                
-                return View(new CirculationViewModel(circ));
+                return View(new CirculationViewModel(circ, AttachmentTooLarge(circ.PendingId)));
             }
             catch (Exception ex)
             {
@@ -252,6 +258,11 @@ namespace ReportDist.Controllers
                 Log.Me.Fatal("Circulation with id " + id.ToString() + " could not be read in " + method); 
             }
             return circ;
+        }
+
+        private bool AttachmentTooLarge(int pendingId)
+        {
+            return _context.PendingReportRepo.CheckFileSize(_filesys, pendingId) != null;
         }
     }
 }

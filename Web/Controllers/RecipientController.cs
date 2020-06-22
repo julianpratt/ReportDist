@@ -53,6 +53,106 @@ namespace ReportDist.Controllers
 
         }
 
+        // GET: /Recipient/Create
+        public IActionResult Create()
+        {
+            string method = "Recipient/Create";
+            Log.Me.Debug(method + " - User: " + CheckIdentity());
+            ApplicationVersion();
+    
+            return View("Edit", new Recipient());
+        }
+
+        // POST: /Recipient/Create
+        [HttpPost]
+        public ActionResult Create(Recipient r)
+        {
+            string method = "Recipient/Create[Post]";
+
+            try
+            {   
+                _context.RecipientRepo.Create(r);
+
+                Log.Me.Info(CheckIdentity() + " added recipient " + r.Name + " (" + r.Email + ")");
+
+                return RedirectToAction("Index", "Recipient");   
+            }
+            catch (Exception ex)
+            {
+                Log.Me.Error("Exception in " + method + ": " + ex.Message);
+                return RedirectToAction("Error", "Home"); 
+            }
+        }
+
+        // GET: /Recipient/Edit/n
+        public IActionResult Edit(int? id)
+        {
+            string method = "Recipient/Edit";
+
+            Log.Me.Debug(method + " - User: " + CheckIdentity() + ", RecipientID: " + (id ?? 0).ToString());
+            ApplicationVersion();
+
+            if (NullId(id, "RecipientID", method)) return RedirectToAction("Error", "Home"); 
+
+            try
+            {
+                Recipient r = null;
+                if ((r = Read(id.Value, method)) == null) return RedirectToAction("Error", "Home"); 
+               
+                return View(r);
+            }
+            catch (Exception ex)
+            {
+                Log.Me.Error("Exception in " + method + ": " + ex.Message);
+                return RedirectToAction("Error", "Home"); 
+            }
+        }
+
+        // POST: /Recipient/Edit
+        [HttpPost]
+        public ActionResult Edit(Recipient update)
+        {
+            string method = "Recipient/Edit[Post]";
+
+            if (IsNull(update,    "Recipient",   method)) return RedirectToAction("Error", "Home");     
+            if (NullId(update.Id, "RecipientID", method)) return RedirectToAction("Error", "Home"); 
+           
+            try
+            {
+                Recipient r = null;
+                if ((r = Read(update.Id, method)) == null)    return RedirectToAction("Error", "Home");
+
+                r.FirstName    = update.FirstName;
+                r.LastName     = update.LastName;
+                r.Email        = update.Email;
+                r.JobTitle     = update.JobTitle;
+                r.AddressLine1 = update.AddressLine1;
+                r.AddressLine2 = update.AddressLine2;
+                r.AddressLine3 = update.AddressLine3;
+                r.AddressLine4 = update.AddressLine4;
+                r.AddressLine5 = update.AddressLine5;
+                r.PostCode     = update.PostCode;
+                
+                _context.RecipientRepo.Update(r);
+
+                Log.Me.Info(CheckIdentity() + " updated recipient " + r.Name + " (" + r.Email + ")");
+
+                return RedirectToAction("Index", "Recipient");
+            }
+           catch (Exception ex)
+            {
+                Log.Me.Error("Exception in " + method + ": " + ex.Message);
+                return RedirectToAction("Error", "Home"); 
+            }
+        }
+
+        // POST: /Recipient/Cancel
+        [HttpPost]
+        public ActionResult Cancel()
+        {                      
+            return RedirectToAction("Index", "Recipient");
+        }
+
         // GET: /Recipient/Delete?pendingId=x&recipientId=y
         public IActionResult Delete(int? recipientId, int? pendingId)
         {
@@ -76,6 +176,16 @@ namespace ReportDist.Controllers
                 return false;
             }             
         } 
+
+        public Recipient Read(int id, string method)
+        {
+           Recipient r = _context.RecipientRepo.Read(id);
+            if (r==null)
+            {
+                Log.Me.Fatal("Recipient with id " + id.ToString() + " could not be read in " + method); 
+            }
+            return r;
+        }
 
     }
 }

@@ -7,7 +7,7 @@ namespace ReportDist.Models
 {
     public class CirculationViewModel : Circulation
     {
-        public CirculationViewModel(Circulation c)
+        public CirculationViewModel(Circulation c, bool oversize)
         {
             if (c != null)
             {
@@ -20,6 +20,8 @@ namespace ReportDist.Models
                 this.PendingId   = c.PendingId;
                 this.RecipientID = c.RecipientID;
                 this.State       = c.State;
+
+                this.OverSize    = true; //oversize;
                 
 
                 this.ElecDeliveryTypes   = new List<SelectListItem>();
@@ -39,6 +41,8 @@ namespace ReportDist.Models
         public List<SelectListItem> ElecDeliveryTypes  { get; set; } 
 
         public List<SelectListItem> PaperDeliveryTypes { get; set; } 
+
+        public bool OverSize                           { get; set; }
  
     }
 }

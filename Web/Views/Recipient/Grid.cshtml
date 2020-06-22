@@ -5,7 +5,7 @@
 <div class="container">  
     <br />  
     <div style="width:90%; margin:0 auto;">  
-        <table id="example" class="compact stripe" width="100%" cellspacing="0">  
+        <table id="recipients" class="compact stripe" width="100%" cellspacing="0">  
             <thead>  
                 <tr>  
                     <th>RecipientID</th>  
@@ -27,7 +27,7 @@
 
         $(document).ready(function ()  
         {  
-            table = $("#example").DataTable({  
+            table = $("#recipients").DataTable({  
                 "processing": true, // for show progress bar  
                 "serverSide": true, // for process server side  
                 "filter": true, // this is for disable filter (search box)  
@@ -55,42 +55,16 @@
                         { return '<a class="btn btn-info" href="/Recipient/Edit/' + full.recipientID + '">Edit</a>'; }  
                     },  
                     {  
-                        data: null, render: function (data, type, row)  
-                        {  
-                            return "<a href='#' class='btn btn-danger' onclick=DeleteData('" + row.RecipientID + "'); >Delete</a>";  
-                        }  
-                    },  
+                        "render": function (data, type, full, meta)  
+                        { if (full.username.length > 10) return '&nbsp;';
+                          else return '<a href="/Recipient/Delete?recipientId=' + full.recipientID + '">Delete</a>'; }   
+                    }   
                 ]  
 
             });
 
             table.columns([1, 2, 3, 4]).header().to$().css("text-align", "left"); 
         });  
-
-
-    function DeleteData(RecipientID) {  
-        if (confirm("Are you sure you want to delete ...?")) {  
-            Delete(RecipientID);  
-            }  
-        else {  
-            return false;  
-            }  
-        }  
-
-
-    function Delete(RecipientID) {  
-        var url = '@Url.Content("~/")' + "Recipient/Delete";  
-
-        $.post(url, { ID: RecipientID }, function (data) {  
-            if (data) {  
-                oTable = $('#example').DataTable();  
-                oTable.draw();  
-                }  
-            else {  
-                alert("Something Went Wrong!");  
-                }  
-            });  
-        }  
 
 </script> 
 }
