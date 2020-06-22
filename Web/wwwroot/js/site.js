@@ -367,3 +367,18 @@ function readOnlyEditReport() {
     $('#spCommit').hide();
   }
 }
+
+function viewTemplate() {
+
+  sScript.Append("function previewET()");
+  sScript.Append("{");
+  sScript.Append(string.Format("var type = document.getElementById(\'{0}\').value;", drpAddElecType.ClientID));
+  options = 'height=300,left=50,top=50,width=550,location=no,resizable=yes,titlebar=no,status=yes,menubar=yes,toolbar=no,scrollbars=yes';
+  window.open('/Template/' + code, 'template', options);
+  
+
+
+
+
+
+}
