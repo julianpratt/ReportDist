@@ -139,7 +139,7 @@ namespace ReportDist.Controllers
                 {
                     ViewData["CommitError"] = commiterror;
 
-                    return View("Edit", update);
+                    return RedirectToAction("Edit", "Report", new { id = update.PendingId });
                 }
 
             }
