@@ -262,7 +262,7 @@ namespace ReportDist.Controllers
 
         private bool AttachmentTooLarge(int pendingId)
         {
-            return _context.PendingReportRepo.CheckFileSize(_filesys, pendingId) != null;
+            return false; //_context.PendingReportRepo.CheckFileSize(_filesys, pendingId) != null;
         }
     }
 }
