@@ -5,10 +5,12 @@
     string pendingId = (string)ViewData["pendingId"];
     string oversize  = (string)ViewData["Oversize"];
     string editable  = (string)ViewData["Editable"];   
-}   
 }
 
 <span class="MediumHeader" id="spMainTitle" runat="server">Report Circulation&nbsp;</span> 
+
+@if(editable == "Yes") 
+{
 <table class="communitylinks" id="tbFindRecip" cellspacing="0" cellpadding="2" width="100%" border-width="0" runat="server">
     <tr>
         <td class="gheaderline" valign="bottom" colspan="2" height="1" rowspan="1"></td>
@@ -38,6 +40,7 @@
         </td>
     </tr>
 </table>
+}
 
 
 <table id="tbReturn" cellspacing="0" cellpadding="0" border-width="0">
@@ -50,7 +53,7 @@
 
 <div id="spCircList">
         <br />
-        <span class="MediumHeader" id="Span1" runat="server">Report Circulation List (Editable @editable Oversize @oversize)</span>
+        <span class="MediumHeader" id="Span1" runat="server">Report Circulation List (Oversize @oversize)</span>
 	    <table class="communitylinks" id="Table6" cellspacing="0" cellpadding="2" width="100%" border="0">
 		    <tr>
 			    <td class="gheaderline" valign="bottom" colspan="2" height="1" rowspan="1"></td>
@@ -85,6 +88,7 @@
 
     $(document).ready(function ()  
     {  
+        if ("@editable" == "Yes") {
             recipList = $("#dgContacts").DataTable({  
             "processing": true,  // for show progress bar  
             "serverSide": true,  // for process server side  
@@ -128,6 +132,7 @@
         });
 
         recipList.columns([1, 2, 3, 4, 5, 6, 7]).header().to$().css("text-align", "left"); 
+        }        
 
 
         circList = $("#dgCircList").DataTable({  
@@ -159,11 +164,13 @@
                 { "data": "addressTrunc",  "name": "addressTrunc",  "autoWidth": true },  
                 {  
                     "render": function (data, type, full, meta)  
-                    { return '<a href="/Circulation/Edit/' + full.circulationId + '">Edit</a>'; }  
+                    { if ("@editable" == "No") return '&nbsp;';
+                      else return '<a href="/Circulation/Edit/' + full.circulationId + '">Edit</a>'; }  
                 },
                 {  
                     "render": function (data, type, full, meta)  
-                    { return '<a href="/Circulation/Delete/' + full.circulationId + '">Delete</a>'; }  
+                    { if ("@editable" == "No") return '&nbsp;';
+                      else return '<a href="/Circulation/Delete/' + full.circulationId + '">Delete</a>'; }  
                 }  
             
             ]  
