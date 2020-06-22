@@ -20,7 +20,7 @@ namespace ReportDist.Controllers
         }
 
         // GET: /Report/Edit/n
-        public IActionResult Edit(int? id)
+        public IActionResult Edit(int? id, string commiterror = null)
         {
             string method = "Report/Edit";
 
@@ -37,6 +37,7 @@ namespace ReportDist.Controllers
                 StandingData sd = _context.StandingDataRepo.Load();
 
                 ViewData["RecipientMessage"] = "- " + _context.CirculationRepo.RecipientMessage(id.Value);
+                if (commiterror != null) ViewData["CommitError"] = commiterror;
 
                 PendingReportViewModel report = new PendingReportViewModel(pr, sd);
 
@@ -137,9 +138,7 @@ namespace ReportDist.Controllers
                 }
                 else
                 {
-                    ViewData["CommitError"] = commiterror;
-
-                    return RedirectToAction("Edit", "Report", new { id = update.PendingId });
+                    return RedirectToAction("Edit", "Report", new { id = update.PendingId, msg = commiterror });
                 }
 
             }
