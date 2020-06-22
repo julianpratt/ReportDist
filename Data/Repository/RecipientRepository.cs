@@ -61,13 +61,21 @@ namespace ReportDist.Data
             string firstName = identity.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value; 
             string lastName  = identity.FindFirst(System.Security.Claims.ClaimTypes.Surname)?.Value;
 
+            if (!username.HasValue()) username=email; // AAD users have UPN set, but Microsoft accounts don't, so use email instead. 
+            if (!username.HasValue()) 
+            {
+                Log.Me.Error("User " + firstName + " " + lastName + " has authenticated, but has neither UPN nor Email set.");
+                return null;
+            }
+
             r = FindRecipient(username);
             if (r != null)
             {
                 // User Identity found. Check it
                 if (r.FirstName != firstName || r.LastName != lastName)
                 {
-                    string tail = ", but First or Last Name do not match (from AAD " + firstName + " " + lastName + ")";
+                    string tail = ", but First or Last Name do not match (from AAD " + firstName + " " + lastName;
+                    tail += ", found in database " + r.FirstName + " " + r.LastName + ")";
                     Log.Me.Warn("User " + username + " has authenticated, and is identified as Recipient " + r.Id.ToString() + tail);
                 } 
             }
