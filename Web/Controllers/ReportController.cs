@@ -127,11 +127,21 @@ namespace ReportDist.Controllers
           
             try
             {
-                string dump = _context.PendingReportRepo.CommitReport(_filesys, update.Id);
+                string commiterror = _context.PendingReportRepo.CommitReport(_filesys, update.Id);
                 
-                Log.Me.Info(CheckIdentity() + " committed report " + update.Id.ToString());
+                if (commiterror == null)
+                {
+                    Log.Me.Info(CheckIdentity() + " committed report " + update.Id.ToString());
 
-                return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ViewData["CommitError"] = commiterror;
+
+                    return View("Edit", update);
+                }
+
             }
             catch (Exception ex)
             {

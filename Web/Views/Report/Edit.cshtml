@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Edit Pending Report";
+	string commiterror = (string)ViewData["CommitError"] ?? "";   
 }
 
 <table cellspacing="0" cellpadding="0" border-width="0" width="750px">
@@ -179,6 +180,10 @@ else
 									<td class="gHighlightText" valign="middle">
 										<button type="submit" id="btnCommit" class="gFormButton" style="HEIGHT:24px;WIDTH:147px;display:none " formaction="/Report/Commit">Commit</button>
 										<div id="CannotCommit" style="display:none;color:red;">Cannot commit because Author, Title, Access Code or Summary has been left empty.</div>
+@if(commiterror.Length >0)
+{
+										<div id="CommitError" style="display:none;color:red;">@commiterror</div>	
+}										
 									</td>
 								</tr>
 							</table>

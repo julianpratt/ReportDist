@@ -119,7 +119,7 @@ function isValidCirculation() {
   }
   else if (document.getElementById("drpAddElecType").selectedIndex == 2 && $("#Oversize").val().trim() == "Yes")
   {
-    $("#ValidationMessage").text("Cannot report as attachment to email, because it is too big.");
+    $("#ValidationMessage").text("Cannot attach report, because it is too big.");
     return false;
   }
   
