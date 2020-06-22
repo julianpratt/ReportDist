@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Edit Circulation";
+    string internalEmailDomain = (string)ViewData["InternalEmailDomain"] ?? "";   
 }
 
 <form method="POST">
@@ -28,7 +29,7 @@
                     <tr>
                         <td class="Label" style="WIDTH: 83px" valign="middle" nowrap="nowrap" width="83">Email</td>
                         <td class="Field" valign="middle">
-                            <input asp-for="Email" class="Field" MaxLength="100" style="WIDTH: 300px" Wrap="False" />
+                            <input asp-for="Email" id="Email" class="Field" MaxLength="100" style="WIDTH: 300px" Wrap="False" />
                             <span asp-validation-for="Email"></span>
                         </td>
                     </tr>
@@ -63,7 +64,7 @@
                                                 <td class="Label" style="WIDTH: 77px" valign="middle" nowrap="nowrap" width="80">Electronic</td>
                                                 <td class="Field" valign="middle">
                                                     <select id="drpAddElecType" asp-for="ElecDeliveryCode" asp-items="Model.ElecDeliveryTypes" class="Field" style="Width:75%;"></select>
-                                                    <button ID="btnSummary" class="gFormButton">View</button>
+                                                    <button type="button" ID="btnSummary" class="gFormButton" onclick="viewTemplate('@internalEmailDomain');">View</button>
                                                 </td>
                                             </tr>
                                             <tr>

@@ -39,10 +39,11 @@ namespace ReportDist.Controllers
             {
                 sOutput.Append("<html><body><pre>");
                 sOutput.Append(subject);
+                sOutput.Append("<br>&nbsp;<br>");
                 sOutput.Append(body);
                 sOutput.Append("</pre></body></html>");
             }
-            else sOutput.Append("No Preview available for the current Electronic template");
+            else sOutput.Append("<html><body><pre>No Preview available for the current Electronic template</pre></body></html>");
 
             return new ContentResult {
                 ContentType = "text/html",

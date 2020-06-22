@@ -86,6 +86,8 @@ namespace ReportDist.Controllers
             circ.Email       = "";
             circ.Address     = "";
 
+            ViewData["InternalEmailDomain"] = EmailConfig.Me.InternalEmailDomain;
+
             PendingReport report = _context.PendingReportRepo.Read(circ.PendingId);
             string oversize = (report.eFilePath ?? "") == "OVERSIZE" ? "Yes" : "No"; 
 

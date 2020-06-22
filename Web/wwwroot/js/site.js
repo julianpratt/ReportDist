@@ -368,17 +368,21 @@ function readOnlyEditReport() {
   }
 }
 
-function viewTemplate() {
+function viewTemplate(internalEmailDomain) {
 
-  sScript.Append("function previewET()");
-  sScript.Append("{");
-  sScript.Append(string.Format("var type = document.getElementById(\'{0}\').value;", drpAddElecType.ClientID));
-  options = 'height=300,left=50,top=50,width=550,location=no,resizable=yes,titlebar=no,status=yes,menubar=yes,toolbar=no,scrollbars=yes';
-  window.open('/Template/' + code, 'template', options);
+  code = "";
+  if      (document.getElementById("drpAddElecType").selectedIndex == 1) code = "ES"; 
+  else if (document.getElementById("drpAddElecType").selectedIndex == 2) code = "EF"; 
+  else if (document.getElementById("drpAddElecType").selectedIndex == 3) code = "EC"; 
+
+  email = document.getElementById('Email').value.trim();
+  n = internalEmailDomain.length;
+
+  if (email.substring(email.length-n, n).toLowerCase() == internalEmailDomain.toLowerCase()) code = code + 'I';
+  else                                                                                       code = code + 'X';
+
+  options = 'height=300,left=50,top=50,width=550,location=no,resizable=yes,titlebar=no,status=yes,menubar=yes';
+  options = options + ',toolbar=no,scrollbars=yes';
+  window.open('/Template?code=' + code, 'template', options);
   
-
-
-
-
-
 }
