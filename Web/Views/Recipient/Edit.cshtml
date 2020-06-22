@@ -38,6 +38,13 @@
                         </td>
                     </tr>
                     <tr>
+                        <td class="Label" style="WIDTH: 83px" valign="middle" nowrap="nowrap" width="83">Job Title</td>
+                        <td class="Field" valign="middle">
+                            <input asp-for="JobTitle" class="Field" MaxLength="100" style="WIDTH: 300px" Wrap="False" />
+                            <span asp-validation-for="JobTitle"></span>
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="Label" style="WIDTH: 83px; PADDING-TOP: 5px" valign="top" nowrap="nowrap" width="83">Address</td>
                           <td class="Field" valign="middle">
                             <input asp-for="AddressLine1" class="Field" MaxLength="100" style="WIDTH: 300px" Wrap="False" />
