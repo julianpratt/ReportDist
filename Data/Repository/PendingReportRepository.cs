@@ -34,6 +34,7 @@ namespace ReportDist.Data
             // Get Next Number
             IQueryable<NextNumbers> q = _context.NextNumberSet.Where(n => n.ReportYear == year);
             int rows = q.Count();
+            Log.Me.Debug("In CreateNonNDT rows = " + rows.ToString());
             if (rows == 0) 
             {
                 NextNumbers n = new NextNumbers();
@@ -44,16 +45,19 @@ namespace ReportDist.Data
             }
             else if (rows > 1) 
             {
+                Log.Me.Debug("In the new code");
                 NextNumbers n = q.First();
                 nextNum = n.NextNumber + 1;
                 foreach (NextNumbers n2 in q.ToList()) _context.NextNumberSet.Remove(n2);
                 _context.SaveChanges();
+                Log.Me.Debug("Just deleted the rows");
 
                 NextNumbers n3 = new NextNumbers();
                 n3.ReportYear = year;
                 n3.NextNumber = nextNum;
                 _context.NextNumberSet.Add(n3);
                 _context.SaveChanges();
+                Log.Me.Debug("And now I've added one");
             }
             else
             {
