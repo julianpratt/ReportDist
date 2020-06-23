@@ -44,19 +44,7 @@ namespace ReportDist.Data
             }
             else if (rows > 1) 
             {
-                Log.Me.Error("There were multiple rows in the NextNumber table for year " + r.ReportYear + ". This has been fixed.");
-              
-                NextNumbers n = q.FirstOrDefault();
-                nextNum = n.NextNumber + 1;
-                IEnumerable<NextNumbers> list = q.ToList();
-                _context.NextNumberSet.RemoveRange(q);
-                _context.SaveChanges();
-
-                NextNumbers n3 = new NextNumbers();
-                n3.ReportYear = year;
-                n3.NextNumber = nextNum;
-                _context.NextNumberSet.Add(n3);
-                _context.SaveChanges();
+                throw new Exception("There are multiple rows in the NextNumber table for year " + r.ReportYear );  
             }
             else
             {
