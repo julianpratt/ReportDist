@@ -53,13 +53,13 @@ namespace ReportDist.Data
         }
 
         [Column("ToCcBcc")]
-        public int      ToCcBccDB     { get; set; }  
+        public byte     ToCcBccDB     { get; set; }  
 
         [NotMapped]
         public eToCcBcc ToCcBcc       
         { 
             get { return (eToCcBcc)Convert.ToInt32(ToCcBccDB); }
-            set { ToCcBccDB = Convert.ToInt32(value); } 
+            set { ToCcBccDB = Convert.ToByte(value); } 
         }
 
         [NotMapped]
