@@ -2,7 +2,8 @@
 
 @{
     ViewData["Title"] = "Edit Pending Report";
-	string commiterror = (string)ViewData["CommitError"] ?? "";   
+	string commiterror = (string)ViewData["CommitError"] ?? ""; 
+	string uploadmax   = (string)ViewData["UploadMax"] ?? "12Mb";  
 }
 
 <table cellspacing="0" cellpadding="0" border-width="0" width="750px">
@@ -167,7 +168,7 @@
 									<td style="WIDTH: 83px" valign="middle" nowrap="nowrap">
 @if(Model.eFileName == null) 
 {										
-                                        <input type="checkbox" id="chkQAConfirm2" class="HighLightBoldText" Width="566px" onclick="onCheck();" title="Nothing Uploaded - check to confirm report is bigger than 12Mb." /><span>&nbsp;Nothing Uploaded - check to confirm report is bigger than 12Mb.</span>
+                                        <input type="checkbox" id="chkQAConfirm2" class="HighLightBoldText" Width="566px" onclick="onCheck();" title="Nothing Uploaded - check to confirm report is bigger than @uploadmax." /><span>&nbsp;Nothing Uploaded - check to confirm report is bigger than @uploadmax.</span>
                                             
 }
 else											

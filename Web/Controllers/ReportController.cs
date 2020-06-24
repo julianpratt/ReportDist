@@ -38,6 +38,7 @@ namespace ReportDist.Controllers
 
                 ViewData["RecipientMessage"] = "- " + _context.CirculationRepo.RecipientMessage(id.Value);
                 if (commiterror != null) ViewData["CommitError"] = commiterror;
+                ViewData["UploadMax"] = ((int)((Config.Get("FileSizeLimit").ToLong())/(1024*1024))).ToString() + "Mb";
 
                 PendingReportViewModel report = new PendingReportViewModel(pr, sd);
 
