@@ -133,10 +133,10 @@ function setAxess() {
   var vs = $("#AccessCode").val().trim();
   var v  = $("#Axess").val();
 
-  if (v.length==0) {
+  if (vs == "!") {}
+  else if (v.length==0) {
     $("#Axess").val(vs);
     }
-  else if (vs == "!") {}
   else if (vs == "ALL" || vs == "NONE") {
     $("#Axess").val(vs);
     }
