@@ -22,7 +22,7 @@ namespace ReportDist.Data
             int? recipientId = c.RecipientID;
 
             if (recipientId == null || recipientId == 0) recipientId = _context.RecipientRepo.Find(c.Email);
-            if (recipientId == 0)
+            /* if (recipientId != 0)
             {
                 Recipient r = new Recipient();
                 r.Name    = c.Name;
@@ -30,14 +30,14 @@ namespace ReportDist.Data
                 r.Address = c.Address;
                 recipientId = _context.RecipientRepo.Create(r);
             }
-            else
-            {
+            else 
+            { 
                 Recipient r = _context.RecipientRepo.Read(recipientId);
                 r.Name    = c.Name;
                 r.Email   = c.Email;
                 r.Address = c.Address;
                 _context.RecipientRepo.Update(r);
-            }
+            } */
             return recipientId;
         } 
 
