@@ -68,7 +68,7 @@ namespace ReportDist.Data
                 return null;
             }
 
-            r = FindRecipient(username);
+            r = FindRecipient(username, null);
             if (r != null)
             {
                 // User Identity found. Check it
@@ -95,14 +95,24 @@ namespace ReportDist.Data
 
         public override int Find(string email)
         {
-            Recipient r = FindRecipient(email);
+            Recipient r = FindRecipient(null, email);
             return (r == null) ? 0 : r.RecipientID;
         }
 
-        public Recipient FindRecipient(string username)
+        public Recipient FindRecipient(string username, string email)
         {
-            IQueryable<Recipient> recips = _context.Recipients.Where(r => r.UserName == username);
-            if (recips.Count() > 0) return recips.FirstOrDefault();
+            if (email != null)
+            {
+                IQueryable<Recipient> recips = _context.Recipients.Where(r => r.Email == email);
+                if (recips.Count() > 0) return recips.FirstOrDefault();
+                else return null;
+            }
+            else if (username != null)
+            {
+                IQueryable<Recipient> recips = _context.Recipients.Where(r => r.UserName == username);
+                if (recips.Count() > 0) return recips.FirstOrDefault();
+                else return null;
+            }
             else return null;
         }
 
