@@ -27,7 +27,7 @@ namespace ReportDist.Data
 
             Log.Me.Debug("RecipientID " + recipientId.ToString());
 
-            if (recipientId != 0)
+            if (recipientId == 0)
             {
                 Recipient r = new Recipient();
                 r.Name    = c.Name;
