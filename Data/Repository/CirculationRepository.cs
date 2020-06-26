@@ -21,7 +21,12 @@ namespace ReportDist.Data
         {
             int? recipientId = c.RecipientID;
 
+            Log.Me.Debug("Email >" + c.Email + "<");
+
             if (recipientId == null || recipientId == 0) recipientId = _context.RecipientRepo.Find(c.Email);
+
+            Log.Me.Debug("RecipientID " + recipientId.ToString());
+
             if (recipientId != 0)
             {
                 Recipient r = new Recipient();
