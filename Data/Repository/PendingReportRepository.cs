@@ -449,6 +449,12 @@ namespace ReportDist.Data
             PendingReport pr = this.Read(pendingId);
 
             batch.Name       = pr.FullReportNo.Trim();
+
+            if (pr.State != 1)
+            {
+                Log.Me.Error("State != 1 for " + pr.FullReportNo + ", so report send was blocked.");
+                return null; 
+            }
     
             if (!pr.CID.HasValue || pr.CID <= 0) 
             {  
@@ -557,14 +563,21 @@ namespace ReportDist.Data
                 // No recipients, so nothing to send, we can just set the Status to 2.
                 // TODO Set status to 2 
                 return null;
-            }       
+            }     
+            
+            PendingReport pr2 = this.Read(pendingId);
+            if (pr2.State != 1)
+            {
+                Log.Me.Error("Possible race condition. Right at the end of CreateEmailBatch State != 1 for " + pr2.FullReportNo + ", so report send was blocked.");
+                return null; 
+            }
 
             // Mark the report as sent  
-            pr.State = 2; // Set State to "Sent" 
-            pr.DateSent = DateTime.Now;               
-            this.Update(pr);  // Update Record
+            pr2.State = 2; // Set State to "Sent" 
+            pr2.DateSent = DateTime.Now;               
+            this.Update(pr2);  // Update Record
             // Also update the state of Circulation
-            _context.CirculationRepo.SetState(pr.PendingId, 2);
+            //_context.CirculationRepo.SetState(pr.PendingId, 2); not needed any more
 
             return batch;
         }
