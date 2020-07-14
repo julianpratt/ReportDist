@@ -5,6 +5,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Mail;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http;
+using System.Net.Security;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using Mistware.Utils;
 using Mistware.Files;
 using Mistware.Postman;
@@ -375,7 +380,8 @@ namespace ReportDist.Data
 
             if (!api.IsValid()) throw new Exception("Missing configuration required by GetCID.");
 
-            string xml1 = FileLoad.Load(api.SearchCataloguesAPI, "\"" + reportNumber+ "\"");
+            //string xml1 = FileLoad.Load(api.SearchCataloguesAPI, "\"" + reportNumber+ "\"");
+            string xml1 = WebLoadSync(api.SearchCataloguesAPI, "\"" + reportNumber+ "\"");
             if (xml1 == null) return null;
 
             // Check that the ReportNumber we searched on is in the XML returned 
@@ -396,7 +402,8 @@ namespace ReportDist.Data
             if (cid == null) return null; // Report has not yet arrived in the catalogue
 
             // Check the attached document has also arrived. 
-            string xml2 = FileLoad.Load(api.GetCatalogueAPI, cid);
+            //string xml2 = FileLoad.Load(api.GetCatalogueAPI, cid);
+            string xml2 = WebLoadSync(api.GetCatalogueAPI, cid);
             if (xml2 == null) return null;
 
             string eFileName  = XML.ReadXmlNode(xml2, api.eFileNameXpath);
@@ -408,6 +415,27 @@ namespace ReportDist.Data
             // if (eFileName.Trim().ToLower() != attachment.Trim().ToLower()) return null;
 
             return cid.ToInteger(0); 
+        }
+
+        private string WebLoadSync(string path, string filename)
+        {
+            return Task.Run(()=>WebLoad(path, filename)).GetAwaiter().GetResult();
+        }
+
+        private async Task<string> WebLoad(string path, string filename)
+        {
+            string fullpath = path + filename;
+
+            var handler = new HttpClientHandler();
+            handler.ServerCertificateCustomValidationCallback = delegate ( HttpRequestMessage msg,
+                X509Certificate2 certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) { return true; };
+            var client = new HttpClient(handler);
+            HttpResponseMessage response = await client.GetAsync(fullpath);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+            else return null;
         }
 
         public void SendAll(IFile filesys)
