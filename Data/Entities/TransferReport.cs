@@ -46,6 +46,7 @@ namespace ReportDist.Data
         public string ToXML()
         {
             StringBuilder sb = new StringBuilder();
+            sb.Append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             sb.Append("<root>\n");
             sb.Append("  <Report>\n");
             AddElement(sb, "Id",            this.CatNo.ToString());
