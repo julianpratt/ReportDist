@@ -4,275 +4,120 @@
     ViewData["Title"] = "Home Page";
 
     string userid = (string)ViewData["UserId"];
-    string sortReportNo = ((string)ViewData["CurrentSort"] == "reportno")       ? "reportno desc"     : "reportno";
-    string sortAuthor   = ((string)ViewData["CurrentSort"] == "author")         ? "author desc"       : "author";
-    string sortTitle    = ((string)ViewData["CurrentSort"] == "title")          ? "title desc"        : "title";
-    string sortDate     = ((string)ViewData["CurrentSort"] == "creationdate")   ? "creationdate desc" : "creationdate";
+    string currentSort  = (string)ViewData["CurrentSort"];
+    string sortReportNo = (currentSort == "reportno")      ? "reportno desc"     : "reportno";
+    string sortAuthor   = (currentSort == "author")        ? "author desc"       : "author";
+    string sortTitle    = (currentSort == "title")         ? "title desc"        : "title";
+    string sortDate     = (currentSort == "creationdate")  ? "creationdate desc" : "creationdate";
 
     string filter       = (string)ViewData["CurrentFilter"];
     string mode         = (filter.Left(6) == "unsent") ? "send" : "normal";
+
+
+    string previous = (Model.HasPreviousPage) ? "/?sortOrder=" + currentSort + "&pageNumber=" + (Model.PageIndex - 1).ToString() + "&currentFilter=" + filter : null; 
+    string next     = (Model.HasNextPage)     ? "/?sortOrder=" + currentSort + "&pageNumber=" + (Model.PageIndex + 1).ToString() + "&currentFilter=" + filter : null; 
+
 }
 
-<div id="divResults" runat="server">
-    <span class="MediumHeader">Reports Pending</span>&nbsp;
-	<table cellpadding="0" cellspacing="0" border-width="0" width="100%">
-		<tr>
-			<td style="PADDING-BOTTOM: 5px">
-                <form method="post" asp-controller="Home" asp-action="Search" onsubmit="return validateSearch()">
-                    <table class="communitylinks" cellspacing="0" cellpadding="3" width="100%" border-width="0">
-                        <tr>
-                            <td class="Highlight" width="15%" colspan="2" height="24">Search Pending List</td>
-                        </tr>
-                        <tr>
-                            <td width="15%" colspan="2" height="24">
-                                <table id="search" cellspacing="0" cellpadding="1" width="100%" border-width="0">
-                                    <tr>
-                                        <td nowrap="nowrap">
-                                            <select id="Company"    name="Company"    class="Field"></select>
-                                            <select id="Year"       name="Year"       class="Field"></select>
-                                            <input  id="Code"       name="Code"       class="Field" />
-                                            <input  id="Number"     name="Number"     class="Field" Width="36px" />
-                                            <select id="ReportType" name="ReportType" class="Field"></select>&nbsp;
-                                            <button type="submit" id="btnSearch" class="gFormButton" Width="55px">Search</button>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<table class="communitylinks" cellspacing="0" cellpadding="3" width="100%" border-width="0" id="Table5">
-					<tr>
-						<td class="gheaderline" valign="bottom" colspan="2" height="1"></td>
-					</tr>
-					<tr id="trSearchLinks" height="16" runat="server">
-						<td class="Highlight" nowrap="nowrap" width="15%" colspan="2" height="24">
-							<table width="100%" border-width="0" cellpadding="0" cellspacing="0">
-								<tr>
-									<td>
-                                        <a  asp-action="Index"
-                                            asp-route-sortOrder="creationdate desc"
-                                            asp-route-pageNumber="1"
-                                            asp-route-currentFilter="uncommitted-@userid"
-                                            class="gContentSection">My Reports
-                                        </a>&nbsp;&nbsp;
-                                        <a  asp-action="Index"
-                                            asp-route-sortOrder="creationdate desc"
-                                            asp-route-pageNumber="1"
-                                            asp-route-currentFilter="uncommitted"
-                                            class="gContentSection">All Reports
-                                        </a>&nbsp;&nbsp;
-                                        <a  asp-action="Index"
-                                            asp-route-sortOrder="creationdate desc"
-                                            asp-route-pageNumber="1"
-                                            asp-route-currentFilter="committed"
-                                            class="gContentSection">All Committed Reports
-                                        </a>&nbsp;&nbsp;
-                                        <a  asp-action="Index"
-                                            asp-route-sortOrder="creationdate desc"
-                                            asp-route-pageNumber="1"
-                                            asp-route-currentFilter="unsent-@userid"
-                                            class="gContentSection">My UnSent Reports
-                                        </a>&nbsp;&nbsp;
-                                        <a  asp-action="Index"
-                                            asp-route-sortOrder="creationdate desc"
-                                            asp-route-pageNumber="1"
-                                            asp-route-currentFilter="sent"
-                                            class="gContentSection">All Sent Reports
-                                        </a>
-									</td>
-									<td align="right">
+<span class="MediumHeader">Reports Pending</span>&nbsp;
+<div class="HighlightHeader">Search Pending List</div>
+<div class="Indent">
+    <form method="post" asp-controller="Home" asp-action="Search" onsubmit="return validateSearch()">
+        <select id="Company"    name="Company"   ></select>
+        <select id="Year"       name="Year"      ></select>
+        <input  id="Code"       name="Code"  />
+        <input  id="Number"     name="Number"/>
+        <select id="ReportType" name="ReportType"></select>&nbsp;
+        <button type="submit" id="btnSearch" class="FormButton">Search</button>
+    </form>
+</div>
+
+<table class="HighlightOptions">
+    <tr>
+        <td>
+            <a href="/?sortOrder=creationdate desc&pageNumber=1&currentFilter=uncommitted-@userid">My Reports</a>&nbsp;&nbsp;
+            <a href="/?sortOrder=creationdate desc&pageNumber=1&currentFilter=uncommitted"        >All Reports</a>&nbsp;&nbsp;
+            <a href="/?sortOrder=creationdate desc&pageNumber=1&currentFilter=committed"          >All Committed Reports</a>&nbsp;&nbsp;            
+            <a href="/?sortOrder=creationdate desc&pageNumber=1&currentFilter=unsent-@userid"     >My UnSent Reports</a>&nbsp;&nbsp;            
+            <a href="/?sortOrder=creationdate desc&pageNumber=1&currentFilter=sent"               >All Sent Reports</a>
+        </td>
+        <td align="right">
 @if (mode == "send") 
 { 
-                                        <button type="button" id="btnSendAll" class="gFormButton" 
-                                            style="border-style: solid;border-width: 1px;font-size: 80%"
-                                            title="Distribute (email) all the reports you have committed"
-											onclick="window.location.href='/Report/SendAll'">Send All</button>
+            <button type="button" id="btnSendAll" class="WideButton" title="Distribute (email) all the reports you have committed" onclick="window.location.href='/Report/SendAll'">Send All</button>
 }
 else
 {
-                                        <button type="button" id="btnCreate" class="gFormButton" 
-                                            style="border-style: solid;border-width: 1px;font-size: 80%"
-                                            title="Create a new report"
-											onclick="window.location.href='/Report/Create'">Create Report</button>
+            <button type="button" id="btnCreate" class="WideButton" title="Create a new report" onclick="window.location.href='/Report/Create'">Create Report</button>
 }                                           
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-                            <table rules="cols" border-width="1" style="border-color:White;border-style:None;width:100%;border-collapse:collapse;">
-                                <thead>                                    
-                                    <tr class="gContentSection" align="center">
-		                                <th colspan="6">
-@if (Model.HasNextPage || Model.HasPreviousPage)
-{                                            
-                                            <span>
-@if (Model.HasPreviousPage)
-{
-                                                <a  asp-action="Index"
-                                                    asp-route-sortOrder="@ViewData["CurrentSort"]"
-                                                    asp-route-pageNumber="@(Model.PageIndex - 1)"
-                                                    asp-route-currentFilter="@ViewData["CurrentFilter"]"
-                                                    style="font-weight:normal;">
-                                                    &lt;&nbsp;Previous
-                                                </a>
-}
-else
-{
-                                                    <span style="font-weight:normal;">&lt;&nbsp;Previous</span>
-}
-                                                &nbsp;
-@if (Model.HasNextPage)
-{                                                
-                                                <a  asp-action="Index"
-                                                    asp-route-sortOrder="@ViewData["CurrentSort"]"
-                                                    asp-route-pageNumber="@(Model.PageIndex + 1)"
-                                                    asp-route-currentFilter="@ViewData["CurrentFilter"]"
-                                                    style="font-weight:normal;">
-                                                    Next&nbsp;&gt;
-                                                </a>
-}
-else
-{
-                                                    <span style="font-weight:normal;">Next&nbsp;&gt;</span>
-}
-                                            </span>
-}                                            
-                                        </th>
-	                                </tr>                                    
-                                    <tr class="gContentSection" align="left" style="background-color:#EEEEEE;font-family:Arial;font-weight:bold;">
-                                        <th style="width:13%;">
-                                            <a asp-action="Index" asp-route-sortOrder="@sortReportNo" asp-route-currentFilter="@filter">Report No</a>
-                                        </th>
-                                        <th style="width:17%;">
-                                            <a  asp-action="Index" 
-                                                asp-route-sortOrder="@sortAuthor"
-                                                asp-route-currentFilter="@filter">
-                                                Author
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a  asp-action="Index" 
-                                                asp-route-sortOrder="@sortTitle"
-                                                asp-route-currentFilter="@filter">
-                                                Title
-                                            </a>
-                                        </th>
-                                        <th style="width:7%;">
-                                            <a  asp-action="Index" 
-                                                asp-route-sortOrder="@sortDate"
-                                                asp-route-currentFilter="@ViewData["CurrentFilter"]">
-                                                Date
-                                            </a>
-                                        </th>
-                                        <th style="width:3%;">&nbsp;</th>
-                                        <th style="width:3%;">&nbsp;</th>                                        
-                                    </tr>
-                                </thead>
-                                <tbody>
-@{string backcolour = "White";}
+        </td>
+    </tr>
+</table>
+
+<div class="Pager">
+    @if (next.HasValue() || previous.HasValue())
+    {                                            
+        @if (previous.HasValue()) { <a href="@previous">&lt;&nbsp;Previous</a>    }
+        else                      {               <span>&lt;&nbsp;Previous</span> }
+        <span>&nbsp;</span>
+        @if (next.HasValue())     { <a href="@next"   >Next&nbsp;&gt;</a>         }
+        else                      {              <span>Next&nbsp;&gt;</span>      }
+    }                                            
+</div>                                    
+
+<table class="StripedTable">
+    <thead>                                    
+        <tr>
+            <th style="width:13%;"><a asp-action="Index" asp-route-sortOrder="@sortReportNo" asp-route-currentFilter="@filter">Report No</a></th>
+            <th style="width:17%;"><a asp-action="Index" asp-route-sortOrder="@sortAuthor"   asp-route-currentFilter="@filter">Author</a></th>
+            <th>                   <a asp-action="Index" asp-route-sortOrder="@sortTitle"    asp-route-currentFilter="@filter">Title</a></th>
+            <th style="width:7%;" ><a asp-action="Index" asp-route-sortOrder="@sortDate"     asp-route-currentFilter="@filter">Date</a></th>
+            <th style="width:3%;">&nbsp;</th>
+            <th style="width:3%;">&nbsp;</th>                                        
+        </tr>
+    </thead>
+    <tbody>
+@{string rowclass = "Stripe";}
 @foreach (var item in Model) {
-    backcolour = (backcolour == "White") ? "#EEEEEE" : "White";
-    string style = "background-color:" + backcolour + ";";
-                                    <tr style="@style"> 
-                                        <td valign="top">
-                                            @Html.DisplayFor(modelItem => item.FullReportNo)
-                                        </td>
-                                        <td valign="top">
-                                            @{string authTrunc = item.Author.IsNull("").Trim().Length >= 25 ? (item.Author.Trim().Substring(0,25) + "...") : item.Author.IsNull("").Trim();}
-                                            @authTrunc
-                                        </td>
-                                        <td valign="top">
-                                            @{string title = item.Title.Left(150);}
-                                            @title
-                                        </td>
-                                        <td valign="top">
-                                            @{string date = item.CreationDate.ToDateString();}
-                                            @date
-                                        </td>
+    rowclass = (rowclass == "Stripe") ? "NoStripe" : "Stripe";
+    string authTrunc = item.Author.IsNull("").Trim().Length >= 25 ? (item.Author.Trim().Substring(0,25) + "...") : item.Author.IsNull("").Trim();
+    string title     = item.Title.Left(150);
+    string date      = item.CreationDate.ToDateString();
+        <tr class="@rowclass"> 
+            <td>@Html.DisplayFor(modelItem => item.FullReportNo)</td>
+            <td>@authTrunc</td>
+            <td>@title</td>
+            <td>@date</td>
 @if (item.State == 0) 
 {                                        
-                                        <td valign="top">
-                                            <a asp-controller="Report" asp-action="Edit"    asp-route-id="@item.Id">Edit</a>
-                                        </td>
-                                        <td valign="top">   
-                                            <a href="javascript:void();" onclick="reportDelete(@item.Id)">Del</a>
-                                        </td>
+            <td><a asp-controller="Report" asp-action="Edit"    asp-route-id="@item.Id">Edit</a></td>
+            <td><a href="javascript:void();" onclick="reportDelete(@item.Id)">Del</a></td>
 }
 else if (item.State == 1 && item.CID > 0)
 {
-                                        <td valign="top">
-                                            <a asp-controller="Report" asp-action="Edit"    asp-route-id="@item.Id">View</a>
-                                        </td>
-                                        <td valign="top">
-                                            <a asp-controller="Report" asp-action="Send"    asp-route-id="@item.Id">Send</a>
-                                        </td>
+            <td><a asp-controller="Report" asp-action="Edit"    asp-route-id="@item.Id">View</a></td>
+            <td><a asp-controller="Report" asp-action="Send"    asp-route-id="@item.Id">Send</a></td>
 } 
 else 
 {
-                                        <td valign="top">
-                                            <a asp-controller="Report" asp-action="Edit"    asp-route-id="@item.Id">View</a>
-                                        </td>
-                                        <td valign="top">
-                                            &nbsp;
-                                        </td>
+            <td><a asp-controller="Report" asp-action="Edit"    asp-route-id="@item.Id">View</a></td>
+            <td>&nbsp;</td>
 }
-                                    </tr>
+        </tr>
 }                                   
-                                    <tr class="gContentSection" align="center">
-		                                <td colspan="6">
-@if (Model.HasNextPage || Model.HasPreviousPage)
-{
-                                            <span>
-@if (Model.HasPreviousPage)
-{
-                                                <a  asp-action="Index"
-                                                    asp-route-sortOrder="@ViewData["CurrentSort"]"
-                                                    asp-route-pageNumber="@(Model.PageIndex - 1)"
-                                                    asp-route-currentFilter="@ViewData["CurrentFilter"]"
-                                                    style="font-weight:normal;">
-                                                    &lt;&nbsp;Previous
-                                                </a>
-}
-else
-{
-                                                    <span style="font-weight:normal;">&lt;&nbsp;Previous</span>
-}
-                                                &nbsp;
-@if (Model.HasNextPage)
-{                                                
-                                                <a  asp-action="Index"
-                                                    asp-route-sortOrder="@ViewData["CurrentSort"]"
-                                                    asp-route-pageNumber="@(Model.PageIndex + 1)"
-                                                    asp-route-currentFilter="@ViewData["CurrentFilter"]"
-                                                    style="font-weight:normal;">
-                                                    Next&nbsp;&gt;
-                                                </a>
-}
-else
-{
-                                                    <span style="font-weight:normal;">Next&nbsp;&gt;</span>
-}
-                                            </span>
-}                                            
-                                        </td>
-	                                </tr>                                   
-                                </tbody>                              
-                            </table>
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-	</table>
-</div>
+    </tbody>                              
+</table>
+
+<div class="Pager">
+    @if (next.HasValue() || previous.HasValue())
+    {                                            
+        @if (previous.HasValue()) { <a href="@previous">&lt;&nbsp;Previous</a>    }
+        else                      {               <span>&lt;&nbsp;Previous</span> }
+        <span>&nbsp;</span>
+        @if (next.HasValue())     { <a href="@next"   >Next&nbsp;&gt;</a>         }
+        else                      {              <span>Next&nbsp;&gt;</span>      }
+    }                                            
+</div>                                    
 
 @section scripts {
      <script type="text/javascript">

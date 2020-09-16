@@ -19,9 +19,9 @@ namespace ReportDist.Controllers
         // GET: /Recipient/ShowGrid 
         public IActionResult ShowGrid()  
         {  
-            string user = CheckIdentity();
+            User user = CheckIdentity();
             if (user == null) return RedirectToAction("Error", "Home");
-            Log.Me.Debug("Recipient/Index - User: " + user);
+            Log.Me.Debug("Recipient/Index - User: " + user.UserName);
             ApplicationVersion();
 
             return View("Grid");  
@@ -73,7 +73,7 @@ namespace ReportDist.Controllers
             {   
                 _context.RecipientRepo.Create(r);
 
-                Log.Me.Info(CheckIdentity() + " added recipient " + r.Name + " (" + r.Email + ")");
+                Log.Me.Info(CheckIdentity().UserName + " added recipient " + r.Name + " (" + r.Email + ")");
 
                 return RedirectToAction("ShowGrid", "Recipient");   
             }
@@ -89,7 +89,7 @@ namespace ReportDist.Controllers
         {
             string method = "Recipient/Edit";
 
-            Log.Me.Debug(method + " - User: " + CheckIdentity() + ", RecipientID: " + (id ?? 0).ToString());
+            Log.Me.Debug(method + " - User: " + CheckIdentity().UserName + ", RecipientID: " + (id ?? 0).ToString());
             ApplicationVersion();
 
             if (NullId(id, "RecipientID", method)) return RedirectToAction("Error", "Home"); 
@@ -135,7 +135,7 @@ namespace ReportDist.Controllers
                 
                 _context.RecipientRepo.Update(r);
 
-                Log.Me.Info(CheckIdentity() + " updated recipient " + r.Name + " (" + r.Email + ")");
+                Log.Me.Info(CheckIdentity().UserName + " updated recipient " + r.Name + " (" + r.Email + ")");
 
                 return RedirectToAction("ShowGrid", "Recipient");
             }

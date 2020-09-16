@@ -24,7 +24,7 @@ namespace ReportDist.Controllers
         {
             string method = "Report/Edit";
 
-            Log.Me.Debug(method + " - User: " + CheckIdentity() + ", PendingId: " + (id ?? 0).ToString());
+            Log.Me.Debug(method + " - User: " + CheckIdentity().UserName + ", PendingId: " + (id ?? 0).ToString());
             ApplicationVersion();
 
             if (NullId(id, "PendingId", method))  return RedirectToAction("Error", "Home");
@@ -70,7 +70,7 @@ namespace ReportDist.Controllers
                 {
                     Log.Me.Warn("Report had zero RecipientId in ReportController.SaveChanges(). Report: " + update.Id.ToString());
                 }
-                string userid = HttpContext.Session.GetString("UserId");
+                string userid = CheckIdentity().UserId;
                 if (!userid.HasValue() || userid.ToInteger() <= 0)
                 {
                     Log.Me.Warn("Null or Zero userid from Session in ReportController.SaveChanges(). Report: " + update.Id.ToString());
@@ -91,7 +91,7 @@ namespace ReportDist.Controllers
 
                 _context.PendingReportRepo.Update(report);
 
-                Log.Me.Info(CheckIdentity() + " updated report " + update.Id.ToString());
+                Log.Me.Info(CheckIdentity().UserName + " updated report " + update.Id.ToString());
 
                 return true;     
             }
@@ -133,7 +133,7 @@ namespace ReportDist.Controllers
                 
                 if (commiterror == null)
                 {
-                    Log.Me.Info(CheckIdentity() + " committed report " + update.Id.ToString());
+                    Log.Me.Info(CheckIdentity().UserName + " committed report " + update.Id.ToString());
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -154,7 +154,7 @@ namespace ReportDist.Controllers
         public IActionResult Create()
         {
             string method = "Report/Create";
-            Log.Me.Debug(method + " - User: " + CheckIdentity());
+            Log.Me.Debug(method + " - User: " + CheckIdentity().UserName);
             ApplicationVersion();
 
             ViewData["Feature"] = "Create Report";
@@ -167,7 +167,7 @@ namespace ReportDist.Controllers
         {
             string method = "Report/Create[Post]";
 
-            string userid = HttpContext.Session.GetString("UserId");
+            string userid = CheckIdentity().UserId;
             if (!userid.HasValue() || userid.ToInteger() <= 0)
             {
                 Log.Me.Warn("Null or Zero userid in ReportController.Create() for Report " + vm.ReportNo);
@@ -189,7 +189,7 @@ namespace ReportDist.Controllers
 
                 if (ZeroId(pendingId, "PendingId", method)) return RedirectToAction("Error", "Home"); 
 
-                Log.Me.Info(CheckIdentity() + " created report " + pendingId.ToString());
+                Log.Me.Info(CheckIdentity().UserName + " created report " + pendingId.ToString());
 
                 return RedirectToAction("Edit", "Report", new { id = pendingId });
             }
@@ -212,7 +212,7 @@ namespace ReportDist.Controllers
             {
                 _context.PendingReportRepo.Delete(id);
 
-                Log.Me.Info(CheckIdentity() + " deleted report " + id.ToString());
+                Log.Me.Info(CheckIdentity().UserName + " deleted report " + id.ToString());
 
                 return RedirectToAction("Index", "Home");
             }
@@ -277,7 +277,7 @@ namespace ReportDist.Controllers
             
             _context.PendingReportRepo.Send(id.Value, _filesys);
 
-            Log.Me.Info(CheckIdentity() + " sent report " + id.ToString());
+            Log.Me.Info(CheckIdentity().UserName + " sent report " + id.ToString());
 
             return RedirectToAction("Index", "Home");
         }
@@ -287,7 +287,7 @@ namespace ReportDist.Controllers
         {
             _context.PendingReportRepo.SendAll(_filesys);
 
-            Log.Me.Info(CheckIdentity() + " sent all reports");
+            Log.Me.Info(CheckIdentity().UserName + " sent all reports");
 
             return RedirectToAction("Index", "Home");
         }

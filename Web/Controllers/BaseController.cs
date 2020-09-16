@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReportDist.Data;
+using ReportDist.Models;
 using Mistware.Utils;
 
 namespace ReportDist.Controllers
@@ -16,6 +17,7 @@ namespace ReportDist.Controllers
             _context = context;
         }
 
+        /*
         protected string CheckIdentity()
         {
             string name = "";
@@ -61,6 +63,56 @@ namespace ReportDist.Controllers
             }    
 
             return name;
+        }
+        */
+        protected User CheckIdentity()
+        {
+            ClaimsIdentity identity = User.Identity as ClaimsIdentity;
+            if (identity == null) return null;
+
+            string login = identity?.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+            string key   = "user-" + login; 
+
+            User user = Cache<User>.GetCache().Get(key, () => IdentifyUser(identity)); 
+
+            if (user == null)
+            {
+                Log.Me.Fatal("Failed to get user identity in GetUserIdentity()");
+                return null;
+            }
+
+            ViewData["UserId"]   = user.UserId;
+            ViewData["UserName"] = user.UserName;
+            
+            return user;
+        }
+
+        private User IdentifyUser(ClaimsIdentity identity)
+        {            
+            User user = null;
+
+            try
+            {
+                Recipient r = _context.RecipientRepo.Identify(identity);
+                if (r != null)
+                {
+                    user = new User();
+                    user.UserId   = r.Id.ToString();
+                    user.UserName = r.Name;
+                }
+                else
+                {
+                    Log.Me.Fatal("User NOT identified. This is often caused by lack of database connection.");
+                    return null;
+                }
+            }    
+            catch (Exception ex)
+            {
+                Log.Me.Fatal("Exception in IdentifyUser(): " + ex.Message);
+                return null;
+            }        
+
+            return user;
         }
 
         protected void ApplicationVersion()

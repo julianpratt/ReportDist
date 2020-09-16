@@ -26,7 +26,7 @@ namespace ReportDist.Controllers
         public IActionResult Index(int? id)
         {
             string method = "Circulation/Index";
-            Log.Me.Debug(method + " - User: " + CheckIdentity() + ", PendingId: " + (id ?? 0).ToString());
+            Log.Me.Debug(method + " - User: " + CheckIdentity().UserName + ", PendingId: " + (id ?? 0).ToString());
             ApplicationVersion();
 
             if (NullId(id, "PendingId", "Circulation/Index")) return RedirectToAction("Error", "Home"); 
@@ -73,7 +73,7 @@ namespace ReportDist.Controllers
         public IActionResult Create(int? id)
         {
             string method = "Circulation/Create";
-            Log.Me.Debug(method + " - User: " + CheckIdentity() + ", PendingId: " + (id ?? 0).ToString());
+            Log.Me.Debug(method + " - User: " + CheckIdentity().UserName + ", PendingId: " + (id ?? 0).ToString());
             ApplicationVersion();
 
             if (NullId(id, "PendingId", method)) return RedirectToAction("Error", "Home"); 
@@ -108,7 +108,7 @@ namespace ReportDist.Controllers
             {   
                 _context.CirculationRepo.Create(circ);
 
-                Log.Me.Info(CheckIdentity() + " added circulation to report " + circ.PendingId.ToString());
+                Log.Me.Info(CheckIdentity().UserName + " added circulation to report " + circ.PendingId.ToString());
 
                 return RedirectToAction("Index", "Circulation", new { id = circ.PendingId });   
             }
@@ -146,7 +146,7 @@ namespace ReportDist.Controllers
                 circ.Address     = r.Address;
                 //int? circId = _context.CirculationRepo.Create(circ);
 
-                //Log.Me.Info(CheckIdentity() + " added circulation to report " + circ.PendingId.ToString());
+                //Log.Me.Info(CheckIdentity().UserName + " added circulation to report " + circ.PendingId.ToString());
 
                 //return RedirectToAction("Edit", "Circulation", new { id = circId });
 
@@ -170,7 +170,7 @@ namespace ReportDist.Controllers
         {
             string method = "Circulation/Edit";
 
-            Log.Me.Debug(method + " - User: " + CheckIdentity() + ", CirculationId: " + (id ?? 0).ToString());
+            Log.Me.Debug(method + " - User: " + CheckIdentity().UserName + ", CirculationId: " + (id ?? 0).ToString());
             ApplicationVersion();
 
             if (NullId(id, "CirculationId", method)) return RedirectToAction("Error", "Home"); 
@@ -218,7 +218,7 @@ namespace ReportDist.Controllers
                 circ.Delivery = update.Delivery;
                 _context.CirculationRepo.Update(circ);
 
-                Log.Me.Info(CheckIdentity() + " updated circulation on report " + circ.PendingId.ToString());
+                Log.Me.Info(CheckIdentity().UserName + " updated circulation on report " + circ.PendingId.ToString());
 
                 return RedirectToAction("Index", "Circulation", new { id = circ.PendingId });
             }
@@ -258,7 +258,7 @@ namespace ReportDist.Controllers
 
                 _context.CirculationRepo.Delete(id);
 
-                Log.Me.Info(CheckIdentity() + " deleted circulation from report " + circ.PendingId.ToString());
+                Log.Me.Info(CheckIdentity().UserName + " deleted circulation from report " + circ.PendingId.ToString());
     
                 return RedirectToAction("Index", "Circulation", new { id = circ.PendingId });
             }

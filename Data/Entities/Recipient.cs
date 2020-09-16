@@ -87,13 +87,13 @@ namespace ReportDist.Data
                     int i = value.IndexOf(' ');
                     if (i > 0)
                     {
-                        FirstName = value.Left(i);
-                        LastName  = value.Substring(i+1);
+                        FirstName = value.Left(i).Left(50);
+                        LastName  = value.Substring(i+1).Left(50);
                     }
                     else
                     {
                         FirstName = "";
-                        LastName = value;
+                        LastName = value.Left(50);
                     }       
                 }
                              
@@ -125,22 +125,30 @@ namespace ReportDist.Data
                 if (value.HasValue())
                 {
                     string[] addresslines = value.Split('\n');
+                    if (addresslines.Length == 1) {
+                        /* Alternative parsing assuming no carriage returns */
+                        addresslines = value.Split(',');
+                    }
                     int n = addresslines.Length;
-                    for (int i=0; i<n; ++i) addresslines[i]=TrimComma(addresslines[i]);
+                    for (int i=0; i<n; ++i) 
+                    {
+                        addresslines[i]=TrimComma(addresslines[i]);
+                        if (addresslines[i].Length > 50) 
+                          Log.Me.Warn("Address truncation for Recipient " + Name + " - this value will be truncated to 50 characters: " + addresslines[i]);
+                    }                      
                     if (addresslines[n-1].Length <= 10) 
                     {
                         // Final line is 10 char or less, so it is assumed to be the postcode
                         PostCode = addresslines[n-1];
                         --n; // We've used the final line, so don't give it to an address line
                     }
-                    if (n > 0) AddressLine1 = addresslines[0];
-                    if (n > 1) AddressLine2 = addresslines[1];
-                    if (n > 2) AddressLine2 = addresslines[2];
-                    if (n > 3) AddressLine2 = addresslines[3];
-                    if (n > 4) AddressLine2 = addresslines[4];
+                    if (n > 0) AddressLine1 = addresslines[0].Left(50);
+                    if (n > 1) AddressLine2 = addresslines[1].Left(50);
+                    if (n > 2) AddressLine3 = addresslines[2].Left(50);
+                    if (n > 3) AddressLine4 = addresslines[3].Left(50);
+                    if (n > 4) AddressLine5 = addresslines[4].Left(50);
                 }
             }
-
         }
 
         [NotMapped]
@@ -167,12 +175,13 @@ namespace ReportDist.Data
             }
             else
             {
-                address += ( (address.Length > 0) ? ",\r\n" : "" ) + TrimComma(line.Trim());
+                address += ( (address.Length > 0) ? ",\r\n" : "" ) + TrimComma(line);
             }
             return address;
         }
-        private static string TrimComma(string s)
+        private static string TrimComma(string sin)
         {
+            string s = sin.TrimEnd();
             if (s.Right(1) == ",") return s.Left(s.Length - 1);
             else                   return s;
         }

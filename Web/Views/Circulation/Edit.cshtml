@@ -5,105 +5,76 @@
     string internalEmailDomain = (string)ViewData["InternalEmailDomain"] ?? "";   
 }
 
-<form method="POST">
-    <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="PendingId" />
-    <input type="hidden" asp-for="Oversize" id="Oversize" />
-    <table class="communitylinks" id="tbAddAmendRecip" cellspacing="0" cellpadding="2" border-width="0">
-        <tr>
-            <td class="gheaderline" valign="bottom" colspan="2" height="1" rowspan="1"></td>
-        </tr>
-        <tr>
-            <td class="Highlight" height="24">&nbsp;Add / Amend Recipient Details</td>
-        </tr>
-        <tr>
-            <td style="PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-TOP: 10px" valign="top">
-                <table id="Table3" style="WIDTH: 360px" cellspacing="0" cellpadding="1" width="360" border-width="0">
-                    <tr>
-                        <td class="Label" style="WIDTH: 83px" valign="middle" nowrap="nowrap" width="83">Name</td>
-                        <td class="Field" valign="middle">
-                            <input asp-for="Name" class="Field" MaxLength="65" style="WIDTH: 300px" Wrap="False" />
-                            <span asp-validation-for="Name"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="Label" style="WIDTH: 83px" valign="middle" nowrap="nowrap" width="83">Email</td>
-                        <td class="Field" valign="middle">
-                            <input asp-for="Email" id="Email" class="Field" MaxLength="100" style="WIDTH: 300px" Wrap="False" />
-                            <span asp-validation-for="Email"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="Label" style="WIDTH: 83px; PADDING-TOP: 5px" valign="top" nowrap="nowrap" width="83">Address</td>
-                        <td class="Field" style="PADDING-BOTTOM: 5px; PADDING-TOP: 5px" valign="middle">
-                            <textarea asp-for="Address" class="Field" MaxLength="300" style="WIDTH: 300px; Height: 80px;" ></textarea>
-                            <span asp-validation-for="Address"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <table class="communitylinks" id="Table4" cellspacing="0" cellpadding="2" width="100%" border-width="0">
-                                <tr>
-                                    <td class="gheaderline" valign="bottom" colspan="2" height="1" rowspan="1"></td>
-                                </tr>
-                                <tr>
-                                    <td class="Highlight" height="24">&nbsp;Distribution Options</td>
-                                </tr>
-                                <tr>
-                                    <td style="PADDING-LEFT: 3px" valign="top">
-                                        <table id="Table5" cellspacing="0" cellpadding="1" width="100%" border-width="0">
-                                            <tr>
-                                                <td class="Label" style="WIDTH: 77px" valign="middle" nowrap="nowrap" width="80"></td>
-                                                <td class="Field" valign="middle">
-                                                    <input type="radio" asp-for="ToCcBccText" class="Field" value="To"  />To&nbsp;&nbsp;&nbsp;
-                                                    <input type="radio" asp-for="ToCcBccText" class="Field" value="CC"  />CC&nbsp;&nbsp;&nbsp;
-                                                    <input type="radio" asp-for="ToCcBccText" class="Field" value="BCC" />BCC
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="Label" style="WIDTH: 77px" valign="middle" nowrap="nowrap" width="80">Electronic</td>
-                                                <td class="Field" valign="middle">
-                                                    <select id="drpAddElecType" asp-for="ElecDeliveryCode" asp-items="Model.ElecDeliveryTypes" class="Field" style="Width:75%;"></select>
-                                                    <button type="button" ID="btnSummary" class="gFormButton" onclick="viewTemplate('@internalEmailDomain');">View</button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="Label" style="WIDTH: 77px" valign="middle" nowrap="nowrap" width="80">Paper</td>
-                                                <td class="Field" valign="middle">
-                                                    <select id="drpAddPaperType" asp-for="PaperDeliveryCode" asp-items="Model.PaperDeliveryTypes" class="Field" style="Width:100%;"></select>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td>
-                                                    <button type="button" id="btnES" class="gFormButton" Width="25px" Text="ES" BorderStyle="Solid" BorderWidth="1px" onclick="setDelivery('ES');" Title="Electronic Summary">ES</button>&nbsp;
-                                                    <button type="button" id="btnEF" class="gFormButton" Width="25px" Text="EF" BorderStyle="Solid" BorderWidth="1px" onclick="setDelivery('EF');" Title="Electronic Full"   >EF</button>&nbsp;
-                                                    <button type="button" id="btnPS" class="gFormButton" Width="25px" Text="PS" BorderStyle="Solid" BorderWidth="1px" onclick="setDelivery('PS');" Title="Paper Summary"     >PS</button>&nbsp;
-                                                    <button type="button" id="btnPF" class="gFormButton" Width="25px" Text="PF" BorderStyle="Solid" BorderWidth="1px" onclick="setDelivery('PF');" Title="Paper Full"        >PF</button>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="PADDING-TOP:5px;align-content:right;vertical-align:bottom" colspan="2">
-                            <span id="ValidationMessage" class="Label" style="color:red;"></span><br/>
+<div class="NarrowPage">
+    <form method="post">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="PendingId" />
+        <input type="hidden" asp-for="Oversize" id="Oversize" />
+        <div class="HighlightHeader">Add / Amend Recipient Details</div>
+        <div class="Indent"> 
+            <table class="Grid">
+                <tr>
+                    <td width="100px"><label>Name</label></td>
+                    <td width="300px"><input asp-for="Name" MaxLength="65" /><span asp-validation-for="Name"></span></td>
+                </tr>
+                <tr>
+                    <td><label>Email</label></td>
+                    <td><input asp-for="Email" id="Email" MaxLength="100" /><span asp-validation-for="Email"></span></td>
+                </tr>
+                <tr>
+                    <td class="LabelTop"><label>Address</label></td>
+                    <td><textarea asp-for="Address" class="TextAreaMedium" MaxLength="300" ></textarea><span asp-validation-for="Address"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><div class="HighlightHeader">Distribution Options</div></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div class="RadioButtons">
+                            <input type="radio" asp-for="ToCcBccText" class="Field" value="To"  />To&nbsp;&nbsp;&nbsp;
+                            <input type="radio" asp-for="ToCcBccText" class="Field" value="CC"  />CC&nbsp;&nbsp;&nbsp;
+                            <input type="radio" asp-for="ToCcBccText" class="Field" value="BCC" />BCC
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Electronic</label></td>
+                    <td>
+                        <select id="drpAddElecType" asp-for="ElecDeliveryCode" asp-items="Model.ElecDeliveryTypes"></select>
+                        <button type="button" id="btnSummary" class="FormButton" onclick="viewTemplate('@internalEmailDomain');">View</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Paper</label></td>
+                    <td><select id="drpAddPaperType" asp-for="PaperDeliveryCode" asp-items="Model.PaperDeliveryTypes"></select></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div class="FormButtons">
+                            <button type="button" id="btnES" class="NarrowButton" Text="ES" onclick="setDelivery('ES');" Title="Electronic Summary">ES</button>&nbsp;
+                            <button type="button" id="btnEF" class="NarrowButton" Text="EF" onclick="setDelivery('EF');" Title="Electronic Full"   >EF</button>&nbsp;
+                            <button type="button" id="btnPS" class="NarrowButton" Text="PS" onclick="setDelivery('PS');" Title="Paper Summary"     >PS</button>&nbsp;
+                            <button type="button" id="btnPF" class="NarrowButton" Text="PF" onclick="setDelivery('PF');" Title="Paper Full"        >PF</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <span id="ValidationMessage" style="color:red;"></span><br/>
 @if (Model.Id == 0)
 {                            
-                            <button type="submit" id="btnAdd"  class="gFormButton" style="HEIGHT:24px;WIDTH:55px;" onclick="return isValidCirculation()" formaction="/Circulation/Create">Add</button>
+                        <button type="submit" id="btnAdd"  class="FormButton" onclick="return isValidCirculation()" formaction="/Circulation/Create">Add</button>
 }
 else
 {                            
-                            <button type="submit" id="btnSave" class="gFormButton" style="HEIGHT:24px;WIDTH:55px;" onclick="return isValidCirculation()" formaction="/Circulation/Edit">Save</button>;
+                        <button type="submit" id="btnSave" class="FormButton" onclick="return isValidCirculation()" formaction="/Circulation/Edit">Save</button>
 }                            
-							&nbsp;&nbsp;<button type="submit" id="btnCancel" class="gFormButton" style="HEIGHT:24px;WIDTH:55px;" formaction="/Circulation/Cancel">Cancel</button>                  
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</form>
+						&nbsp;&nbsp;<button type="submit" id="btnCancel" class="FormButton" formaction="/Circulation/Cancel">Cancel</button>                  
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</div>    

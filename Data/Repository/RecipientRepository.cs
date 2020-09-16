@@ -123,9 +123,14 @@ namespace ReportDist.Data
             if (!String.IsNullOrEmpty(filter))
             {
                 recips = recips.Where(r => (r.FirstName.Contains(filter)    || r.LastName.Contains(filter) ||
+                                            r.Email.Contains(filter)        ));
+                /*
+                recips = recips.Where(r => (r.FirstName.Contains(filter)    || r.LastName.Contains(filter) ||
                                             r.Email.Contains(filter)        || r.AddressLine1.Contains(filter) ||
                                             r.AddressLine2.Contains(filter) || r.AddressLine3.Contains(filter) ||
                                             r.AddressLine4.Contains(filter) || r.AddressLine5.Contains(filter)));
+                */                            
+
             }
 
             if (!String.IsNullOrEmpty(sort))

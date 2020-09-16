@@ -1,0 +1,476 @@
+
+/* This stylesheet has been documented in: DT3a - Web Pages - Basic HTML */
+
+/* The relevant sections are:                                   */
+/*   1. CSS Custom Properties                                   */
+/*   2. Global Styling                                          */
+/*   3. Header                                                  */
+/*   4. Footer                                                  */
+/*   5. Container Class                                         */
+/*   6. Fixed Width Forms (which includes Controls and Buttons) */
+ 
+
+
+/* 2. Global Styling */
+
+body
+{
+	background-color: white;
+	font-size:        9pt;
+    font-family:      verdana,arial,helvetica,sans-serif;
+	color:            black;
+	margin:           0px;
+	padding:          0px;
+}
+
+input, textarea, button, select { 
+	font:             inherit; 
+    white-space:      nowrap;
+}
+
+select {
+    padding:          0px 0px;
+	color:            black;
+	border:           1px solid dimgrey;
+	margin-top:       2px;	
+	height:           21px;	
+}
+
+input, textarea {
+	padding:          1px 1px;
+	color:            black;
+	border:           1px solid dimgrey;
+	margin-top:       2px;	
+} 
+
+input {
+	height:           17px;		
+}
+
+button {
+	font-weight:      bold;
+    color:            white;
+	background-color: var(--brand-main-color);
+	height:           28px;
+}
+
+a {
+	font:             inherit;
+	color:            black;
+	text-decoration:  underline;	 
+}
+
+/* 3. Header and 4. Footer */
+
+header
+{
+	width:               100%;
+	height:              93px;
+	background-color:    var(--brand-main-color);
+	background-image:    var(--brand-logo);
+	background-repeat:   no-repeat;
+	background-position: 0px 0px;
+	margin:              0px 0px 10px 0px;	
+}
+
+#branding h1
+{
+	float:               right;
+	top:                 20px;
+    right:               20px;
+	position:            absolute;
+	text-align:          right;
+	font-size:           11pt;
+	font-weight:         bold;
+	height:              15px;
+	color:               white;
+	margin:              0; 
+	padding:             0;
+}
+
+header nav {
+	float:         right;
+	top:           75px;
+	right:         20px;
+	position:      absolute;
+	text-align:    right;
+	font-weight:   bold;
+}
+
+header ul       { margin:  0;         padding:         0;   }
+header li       { display: inline;    padding-left:    20px;}
+header a        { color:   white;   text-decoration: none;}
+header a:hover  { color:   #990000; text-decoration: none;}
+
+footer
+{
+	font-size:        8pt;
+	color:            grey;
+	border-top-color: lightgrey;
+	border-top-style: solid;
+	border-top-width: 1px;	
+	padding:          5px 0px 2px 0px;
+	float:            left;
+	width:            100%;
+	text-align:       center;
+}
+
+footer .Right
+{
+	float:            right;
+	padding-right:    15px;	
+}
+
+footer .Left
+{
+	float:            left;
+	padding-left:     5px;
+}
+
+/* 5. Container Class */
+
+.container
+{
+	padding:     20px 40px 20px 40px;
+	overflow:    hidden;
+}
+
+/* 6. Fixed Width Forms */
+
+.MediumPage
+{
+	width:           750px;
+}
+
+.NarrowPage
+{
+	width:           426px;
+}
+
+.MediumHeader 
+{
+    color:           black;
+	font-weight:     bold;
+	text-decoration: none;
+}
+
+.HighlightHeader 
+{
+	background-color: var(--brand-main-color);
+	color:            white;
+	height:           24px;
+	margin-top:       5px;
+	padding:          1px 2px 3px 6px;
+	display:          flex;
+	align-items:      center;
+}
+
+.Indent
+{ 
+	/* Padding is clockwise: top | right | bottom | left */
+	padding:         5px 10px 0px 10px; 
+}
+
+.Grid
+{
+	table-layout:   fixed;
+	width:          100%;
+	padding:        0px;
+	border-width:   0px;
+	border-spacing: 0px;
+}
+
+.Grid input[type="text"], textarea {
+	width:          calc(100% - 4px);
+}
+
+.Grid input[type="radio"] {
+	height:         13px;
+}
+
+.HighlightOptions 
+{
+	width:            100%;
+	background-color: var(--brand-main-color);
+	color:            white;
+	margin-top:       10px;
+	margin-bottom:    5px;
+	padding:          1px 6px 1px 6px;
+	vertical-align:   middle;
+}
+
+.HighlightOptions a 
+{
+	text-decoration:  underline;
+	color:            white;
+}
+
+.Pager {
+	text-align:     center;
+	width:          100%;
+}
+
+.StripedTable
+{
+	border:           1px solid white;
+	border-style:     None;
+	width:            100%;
+	border-collapse:  collapse;
+}
+
+.StripedTable thead {
+	text-align:        left;
+	background-color:  #EEEEEE;
+	font-weight:bold;
+}
+
+.StripedTable tr
+{
+    border-top:       none;
+    border-bottom:    none;
+}
+
+.StripedTable .NoStripe {
+	background-color:  white; 	
+}
+
+.StripedTable .Stripe {
+	background-color:  #EEEEEE; 
+}
+
+.StripedTable td
+{
+    border-left:      1px solid white;
+	border-right:     1px solid white;
+	vertical-align:   top;
+}
+
+.StripedTable td:first-child
+{
+    border-left:      none;
+}
+
+.StripedTable td:last-child
+{
+    border-right:     none;
+}
+
+
+/* Controls */
+
+Label
+{
+	color:            black;	
+	font-weight:      bold;
+	white-space:      nowrap;
+}
+
+.LabelTop
+{
+	margin-top:       5px;		
+	display:          flex;
+}
+
+.FieldWide 
+{
+	width:            600px;
+	height:           18px;
+}
+
+.FieldNarrow 
+{
+	width:            240px;
+	height:           18px;
+}
+
+.TextAreaShallow 
+{
+	height:           45px;
+}
+
+.TextAreaMedium 
+{
+	height:           90px;
+}
+
+.TextAreaDeep 
+{
+	height:           135px;
+}
+
+.Selector 
+{ 
+    display:          inline-block; 
+    vertical-align:   top; 
+    overflow:         hidden; 
+    border:           solid grey 1px; 
+	margin:           5px; 
+}
+
+ .Selector select 
+ { 
+     padding:         10px 30px 10px 10px; 
+	 margin:          -5px -25px -5px -5px; 
+	 height:          auto;
+ } 
+
+
+ .RadioButtons
+ {
+	 height:         21px;
+ }
+
+
+/* Buttons */ 
+
+.FormButtons   { margin-top: 5px; }
+.FormButton    { width: 65px;     }
+.WideButton    { width: 125px;    }
+.WidestButton  { width: 180px;    }
+.NarrowButton  { width: 32px;     }
+
+
+
+
+/* Older Styling that may be defunct */ 
+
+/*
+A.MenuButtonLink
+{
+	color:           white;
+	font-weight:     bold;
+	text-decoration: none;
+	padding-right:   10px;
+}
+A.MenuButtonLink:link
+{
+	color:           white;
+	font-weight:     bold;
+	text-decoration: none;
+}
+A.MenuButtonLink:visited
+{
+	color:           white;
+	font-weight:     bold;
+	text-decoration: none;
+}
+A.MenuButtonLink:hover
+{
+	color:           #990000;
+	font-weight:     bold;
+	text-decoration: none;
+}
+*/
+
+
+.Highlight 
+{
+	background-color: var(--brand-main-color);
+	color:            white;
+	padding:          10px 6px;	
+}
+
+.Highlight A 
+{
+  	color:            white;	
+	text-decoration:  underline;
+}
+
+.HighlightText 
+{
+	color:            var(--brand-main-color);		
+}
+
+.HighlightText A 
+{
+	text-decoration:  underline;
+}
+
+.HighlightBoldText 
+{
+ 	color:            black;	
+	font-weight:      bold;
+}
+
+.HighlightBoldText A 
+{
+ 	color:            black;	
+	font-weight:      bold;
+	text-decoration:  underline;
+}
+
+.gContentSection 
+{
+	/*font-size:        x-small;*/
+    COLOR:            black;
+    FONT-FAMILY:      verdana,arial,helvetica
+}
+.gContentSection A 
+{
+    color:            black;
+    /*COLOR: #006666;*/ 
+	text-decoration:  underline;
+}
+.ReportDistGrid TH
+{
+		/*font-size:        x-small;*/
+		COLOR:            black;
+		FONT-FAMILY:      verdana,arial,helvetica
+}
+
+.gFormButton 
+{
+    FONT-WEIGHT:      bold;
+	font-size:        x-small;
+    COLOR:            white;
+    FONT-FAMILY:      Arial, Helvetica;
+    BACKGROUND-COLOR: var(--brand-main-color);
+}
+
+
+input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+
+	font:             inherit; 
+    white-space:      nowrap;
+	font-weight:      bold;
+    color:            white;
+	background-color: var(--brand-main-color);
+	height:           22px;
+	width:            65px;
+    display:          inline-block;
+	cursor:           pointer;
+	text-align:       center;
+    padding:          5px 0px 0px 0px;
+    border-top:       1px solid #CCCCCC;
+    border-right:     1px solid #333333;
+    border-bottom:    1px solid #333333;
+    border-left:      1px solid #CCCCCC;
+}
+
+.progress {
+	background:    dimgrey;
+	margin-top:      30px;
+	display:         none;
+	position:        relative;
+  }
+  
+  .progress .bar {
+	background:      var(--brand-main-color);
+	width:           33%;
+	height:          30px;
+  }
+  
+  .progress .label {
+	line-height:    30px;
+	text-align:     center;
+	position:       absolute;
+	left:           0px;
+	top:            0px;
+	width:          100%;
+	height:         30px;
+	color:        white;  
+  }

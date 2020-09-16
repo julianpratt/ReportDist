@@ -1,33 +1,35 @@
 @{
-    ViewData["Title"] = "Streamed Single File Upload with AJAX (Physical)";
+    ViewData["Title"] = "Document Upload";
     string pendingId = (string)ViewData["PendingId"];
 }
 
-<table class="communitylinks" cellspacing="0" cellpadding="3" width="100%" border-width="0">
-  <tr>
-    <td class="Highlight" width="15%" colspan="2" height="24">Upload a Document</td>
-  </tr>
-</table>
+<div class="MediumPage">
+  <div class="HighlightHeader">Upload a Document</div>
 
-<p class="Label">Press "Browse" to select a file, and then press "Upload".</p>
+  <p class="Label">Press "Browse" to select a file, and then press "Upload".</p>
 
-<form id="uploadForm" action="/Document/UploadDocument" method="post"
-    enctype="multipart/form-data" onsubmit="AJAXSubmitOld(this);return false;">
+  <form id="uploadForm" method="post" enctype="multipart/form-data" onsubmit="uploadFiles('files');return false;">
+      <input id="Id" type="hidden" value="@pendingId" />
 
-    <label for="file" class="custom-file-upload" style="HEIGHT:18px;WIDTH:41px;">Browse
-      <input id="file" type="file" name="file" />
-    </label>
-    <div>&nbsp;</div>
-    <span id="file-selected"></span>
-    <div>&nbsp;</div>
-    <input type="submit" value="Upload" class="gFormButton" style="HEIGHT:24px;WIDTH:55px;"/>&nbsp;&nbsp;
-    <button type="button" id="btnCancel" class="gFormButton" style="HEIGHT:24px;WIDTH:55px;" onclick="window.location.href='/Report/Edit/'+$('#Id').val()">Cancel</button>
+      <label label-for="files" class="custom-file-upload">Browse<input id="files" type="file" name="files" /></label>&nbsp;&nbsp;
+      <button type="button" id="btnCancel" class="FormButton" onclick="window.location.href='/Report/Edit/'+$('#Id').val()">Cancel</button>
+      <div>&nbsp;</div>
+      <span id="file-selected"></span>
 
-    <div style="margin-top:15px">
-        <output form="uploadForm" name="result"></output>
-    </div>
-    <input id="Id" type="hidden" value="@pendingId" />
-</form>
+      <div>&nbsp;</div>
+      <button id="Upload" type="submit" class="FormButton" style="display:none">Upload</button>
+      <div>&nbsp;</div>
+
+      <div id="progress" class="progress">
+        <div id="bar" class="bar"></div>
+        <div id="label" class="label">0%</div>
+      </div>
+
+      <div style="margin-top:15px">
+          <output form="uploadForm" name="result" id="result"></output>
+      </div>
+  </form>
+</div>
 
 @section Scripts {
   <script>
@@ -85,16 +87,128 @@
     oReq.send(new FormData(oFormElement));
   }
 
+
+/* NEW CODE */
+
+function uploadFiles(inputId) {
+    var input = document.getElementById(inputId);
+    var files = input.files;
+    var formData = new FormData();
+  
+    for (var i = 0; i != files.length; i++) {
+      formData.append("files", files[i]);
+    }
+  
+    $("#result").html("");
+    $('#Upload').hide(); 
+    $('#btnCancel').hide(); 
+
+    var token = document.getElementsByName("__RequestVerificationToken")[0].value;
+
+    if (typeof(token) == "undefined") {
+      $("#result").html("Request Verification Token is missing!");
+      return;
+    }
+    
+    var pendingId = $('#Id').val();
+
+    startProgress();
+
+    $.ajax(
+      {
+        url: "/Document/Upload?pendingId=" + pendingId,
+        data: formData,
+        processData: false,
+        contentType: false,
+        type: "POST",
+        headers: { 'RequestVerificationToken': token },
+        xhr: function () {
+          var xhr = new window.XMLHttpRequest();
+          xhr.upload.addEventListener("progress", function (e) {
+            if (e.lengthComputable) {
+                showProgress(Math.floor(100 * (e.loaded / e.total)));
+              }
+          }, false);
+          return xhr;
+        },
+        success: function (data) {
+          /* showResult("File Uploaded"); */
+          window.location.href="/Report/Edit/" + pendingId;
+        },
+        error: function (xhr, exception) {
+          showResult(errorText(xhr.status));
+          $('#btnCancel').show(); 
+        }
+      }
+    );
+  }
+  
+  function startProgress() {
+    $("#progress").show();
+    showProgress(0);
+  }
+
+  function showProgress(progress) {
+    $("#bar").css({ width: progress + "%" });
+    $("#label").html(progress + "%");
+    if (progress < 99) $("#result").html("Uploading");
+    else               $("#result").html("Saving (be patient, this will take a while!)");  
+  }
+
+  function showResult(result) {
+    $("#progress").hide();
+    $("#result").html(result);
+  }
+
+  function getCookieNew(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+
+  function errorText(errcode) {
+      var msg = '';
+      if (errcode == 413) {
+          msg = 'The file was too large - nothing uploaded.';
+      } else if (errcode == 415) {
+          msg = 'The file was the wrong type - nothing uploaded.';
+      } else if (errcode == 400) {
+          msg = 'Something went wrong in the browser (Bad Request Error 400) - please seek assistance.';
+      } else if (errcode == 500) {
+          msg = 'Something went wrong at the server end (Internal Server Error 500) - please seek assistance.';    
+      } else {
+          msg = 'Return status was ' + errcode.toString() + ' - please seek assistance.';
+      }
+      return msg;
+  }
+
+
+
+/* END OF NEW CODE */
+
+
     function getCookie(name) {
       var value = "; " + document.cookie;
       var parts = value.split("; " + name + "=");
       if (parts.length == 2) return parts.pop().split(";").shift();
     }
 
-  $('#file').bind('change', function() { 
+  $('#files').bind('change', function() { 
     var fileName = ''; 
     fileName = $(this).val().split('\\').pop().split('/').pop();
-    $('#file-selected').html("The file selected was: " + fileName); 
+    $('#file-selected').html("The file selected was: " + fileName);
+    $('#Upload').show(); 
+    $("#result").html("");
     }) 
   </script>
 }

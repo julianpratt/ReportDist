@@ -13,34 +13,49 @@ namespace ReportDist.Controllers
     {
         public HomeController(DataContext context) : base(context) {}
        
-        public IActionResult Index(string sortOrder, string searchString, string currentFilter, int? pageNumber)
+        public IActionResult Index(string sortOrder, string currentFilter, int? pageNumber)
         {
-            string user = CheckIdentity();
+            User user = CheckIdentity();
             if (user == null) return RedirectToAction("Error", "Home");
-            Log.Me.Debug("Home/Index - User: " + user + ", SortOrder: " + sortOrder + ", SearchString: " + searchString + ", CurrentFilter: " + currentFilter + ", PageNumber: " + pageNumber.ToString());
+            Log.Me.Debug("Home/Index - User: " + user.UserName + ", SortOrder: '" + sortOrder + "', CurrentFilter: '" + currentFilter + "', PageNumber: " + pageNumber.ToString());
             ApplicationVersion();
 
-            string userid = HttpContext.Session.GetString("UserId");
-            
-            // Sorting
-            if (sortOrder == null) sortOrder = HttpContext.Session.GetString("CurrentSort");
-            if (sortOrder == null) sortOrder = "creationdate desc"; // default sort order
-            ViewData["CurrentSort"] = sortOrder;
-            if (sortOrder != null) HttpContext.Session.SetString("CurrentSort", sortOrder);
-           
-            // Filtering
-            if (currentFilter == null)      currentFilter = HttpContext.Session.GetString("CurrentFilter");
-            if (searchString != null)       pageNumber = 1;  // filter just got updated, so reset the page number
-            else if (currentFilter == null) searchString = "uncommitted-" + userid; // default filter
-            else                            searchString = currentFilter;
-            ViewData["CurrentFilter"] = searchString;
-            if (searchString != null) HttpContext.Session.SetString("CurrentFilter", searchString);
+            // current is what's cached, or the defaults 
+            SortFilter def = new SortFilter("creationdate desc", "uncommitted-" + user.UserId, 1);
+            string key = "HomeIndex-" + user.UserId;
+            SortFilter current = Cache<SortFilter>.GetCache().Get(key, () => def);      
+
+            // Inputs override previous or default values  
+            if (sortOrder     != null) current.Sort   = sortOrder;
+            if (pageNumber.HasValue)   current.Page   = pageNumber;
+            if (currentFilter != null && current.Filter != currentFilter) 
+            {
+                current.Filter = currentFilter;
+                current.Page   = 1;  // filter just got updated, so reset the page number
+            }
+
+            // Cache the current settings, so that we come back to the same page from Report/Edit
+            Cache<SortFilter>.GetCache().Set(key, () => current);
+
+            ViewData["CurrentSort"]   = current.Sort;
+            ViewData["CurrentFilter"] = current.Filter;
 
             int pageSize = 25;
 
             return View(PaginatedList<PendingReport>.Create(
-                        _context.PendingReportRepo.List(sortOrder, searchString), pageNumber ?? 1, pageSize));
+                        _context.PendingReportRepo.List(current.Sort, current.Filter), current.Page ?? 1, pageSize));
         }
+
+        private SortFilter GetSortFilter(SortFilter def, SortFilter inp)
+        {
+            SortFilter sf = new SortFilter();
+            sf.Sort   = (inp.Sort   == null) ? def.Sort   : inp.Sort;
+            sf.Filter = (inp.Filter == null) ? def.Filter : inp.Filter;
+            sf.Page   = (!inp.Page.HasValue) ? def.Page   : inp.Page;
+
+            return sf;
+        }
+
 
         // POST: /Home/Search
         [HttpPost]
@@ -54,9 +69,10 @@ namespace ReportDist.Controllers
                 string start = vm.Company + "/" + vm.Year;
                 if (vm.Code != null) start += "/" + vm.Code;
                 string filter = "search-" + start + "-" + (vm.Number ?? "") + "-" + (vm.ReportType ?? "");
-                HttpContext.Session.SetString("CurrentFilter", filter);
 
-                return RedirectToAction("Index", "Home");   
+                Log.Me.Debug("Redirecting to Home/Index/?sortOrder=creationdate desc&pageNumber=1&currentFilter=" + filter);
+
+                return RedirectToAction("Index", "Home", new { sortOrder="creationdate desc", pageNumber=1, currentFilter=filter} );   
             }
             catch (Exception ex)
             {

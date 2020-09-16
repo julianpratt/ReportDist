@@ -48,6 +48,7 @@ namespace ReportDist
 
             services.AddDistributedMemoryCache();
 
+/*
             services.AddSession(options =>
             {
                 options.Cookie.Name = ".ReportDist.Session";
@@ -55,7 +56,7 @@ namespace ReportDist
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
-
+*/
             if (!Env.IsDevelopment())
             {
                 services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
@@ -127,7 +128,7 @@ namespace ReportDist
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            app.UseSession();
+            //app.UseSession();
 
             if (!env.IsDevelopment()) app.UseAuthentication();
 
@@ -202,7 +203,7 @@ namespace ReportDist
             string root = Config.Get("LocalFilesRoot");
             string logs = Config.Get("Logs");
 		    IFile fsys = FileBootstrap.SetupFileSys(conn,cont,root,logs);
-            Log.Me.LogFile = "ReportDist.log"; // Overide default from Boostrap
+            Log.Me.LogFile = "ReportDistDev.log"; // Overide default from Boostrap
             Log.Me.DebugOn = false;
             if (Config.Get("Logging") == "Debug") Log.Me.DebugOn = true;
             if (Config.Debug)                     Log.Me.DebugOn = true;

@@ -6,80 +6,57 @@
     string editable  = (string)ViewData["Editable"];   
 }
 
-<span class="MediumHeader" id="spMainTitle" runat="server">Report Circulation&nbsp;</span> 
+<span class="MediumHeader">Report Circulation</span> 
 
 @if(editable == "Yes") 
 {
-<table class="communitylinks" id="tbFindRecip" cellspacing="0" cellpadding="2" width="100%" border-width="0" runat="server">
-    <tr>
-        <td class="gheaderline" valign="bottom" colspan="2" height="1" rowspan="1"></td>
-    </tr>
-    <tr>
-        <td class="Highlight" height="24">&nbsp;Select Recipients</td>
-    </tr>
-    <tr>
-        <td style="PADDING-LEFT: 3px" valign="top">
-            <a asp-controller="Circulation" asp-action="Create" asp-route-id="@pendingId" class="gContentSection">Blank Record</a>
-            <div id="spCustContact" runat="server">
-                <table id="dgContacts" class="compact stripe" width="100%" cellspacing="0">  
-                    <thead>  
-                        <tr>  
-                            <th>RecipientID</th>  
-                            <th>First Name</th>  
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Job Title</th>    
-                            <th>Address</th>
-                            <th>&nbsp;</th>  
-                            <th>&nbsp;</th>  
-                        </tr>  
-                    </thead>  
-                </table>  
-            </div>
-        </td>
-    </tr>
-</table>
+<div class="HighlightHeader">Select Recipients</div>
+<a asp-controller="Circulation" asp-action="Create" asp-route-id="@pendingId">Blank Record</a>
+<div class="Indent">
+    <table id="dgContacts" class="compact stripe" width="100%" cellspacing="0">  
+        <thead>  
+            <tr>  
+                <th>RecipientID</th>  
+                <th>First Name</th>  
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Job Title</th>    
+                <th>Address</th>
+                <th>&nbsp;</th>  
+                <th>&nbsp;</th>  
+            </tr>  
+        </thead>  
+    </table>  
+</div>
 }
 
+<br />
 
-<table id="tbReturn" cellspacing="0" cellpadding="0" border-width="0">
-	<tr>
-		<td style="PADDING-BOTTOM: 5px; PADDING-TOP: 5px">
-            <button type="button" id="btnReturn" class="gFormButton" style="HEIGHT:24px;WIDTH:180px;" onclick="window.location.href='/Report/Edit/@pendingId'">Return to Report Details</button>
-		</td>
-	</tr>
-</table>
+<div id="Indent">
+    <button type="button" id="btnReturn" class="WidestButton" onclick="window.location.href='/Report/Edit/@pendingId'">Return to Report Details</button>
+</div>
 
-<div id="spCircList">
-        <br />
-        <span class="MediumHeader" id="Span1" runat="server">Report Circulation List</span>
-	    <table class="communitylinks" id="Table6" cellspacing="0" cellpadding="2" width="100%" border="0">
-		    <tr>
-			    <td class="gheaderline" valign="bottom" colspan="2" height="1" rowspan="1"></td>
-		    </tr>
-		    <tr>
-			    <td class="Highlight" height="24">&nbsp;Current Circulation List</td>
-		    </tr>
-		    <tr>
-			    <td>
-                    <table id="dgCircList" class="compact stripe" width="100%" cellspacing="0">  
-                        <thead>  
-                            <tr>  
-                                <th>RecipientID</th>  
-                                <th>&nbsp;</th>  
-                                <th>Name</th>  
-                                <th>Type</th>  
-                                <th>Email</th>  
-                                <th>Address</th>  
-                                <th>&nbsp;</th>  
-                                <th>&nbsp;</th>  
-                            </tr>  
-                        </thead>  
-                    </table>  
-	    		</td>
-		    </tr>
- 	    </table>
-    </div>
+<br />
+
+<span class="MediumHeader"   >Report Circulation List</span>
+<div  class="HighlightHeader">Current Circulation List</div>
+
+<div class="Indent">
+    <table id="dgCircList" class="compact stripe" width="100%" cellspacing="0">  
+        <thead>  
+            <tr>  
+                <th>RecipientID</th>  
+                <th>&nbsp;</th>  
+                <th>Name</th>  
+                <th>Type</th>  
+                <th>Email</th>  
+                <th>Address</th>  
+                <th>&nbsp;</th>  
+                <th>&nbsp;</th>  
+            </tr>  
+        </thead>  
+    </table>  
+</div>
 
 @section scripts {
 
