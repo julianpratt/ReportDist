@@ -25,6 +25,9 @@ body
 
 input, textarea, button, select { 
 	font:             inherit; 
+}
+
+input, button, select { 
     white-space:      nowrap;
 }
 
