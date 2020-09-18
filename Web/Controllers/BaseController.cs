@@ -69,9 +69,21 @@ namespace ReportDist.Controllers
         {
             ClaimsIdentity identity = User.Identity as ClaimsIdentity;
             if (identity == null) return null;
+           
+            string upn       = identity.FindFirst(System.Security.Claims.ClaimTypes.Upn)?.Value;
+            string email     = identity.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+            string firstName = identity.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value; 
+            string lastName  = identity.FindFirst(System.Security.Claims.ClaimTypes.Surname)?.Value;
 
-            string login = identity?.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
-            string key   = "user-" + login; 
+            if (!upn.HasValue()) upn=email; // AAD users have UPN set, but Microsoft accounts don't, so use email instead. 
+            if (!upn.HasValue()) 
+            {
+                Log.Me.Error("User " + firstName + " " + lastName + " has authenticated, but has neither UPN nor Email set.");
+                return null;
+            }
+
+            string key   = "user-" + upn; 
+            Log.Me.Debug("key in CheckIdentity: " + key + " (upn or email = " + upn + ")");
 
             User user = Cache<User>.GetCache().Get(key, () => IdentifyUser(identity)); 
 
