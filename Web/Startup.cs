@@ -203,7 +203,7 @@ namespace ReportDist
             string root = Config.Get("LocalFilesRoot");
             string logs = Config.Get("Logs");
 		    IFile fsys = FileBootstrap.SetupFileSys(conn,cont,root,logs);
-            Log.Me.LogFile = "ReportDistProduction.log"; // Overide default from Bootstrap...
+            Log.Me.LogFile = "ReportDist.log"; // Overide default from Bootstrap...
             Log.Me.DebugOn = false;
             if (Config.Get("Logging") == "Debug") Log.Me.DebugOn = true;
             if (Config.Debug)                     Log.Me.DebugOn = true;
