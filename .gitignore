@@ -13,8 +13,6 @@ Test/appsettings.json
 Web/.DS_Store
 Web/.vscode/**
 Web/bin/**
-Web/Config/configure.json
-Web/Config/configure*.json
 Web/obj/**
 Web/appsettings.json
 Web/wwwroot/lib/**

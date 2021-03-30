@@ -1,0 +1,11 @@
+{
+    "SearchCataloguesAPI":    "/Library/WebServices/soutronapi.svc/SearchCatalogues?userid={1}&q=\"{0}\"",
+    "GetCatalogueAPI":        "/Library/WebServices/soutronapi.svc/getcatalogue?userid={1}&id={0}",
+    "SearchCataloguesXpath":  "/soutron/search_info/catalogs_view/ct/ctlgs/cat[{0}]/",
+    "GetCatalogueXpath":      "/soutron/catalogs_view/ct/cat[1]/",
+    "ReportNoXpath":          "fs/f[@id=73]/vs/v",
+    "CIDXpath":               "@id",
+    "eFileNameXpath":         "fs/f[@id=76]/vs/v",
+    "AttachmentXpath":        "fs/f[@id=13]/vs/v",
+    "AbstractXpath":          "fs/f[@id=11]/vs/v",
+}  
