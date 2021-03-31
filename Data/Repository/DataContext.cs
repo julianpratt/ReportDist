@@ -35,21 +35,28 @@ namespace ReportDist.Data
             // warning To protect potentially sensitive information in your connection string, 
             // you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 
             // for guidance on storing connection strings.
-            string serverType = Config.Get("SQLServerType");
-            if (serverType == "MySQL")
+            string connection = Config.Get("SQLConnection");
+            if (SQLServerType(connection) == "MySQL")
             {
-                options.UseMySQL(Config.Get("SQLConnection"));
+                options.UseMySQL(connection);
             }
-            else  if (serverType == "SQLServer")
+            else
             {
-                options.UseSqlServer(Config.Get("SQLConnection"));
+                options.UseSqlServer(connection);
             }
-            else 
-            {
-                Log.Me.Fatal("Cannot configure data context. SQLServerType " + serverType + " is not recognised. Should be 'MySQL' or 'SQLServer'");
-            }
+        }
 
-            
+        private string SQLServerType(string connection)
+        {
+            string stem = ".database.windows.net,1433";
+            if (connection.Left(4).ToLower() == "tcp:" && connection.Right(stem.Length).ToLower() == stem)
+            {
+                return "SQLServer";
+            }
+            else
+            {
+                return "MySQL";
+            }
         }
     }
 }

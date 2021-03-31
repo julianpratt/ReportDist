@@ -32,21 +32,21 @@ namespace ReportDist.Data
 
             if (Config.Env == "Development")
             {
-                string id = Config.Get("DeveloperUserId");
+                string id = Config.Get("DefaultUserId");
                 if (id == null) 
                 {
-                    Log.Me.Fatal("In Development (so no authentication). DeveloperUserId not in configuration.");
+                    Log.Me.Fatal("In Development (so no authentication). DefaultUserId not in configuration.");
                     return null;
                 }
                 if (!id.IsInteger()) 
                 {
-                    Log.Me.Fatal("In Development (so no authentication). DeveloperUserId is not an integer.");
+                    Log.Me.Fatal("In Development (so no authentication). DefaultUserId is not an integer.");
                     return null;
                 }
                 r = _context.RecipientRepo.Read(id.ToInteger(0));
                 if (r == null) 
                 {
-                    Log.Me.Fatal("In Development (so no authentication). DeveloperUserId does not match a Recipient.");
+                    Log.Me.Fatal("In Development (so no authentication). DefaultUserId does not match a Recipient.");
                 }
                 return r;
             } 

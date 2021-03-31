@@ -374,39 +374,59 @@ namespace ReportDist.Data
            
         }
         
-        public int? GetCID(string reportNumber)
+        public static int? GetCID(string reportNumber)
         {
             CatalogueAPI api = CatalogueAPI.Me;
 
             if (!api.IsValid()) throw new Exception("Missing configuration required by GetCID.");
 
-            //string xml1 = FileLoad.Load(api.SearchCataloguesAPI, "\"" + reportNumber+ "\"");
-            string xml1 = WebLoadSync(api.SearchCataloguesAPI, "\"" + reportNumber+ "\"");
+            string searchAPI = String.Format(api.SearchCataloguesAPI, reportNumber, api.CatalogueUserId);
+
+            string xml1 = WebLoadSync(searchAPI, api.Authorization);
             if (xml1 == null) return null;
 
+            //Console.WriteLine(xml1); 
+
             // Check that the ReportNumber we searched on is in the XML returned 
-            int i = 1;
             string cid = null;
-            while (true)
+            string s = null;
+            int i = 1;
+            if (api.Authorization == null)
             {
-                string s = XML.ReadXmlNode(xml1, String.Format(api.ReportNoXpath,i));
-                if (s == null || s.Length == 0) break;   
-                if (s == reportNumber.Trim()) 
+                // Old style API potentially returns multiple results from search => must find right one
+                while (true)
                 {
                     cid = XML.ReadXmlAttribute(xml1, String.Format(api.CIDXpath,i));
-                    break;
-                }    
-                ++i;
+                    s = XML.ReadXmlNode(xml1, String.Format(api.ReportNoXpath,i));
+                    if (s == null || s.Length == 0) { cid=null; break; }    
+                    if (s == reportNumber.Trim()) break;
+                    ++i;
+                }
             }
+            else
+            {
+                // New style finds the report or it doesn't
+                cid = XML.ReadXmlAttribute(xml1, api.CIDXpath);
+            }
+            
+            if (!cid.HasValue()) return null; // Report has not yet arrived in the catalogue
 
-            if (cid == null) return null; // Report has not yet arrived in the catalogue
-
-            // Check the attached document has also arrived. 
-            //string xml2 = FileLoad.Load(api.GetCatalogueAPI, cid);
-            string xml2 = WebLoadSync(api.GetCatalogueAPI, cid);
+            // Check the attached document has also arrived.
+            string xml2 = WebLoadSync(String.Format(api.GetCatalogueAPI, cid), api.Authorization);
             if (xml2 == null) return null;
 
-            string eFileName  = XML.ReadXmlNode(xml2, api.eFileNameXpath);
+            //Console.WriteLine("======================================================================================"); 
+            //Console.WriteLine(xml2); 
+
+            // Check ReportNumber again
+            s = XML.ReadXmlNode(xml2, String.Format(api.ReportNoGetXpath,i));
+            if (s == null || s.Length == 0) return null;   
+            if (s != reportNumber.Trim())   return null; 
+
+            //string summary = XML.ReadXmlNode(xml2, api.AbstractXpath);
+            //Console.WriteLine(ToHTML(ToTextList(summary)));
+
+            //string eFileName  = XML.ReadXmlNode(xml2, api.eFileNameXpath);
             string attachment = XML.ReadXmlNode(xml2, api.AttachmentXpath);
             // We'll only accept reports with an attachment (but we don't care about what it is called)
             if (!attachment.HasValue()) return null;
@@ -417,25 +437,33 @@ namespace ReportDist.Data
             return cid.ToInteger(0); 
         }
 
-        private string WebLoadSync(string path, string filename)
+        private static string WebLoadSync(string fullpath, KeyList header)
         {
-            return Task.Run(()=>WebLoad(path, filename)).GetAwaiter().GetResult();
+            return Task.Run(()=>WebLoad(fullpath, header)).GetAwaiter().GetResult();
         }
 
-        private async Task<string> WebLoad(string path, string filename)
+        private static async Task<string> WebLoad(string fullpath, KeyList header)
         {
-            string fullpath = path + filename;
-
             var handler = new HttpClientHandler();
             handler.ServerCertificateCustomValidationCallback = delegate ( HttpRequestMessage msg,
                 X509Certificate2 certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) { return true; };
             var client = new HttpClient(handler);
-            HttpResponseMessage response = await client.GetAsync(fullpath);
+
+            HttpResponseMessage response = null;    
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri(fullpath);    
+            request.Method = HttpMethod.Get;    
+            if (header != null) foreach (KeyPair p in header) request.Headers.Add(p.Key, p.Value);
+            response = await client.SendAsync(request);
+
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadAsStringAsync();
             }
-            else return null;
+            else 
+            {
+                return null;
+            } 
         }
 
         public void SendAll(IFile filesys)

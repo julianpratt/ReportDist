@@ -18,7 +18,7 @@ namespace ReportDist
     {
         public static void Main(string[] args)
         {
-            Config.Setup("Config/configure.json", Directory.GetCurrentDirectory(), null, "ReportDist");
+            Config.Setup("Config/general.json", Directory.GetCurrentDirectory(), null, "ReportDist");
 
             // Standard single line in Main:
             // CreateWebHostBuilder(args).Build().Run();

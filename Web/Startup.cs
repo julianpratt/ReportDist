@@ -92,6 +92,11 @@ namespace ReportDist
             opts.ClientId     = Config.Get("AAD_ClientId");
             opts.CallbackPath = Config.Get("AAD_CallbackPath");
 
+            bool ok = opts.Instance.HasValue() && opts.Domain.HasValue() && opts.TenantId.HasValue();
+            ok = ok && opts.ClientId.HasValue() && opts.CallbackPath.HasValue();
+
+            if (!ok) Log.Me.DebugOn = true;
+
             Log.Me.Debug("----------------------------------------------------------------------------------------------");
             Log.Me.Debug("Azure Active Directory (aka authentication) Configuration:");
             Log.Me.Debug("");
@@ -101,12 +106,9 @@ namespace ReportDist
             Log.Me.Debug("AAD_ClientId    : " + (opts.ClientId     ?? ""));
             Log.Me.Debug("AAD_CallbackPath: " + (opts.CallbackPath ?? "")); 
 
-            bool ok = opts.Instance.HasValue() && opts.Domain.HasValue() && opts.TenantId.HasValue();
-            ok = ok && opts.ClientId.HasValue() && opts.CallbackPath.HasValue();
-
             if (!ok)
             {
-                Log.Me.Fatal("Missing AzureAD Configuration. Use ASPNETCORE_ENVIRONMENT='Development' to see what is wrong.");
+                Log.Me.Fatal("Missing AzureAD Configuration. Check debug (above) to see what is wrong.");
                 System.Environment.Exit(8);
             }
         }
@@ -142,32 +144,35 @@ namespace ReportDist
 
         public void CheckConfiguration()
         {
+            // Instructions are to set Environment rather than Env (perhaps Config needs to be changed).
+            if (Config.Env != "Development") Config.Env = Config.Get("Environment");
+
+            // Default for Development and Staging is that Logging is Debug
+            if (Config.Env != "Production" && !Config.Get("Logging").HasValue()) Config.Set("Logging", "Debug");
+
             Log.Me.Info("");
             Log.Me.Info("==================================================================================================");
             Log.Me.Info("Report Distribution Starting");
 
             bool filesysok = false;
             
-
             // Check SQL Config, AppVersion and Developer Id
             string conn   = Config.Get("SQLConnection");
-            string type   = Config.Get("SQLServerType");
             string appver = Config.Get("AppVersion");
             if (!appver.HasValue()) Config.Set("AppVersion", "ReportDist (unknown version)");
-            string devuid = Config.Get("DeveloperUserId");
-            bool othersok = conn.HasValue() && type.HasValue() && devuid.HasValue();
-            if (othersok) if (type != "MySQL" && type != "SQLServer") othersok=false;
+            string defaultuid = Config.Get("DefaultUserId");
+            bool othersok = conn.HasValue() && defaultuid.HasValue();
             
             if (Log.Me.DebugOn)
             {
                 Log.Me.Debug("Configuration: ");
                 Log.Me.Debug("");
-                Log.Me.Debug("SQLConnection:   " + (conn ?? ""));
-                Log.Me.Debug("SQLServerType:   " + (type ?? ""));
-                Log.Me.Debug("AppVersion:      " + (appver ?? ""));
-                Log.Me.Debug("DeveloperUserId: " + (devuid ?? ""));
-                Log.Me.Debug("Logging:         " + (Config.Get("Logging") ?? ""));
-                Log.Me.Debug("Env:             " + (Config.Get("Env") ?? ""));
+                Log.Me.Debug("AppName:        " + (Config.AppName ?? ""));
+                Log.Me.Debug("SQLConnection:  " + (conn ?? ""));
+                Log.Me.Debug("AppVersion:     " + (appver ?? ""));
+                Log.Me.Debug("DefaultUserId:  " + (defaultuid ?? ""));
+                Log.Me.Debug("Logging:        " + (Config.Get("Logging") ?? ""));
+                Log.Me.Debug("Environment:    " + (Config.Env ?? ""));
 
                 filesysok = DebugFileSystemConfig();
                 CatalogueAPI.Me.Debug();
@@ -180,11 +185,11 @@ namespace ReportDist
             }
 
             string delimiter = System.IO.Path.DirectorySeparatorChar.ToString();
-            Log.Me.Info("configure.json: " + Config.ContentRoot + delimiter + "Config/configure.json");
+            Log.Me.Info("general.json: " + Config.ContentRoot + delimiter + "Config/general.json");
             
-            if (!File.Exists(Config.ContentRoot + delimiter + "Config/configure.json"))
+            if (!File.Exists(Config.ContentRoot + delimiter + "Config/general.json"))
             {
-                Log.Me.Info("Could not find Config/configure.json. Set environmental variable Logging='Debug' to see what is wrong.");
+                Log.Me.Info("Could not find Config/general.json. Set environmental variable Logging='Debug' to see what is wrong.");
                 System.Environment.Exit(8);
             }
             
@@ -198,12 +203,22 @@ namespace ReportDist
 
         public IFile ConfigureFileSystem()
         {
+            // We need the appname, which is given to us in Production and Staging
+            string appName = Config.Get("AAD_Domain");
+            if (appName.HasValue())
+            {
+              int i = appName.IndexOf('.');
+              if (i > 0) appName = appName.Left(i - 1);
+            }
+            else appName = "ReportDistDev";
+            Config.AppName = appName;
+
             string conn = Config.Get("AzureConnectionString");
      		string cont = Config.Get("AzureContainer");
             string root = Config.Get("LocalFilesRoot");
             string logs = Config.Get("Logs");
 		    IFile fsys = FileBootstrap.SetupFileSys(conn,cont,root,logs);
-            Log.Me.LogFile = "ReportDistTest.log"; // Overide default from Bootstrap...
+            Log.Me.LogFile = appName + ".log"; // Overide default from FileBootstrap...
             Log.Me.DebugOn = false;
             if (Config.Get("Logging") == "Debug") Log.Me.DebugOn = true;
             if (Config.Debug)                     Log.Me.DebugOn = true;
