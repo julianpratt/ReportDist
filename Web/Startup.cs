@@ -216,7 +216,7 @@ namespace ReportDist
             appName = "ReportDistTest";
             Config.AppName = appName;
 
-            string conn = Config.Get("AzureConnectionString");
+            string conn = Config.Get("AzureConnection");
      		string cont = Config.Get("AzureContainer");
             string root = Config.Get("LocalFilesRoot");
             string logs = Config.Get("Logs");
@@ -232,7 +232,7 @@ namespace ReportDist
 
         public bool DebugFileSystemConfig()
         {
-            string conn    = Config.Get("AzureConnectionString");
+            string conn    = Config.Get("AzureConnection");
      		string cont    = Config.Get("AzureContainer");
             string root    = Config.Get("LocalFilesRoot");
             string logs    = Config.Get("Logs");
@@ -244,14 +244,14 @@ namespace ReportDist
             Log.Me.Debug("----------------------------------------------------------------------------------------------");
             Log.Me.Debug("File System Configuration:");
             Log.Me.Debug("");
-            Log.Me.Debug("AzureConnectionString: " + (conn    ?? ""));
-            Log.Me.Debug("AzureContainer:        " + (cont    ?? ""));
-            Log.Me.Debug("LocalFilesRoot:        " + (root    ?? ""));
-            Log.Me.Debug("Logs:                  " + (logs    ?? ""));
-            Log.Me.Debug("UploadDirectory:       " + (upload  ?? ""));
-            Log.Me.Debug("OutboxDirectory:       " + (outbox  ?? ""));
-            Log.Me.Debug("FileSizeLimit:         " + (maxlen  ?? ""));
-            Log.Me.Debug("AttachmentSizeLimit:   " + (maxmail ?? ""));
+            Log.Me.Debug("AzureConnection:     " + (conn    ?? ""));
+            Log.Me.Debug("AzureContainer:      " + (cont    ?? ""));
+            Log.Me.Debug("LocalFilesRoot:      " + (root    ?? ""));
+            Log.Me.Debug("Logs:                " + (logs    ?? ""));
+            Log.Me.Debug("UploadDirectory:     " + (upload  ?? ""));
+            Log.Me.Debug("OutboxDirectory:     " + (outbox  ?? ""));
+            Log.Me.Debug("FileSizeLimit:       " + (maxlen  ?? ""));
+            Log.Me.Debug("AttachmentSizeLimit: " + (maxmail ?? ""));
             bool ok = root.HasValue() || (conn.HasValue() && cont.HasValue());
             ok = ok && logs.HasValue()   && upload.HasValue() && outbox.HasValue();
             ok = ok && maxlen.HasValue() && maxmail.HasValue();
