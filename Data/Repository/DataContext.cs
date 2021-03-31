@@ -48,8 +48,9 @@ namespace ReportDist.Data
 
         private string SQLServerType(string connection)
         {
+            string server = ParseConnect(connection);
             string stem = ".database.windows.net,1433";
-            if (connection.Left(4).ToLower() == "tcp:" && connection.Right(stem.Length).ToLower() == stem)
+            if (server.Left(4).ToLower() == "tcp:" && server.Right(stem.Length).ToLower() == stem)
             {
                 return "SQLServer";
             }
@@ -57,6 +58,38 @@ namespace ReportDist.Data
             {
                 return "MySQL";
             }
+        }
+        private string ParseConnect(string connect)
+        {
+            if (connect == null) return null;
+
+            string[] segs = connect.Split(';');
+            string server   = null;
+            string database = null;
+            string userid   = null;
+            string password = null;
+
+            foreach (string seg in segs)
+            {
+                int i = seg.IndexOf('=');
+                if (i > 0)
+                {
+                    string key = seg.Substring(0, i).ToLower();
+                    string value = seg.Substring(i + 1);
+                    if (key == "data source"     || key == "server")       server   = value;
+                    if (key == "initial catalog" || key == "database")     database = value;
+                    if (key == "user id" || key == "user" || key == "uid") userid   = value;
+                    if (key == "password"        || key == "pwd")          password = value;
+                }
+            }
+
+            if (server == null || database == null || userid == null || password == null)
+            {
+                Log.Me.Fatal("Connection string " + connect + " is not formatted correctly.");
+                System.Environment.Exit(8);
+            }    
+
+            return server;
         }
     }
 }
