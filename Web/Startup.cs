@@ -144,15 +144,15 @@ namespace ReportDist
 
         public void CheckConfiguration()
         {
+            Log.Me.Info("");
+            Log.Me.Info("==================================================================================================");
+            Log.Me.Info("Report Distribution Starting");
+
             // Instructions are to set Environment rather than Env (perhaps Config needs to be changed).
             if (Config.Env != "Development") Config.Env = Config.Get("Environment");
 
             // Default for Development and Staging is that Logging is Debug
             if (Config.Env != "Production" && !Config.Get("Logging").HasValue()) Config.Set("Logging", "Debug");
-
-            Log.Me.Info("");
-            Log.Me.Info("==================================================================================================");
-            Log.Me.Info("Report Distribution Starting");
 
             bool filesysok = false;
             
@@ -205,12 +205,15 @@ namespace ReportDist
         {
             // We need the appname, which is given to us in Production and Staging
             string appName = Config.Get("AAD_Domain");
+            /*
             if (appName.HasValue())
             {
               int i = appName.IndexOf('.');
               if (i > 0) appName = appName.Left(i - 1);
             }
             else appName = "ReportDistDev";
+            */
+            appName = "ReportDistTest";
             Config.AppName = appName;
 
             string conn = Config.Get("AzureConnectionString");
@@ -220,6 +223,7 @@ namespace ReportDist
 		    IFile fsys = FileBootstrap.SetupFileSys(conn,cont,root,logs);
             Log.Me.LogFile = appName + ".log"; // Overide default from FileBootstrap...
             Log.Me.DebugOn = false;
+            Log.Me.DebugOn = true;
             if (Config.Get("Logging") == "Debug") Log.Me.DebugOn = true;
             if (Config.Debug)                     Log.Me.DebugOn = true;
 
