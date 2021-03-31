@@ -374,7 +374,7 @@ namespace ReportDist.Data
            
         }
         
-        public static int? GetCID(string reportNumber)
+        public int? GetCID(string reportNumber)
         {
             CatalogueAPI api = CatalogueAPI.Me;
 
@@ -437,12 +437,12 @@ namespace ReportDist.Data
             return cid.ToInteger(0); 
         }
 
-        private static string WebLoadSync(string fullpath, KeyList header)
+        private string WebLoadSync(string fullpath, KeyList header)
         {
             return Task.Run(()=>WebLoad(fullpath, header)).GetAwaiter().GetResult();
         }
 
-        private static async Task<string> WebLoad(string fullpath, KeyList header)
+        private async Task<string> WebLoad(string fullpath, KeyList header)
         {
             var handler = new HttpClientHandler();
             handler.ServerCertificateCustomValidationCallback = delegate ( HttpRequestMessage msg,
