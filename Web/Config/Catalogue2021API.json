@@ -7,5 +7,5 @@
     "CIDXpath":               "@id",
     "eFileNameXpath":         "fs/f[@id=76]/vs/v",
     "AttachmentXpath":        "fs/f[@id=13]/vs/v",
-    "AbstractXpath":          "fs/f[@id=11]/vs/v",
+    "AbstractXpath":          "fs/f[@id=11]/vs/v"
 }  

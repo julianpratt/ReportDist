@@ -16,4 +16,10 @@
     <ProjectReference Include="..\Data\ReportDistData.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Config/EmailTemplates.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

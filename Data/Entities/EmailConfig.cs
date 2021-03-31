@@ -13,7 +13,7 @@ namespace ReportDist.Data
             PostmasterEmail     = Config.Get("PostmasterEmail");
             PostmasterName      = Config.Get("PostmasterName");
             InternalEmailDomain = Config.Get("InternalEmailDomain");
-            PortalLinkURL       = Config.Get("PortalLinkURL"); 
+            PortalLinkURL       = Config.Get("CatalogueDomain") + Config.Get("PortalLinkURL"); 
             Company             = Config.Get("Company");  
             CatalogueSupport    = Config.Get("CatalogueSupport");
             SendGridKey         = Config.Get("SendGridKey");
