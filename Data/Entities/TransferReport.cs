@@ -158,7 +158,7 @@ namespace ReportDist.Data
         private string ToHTML(List<String> t)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("<!CDATA[\n");
+            sb.Append("<![CDATA[\n");
 
             int mode = 0;
             foreach(string s in t)
