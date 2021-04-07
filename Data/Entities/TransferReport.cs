@@ -158,14 +158,14 @@ namespace ReportDist.Data
         private string ToHTML(List<String> t)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("<![CDATA[\n");
+            //sb.Append("<![CDATA[\n");
 
             int mode = 0;
             foreach(string s in t)
             {
-                Log.Me.Debug("ToHTML: " + s);
+                //Log.Me.Debug("ToHTML: " + s);
                 int linetype = ParseLineType(s);
-                Log.Me.Debug("LineType is " + linetype.ToString());
+                //Log.Me.Debug("LineType is " + linetype.ToString());
                 if (linetype != mode && mode > 0)
                 {
                     /* This line is not the same type as the previous one, and the previous one was a list item, so close the list */
@@ -191,7 +191,7 @@ namespace ReportDist.Data
                 if (mode == 1) sb.Append("</ul>\n");
                 else           sb.Append("</ol>\n");                    
             }
-            sb.Append("\n]]>\n");
+            //sb.Append("\n]]>\n");
 
             return sb.ToString();
         }
