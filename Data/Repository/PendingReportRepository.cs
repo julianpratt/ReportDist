@@ -381,7 +381,7 @@ namespace ReportDist.Data
             if (!api.IsValid()) throw new Exception("Missing configuration required by GetCID.");
 
             string searchAPI = String.Format(api.SearchCataloguesAPI, reportNumber, api.CatalogueUserId);
-            Log.Me.Debug(searchAPI);
+            //Log.Me.Debug(searchAPI);
 
             string xml1 = WebLoadSync(searchAPI, api.Authorization);
             if (xml1 == null) return null;
@@ -414,7 +414,7 @@ namespace ReportDist.Data
 
             // Check the attached document has also arrived.
             string getCatalogueAPI = String.Format(api.GetCatalogueAPI, cid, api.CatalogueUserId);
-            Log.Me.Debug(getCatalogueAPI);
+            //Log.Me.Debug(getCatalogueAPI);
 
             string xml2 = WebLoadSync(getCatalogueAPI, api.Authorization);
             if (xml2 == null) return null;

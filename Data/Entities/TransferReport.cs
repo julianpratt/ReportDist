@@ -55,7 +55,7 @@ namespace ReportDist.Data
             AddElement(sb, "DateIssued",    this.DateIssued.ToString("yyyy-MM-dd"));
             AddElement(sb, "ReportYear",    this.ReportYear.ToString());
             AddElement(sb, "Title",         EscapeXML(this.Title));
-            AddElement(sb, "Abstract",      EscapeXML(this.Abstract));
+            AddElement(sb, "Abstract",      ToHTML(ToTextList(EscapeXML(this.Abstract))));
             foreach (string author in this.Authors) AddElement(sb, "Author", EscapeXML(author));
             AddElement(sb, "SecurityLevel", this.SecurityLevel.ToString());
             AddElement(sb, "Software",      EscapeXML(this.Software));
@@ -129,6 +129,120 @@ namespace ReportDist.Data
 
             return sb.ToString();
         }
+
+        private static List<String> ToTextList(string s)
+        {
+            List<String> t = new List<String>();
+            int j=-1;
+            for (int i=0; i<s.Length; ++i) 
+            {
+                if (s[i] == '\n') 
+                {
+                    string temp=s.Mid(j+1,i-j).TrimEnd();
+                    if (temp.Length > 0) t.Add(temp);
+                    j=i; 
+                }
+            } 
+            return t;
+        }
+
+        private static string ToHTML(List<String> t)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<!CDATA[\n");
+
+            int mode = 0;
+            foreach(string s in t)
+            {
+                int linetype = ParseLineType(s);
+                if (linetype != mode && mode > 0)
+                {
+                    /* This line is not the same type as the previous one, and the previous one was a list item, so close the list */
+                    if (mode == 1) sb.Append("</ul>\n");
+                    else           sb.Append("</ol>\n");                    
+                }
+                if (linetype != mode && linetype > 0)
+                {
+                    /* This line is not the same type as the previous one, and this one is a list item, so open a list */
+                    if      (linetype == 1) sb.Append("<ul>\n");
+                    else if (linetype == 2) sb.Append("<ol>\n");                    
+                    else if (linetype == 3) sb.Append("<ol type=\"a\">\n");                    
+                    else if (linetype == 4) sb.Append("<ol type=\"A\">\n");    
+                }
+                mode=linetype;
+                if (linetype == 0) sb.Append("<p>" + s.Trim() + "</p>\n");
+                else               sb.Append("<li>" + TrimLine(s, linetype) + "</li>\n");
+            }
+
+            if (mode > 0)
+            {
+                /* We have an open list, which needs to be closed */
+                if (mode == 1) sb.Append("</ul>\n");
+                else           sb.Append("</ol>\n");                    
+            }
+            sb.Append("\n]]>\n");
+
+            return sb.ToString();
+        }
+
+        private static int ParseLineType(string s)
+        {
+            string alphalowercase = "abcdefghijklmnopqrstuvwxyz";
+            string alphauppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            string digit          = "1234567890";
+            int linetype = 0;
+
+            string t = s.Trim();
+ 
+            if (t[0] == '•') return 1;
+            int l = t.Length;
+            if (l>3) l = 3;
+            for (int i=0; i < l; i++)
+            {
+                char c = t[i]; 
+                if      (digit.IndexOf(c) > -1)          linetype=2;
+                else if (alphalowercase.IndexOf(c) > -1) linetype=3;
+                else if (alphauppercase.IndexOf(c) > -1) linetype=4;
+                else if (c == '.' || c == ')')
+                {
+                    if (linetype > 0) return linetype;
+                    break;
+                }
+                else if (c == ' ')
+                {
+                    if (linetype == 2) return linetype;
+                    break;
+                }
+                else break;
+            }
+
+            return 0;
+        }
+
+        private static string TrimLine(string s, int linetype)
+        {
+            string valid = null;
+            if      (linetype == 1) valid = "•";
+            else if (linetype == 2) valid = "1234567890";
+            else if (linetype == 3) valid = "abcdefghijklmnopqrstuvwxyz";
+            else if (linetype == 4) valid = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (valid==null) return null;
+
+            string t = s.Trim();
+            for (int i=0; i < 10; i++)
+            {
+                char c = t[i]; 
+                if      (valid.IndexOf(c) > -1) continue;
+                else if (c == '.' || c == ')' || c == ' ')
+                {
+                    return t.Mid(i+1, t.Length-i).Trim();
+                }
+                else break;
+            }
+
+            return null;
+        }
+
 
     }
 
