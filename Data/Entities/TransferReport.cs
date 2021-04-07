@@ -123,8 +123,9 @@ namespace ReportDist.Data
                 else 
                 {
                     string temp = "&#x" + String.Format("{0:X}", Convert.ToUInt32(c)) + ";";
+                    if (temp == "&#x9;") sb.Append(" ");
                     if (temp != "&#x1F;" && temp != "&#xB;" && temp != "&#x1;" && temp != "&#xDBC0;" && temp != "&#xDC79;" 
-                     && temp != "&#xC;"  && temp != "&#x2;" && temp != "&#xA;") 
+                     && temp != "&#xC;"  && temp != "&#x2;" && temp != "&#xA;" && temp != "&#xD;"   ) 
                         sb.Append(temp);
                 }                      
             }
