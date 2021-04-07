@@ -130,7 +130,7 @@ namespace ReportDist.Data
             return sb.ToString();
         }
 
-        private static List<String> ToTextList(string s)
+        private List<String> ToTextList(string s)
         {
             List<String> t = new List<String>();
             int j=-1;
@@ -146,7 +146,7 @@ namespace ReportDist.Data
             return t;
         }
 
-        private static string ToHTML(List<String> t)
+        private string ToHTML(List<String> t)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("<!CDATA[\n");
@@ -154,7 +154,9 @@ namespace ReportDist.Data
             int mode = 0;
             foreach(string s in t)
             {
+                Log.Me.Debug("ToHTML: " + s);
                 int linetype = ParseLineType(s);
+                Log.Me.Debug("LineType is " + linetype.ToString());
                 if (linetype != mode && mode > 0)
                 {
                     /* This line is not the same type as the previous one, and the previous one was a list item, so close the list */
@@ -185,7 +187,7 @@ namespace ReportDist.Data
             return sb.ToString();
         }
 
-        private static int ParseLineType(string s)
+        private int ParseLineType(string s)
         {
             string alphalowercase = "abcdefghijklmnopqrstuvwxyz";
             string alphauppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
