@@ -118,6 +118,8 @@ namespace ReportDist.Data
                 else if (c == '\'')        sb.Append("&apos;");
                 else if (c == '\\')        sb.Append("&#x5C;");
                 else if (c == '"')         sb.Append("&quot;");
+                else if (c == '\n')        sb.Append("\n");
+                else if (c == '•')         sb.Append("•");
                 else 
                 {
                     string temp = "&#x" + String.Format("{0:X}", Convert.ToUInt32(c)) + ";";
