@@ -144,7 +144,13 @@ namespace ReportDist.Data
                     if (temp.Length > 0) t.Add(temp);
                     j=i; 
                 }
-            } 
+            }
+            if (j < s.Length)
+            {
+                string temp=s.Mid(j+1,s.Length-j).TrimEnd();
+                if (temp.Length > 0) t.Add(temp);
+            }
+
             return t;
         }
 
