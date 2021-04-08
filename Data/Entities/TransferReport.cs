@@ -55,7 +55,8 @@ namespace ReportDist.Data
             AddElement(sb, "DateIssued",    this.DateIssued.ToString("yyyy-MM-dd"));
             AddElement(sb, "ReportYear",    this.ReportYear.ToString());
             AddElement(sb, "Title",         EscapeXML(this.Title));
-            AddElement(sb, "Abstract",      ToHTML(ToTextList(EscapeXML(this.Abstract))));
+            //AddElement(sb, "Abstract",      ToHTML(ToTextList(EscapeXML(this.Abstract))));
+            AddElement(sb, "Abstract",      EscapeXML(this.Abstract));
             foreach (string author in this.Authors) AddElement(sb, "Author", EscapeXML(author));
             AddElement(sb, "SecurityLevel", this.SecurityLevel.ToString());
             AddElement(sb, "Software",      EscapeXML(this.Software));
@@ -118,14 +119,14 @@ namespace ReportDist.Data
                 else if (c == '\'')        sb.Append("&apos;");
                 else if (c == '\\')        sb.Append("&#x5C;");
                 else if (c == '"')         sb.Append("&quot;");
-                else if (c == '\n')        sb.Append("\n");
-                else if (c == '•')         sb.Append("•");
+                //else if (c == '\n')        sb.Append("\n");
+                //else if (c == '•')         sb.Append("•");
                 else 
                 {
                     string temp = "&#x" + String.Format("{0:X}", Convert.ToUInt32(c)) + ";";
-                    if (temp == "&#x9;") sb.Append(" ");
-                    else if (temp != "&#x1F;" && temp != "&#xB;" && temp != "&#x1;" && temp != "&#xDBC0;" && temp != "&#xDC79;" 
-                     && temp != "&#xC;"  && temp != "&#x2;" && temp != "&#xA;" && temp != "&#xD;"   ) 
+                    /* if (temp == "&#x9;") sb.Append(" ");
+                    else */ if (temp != "&#x1F;" && temp != "&#xB;" && temp != "&#x1;" && temp != "&#xDBC0;" && temp != "&#xDC79;" 
+                     && temp != "&#xC;"  && temp != "&#x2;" && temp != "&#xA;" ) // && temp != "&#xD;"   ) 
                         sb.Append(temp);
                 }                      
             }
