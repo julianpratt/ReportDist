@@ -213,7 +213,7 @@ namespace ReportDist
             }
             else appName = "ReportDistDev";
             */
-            appName = "ReportDistTest";
+            appName = "ReportDist";
             Config.AppName = appName;
 
             string conn = Config.Get("AzureConnection");
