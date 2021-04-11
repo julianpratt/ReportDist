@@ -149,7 +149,7 @@ namespace ReportDist
             Log.Me.Info("Report Distribution Starting");
 
             // Instructions are to set Environment rather than Env (perhaps Config needs to be changed).
-            if (Config.Env != "Development") Config.Env = Config.Get("Environment");
+            //if (Config.Env != "Development") Config.Env = Config.Get("Environment");
 
             // Default for Development and Staging is that Logging is Debug
             if (Config.Env != "Production" && !Config.Get("Logging").HasValue()) Config.Set("Logging", "Debug");
