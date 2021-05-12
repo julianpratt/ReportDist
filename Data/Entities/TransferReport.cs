@@ -20,7 +20,7 @@ namespace ReportDist.Data
             this.MaterialType  = 5;
             this.ReportNumber  = pr.FullReportNo.Trim();
             this.ReportYear    = pr.ReportYear.ToInteger();
-            this.SecurityLevel = pr.SecurityLevel.HasValue ? pr.SecurityLevel.Value : -1;
+            this.SecurityLevel = pr.SecurityLevel.HasValue ? pr.SecurityLevel.Value : 70;
             this.Software      = pr.Software;
             this.Title         = pr.Title;             
         }
@@ -55,8 +55,8 @@ namespace ReportDist.Data
             AddElement(sb, "DateIssued",    this.DateIssued.ToString("yyyy-MM-dd"));
             AddElement(sb, "ReportYear",    this.ReportYear.ToString());
             AddElement(sb, "Title",         EscapeXML(this.Title));
-            //AddElement(sb, "Abstract",      ToHTML(ToTextList(EscapeXML(this.Abstract))));
-            AddElement(sb, "Abstract",      EscapeXML(this.Abstract));
+            AddElement(sb, "Abstract",      ToHTML(ToTextList(EscapeXML(this.Abstract))));
+            //AddElement(sb, "Abstract",      EscapeXML(this.Abstract));
             foreach (string author in this.Authors) AddElement(sb, "Author", EscapeXML(author));
             AddElement(sb, "SecurityLevel", this.SecurityLevel.ToString());
             AddElement(sb, "Software",      EscapeXML(this.Software));
@@ -119,14 +119,14 @@ namespace ReportDist.Data
                 else if (c == '\'')        sb.Append("&apos;");
                 else if (c == '\\')        sb.Append("&#x5C;");
                 else if (c == '"')         sb.Append("&quot;");
-                //else if (c == '\n')        sb.Append("\n");
-                //else if (c == '•')         sb.Append("•");
+                else if (c == '\n')        sb.Append("\n");
+                else if (c == '•')         sb.Append("•");
                 else 
                 {
                     string temp = "&#x" + String.Format("{0:X}", Convert.ToUInt32(c)) + ";";
-                    /* if (temp == "&#x9;") sb.Append(" ");
-                    else */ if (temp != "&#x1F;" && temp != "&#xB;" && temp != "&#x1;" && temp != "&#xDBC0;" && temp != "&#xDC79;" 
-                     && temp != "&#xC;"  && temp != "&#x2;" && temp != "&#xA;" ) // && temp != "&#xD;"   ) 
+                    if (temp == "&#x9;") sb.Append(" ");
+                    else if (temp != "&#x1F;" && temp != "&#xB;" && temp != "&#x1;" && temp != "&#xDBC0;" && temp != "&#xDC79;" 
+                     && temp != "&#xC;"  && temp != "&#x2;" && temp != "&#xA;" && temp != "&#xD;"   ) 
                         sb.Append(temp);
                 }                      
             }
@@ -170,27 +170,27 @@ namespace ReportDist.Data
                 if (linetype != mode && mode > 0)
                 {
                     /* This line is not the same type as the previous one, and the previous one was a list item, so close the list */
-                    if (mode == 1) sb.Append("</ul>\n");
-                    else           sb.Append("</ol>\n");                    
+                    if (mode == 1) sb.Append("&lt;/ul&gt;\n");
+                    else           sb.Append("&lt;/ol&gt;\n");                    
                 }
                 if (linetype != mode && linetype > 0)
                 {
                     /* This line is not the same type as the previous one, and this one is a list item, so open a list */
-                    if      (linetype == 1) sb.Append("<ul>\n");
-                    else if (linetype == 2) sb.Append("<ol>\n");                    
-                    else if (linetype == 3) sb.Append("<ol type=\"a\">\n");                    
-                    else if (linetype == 4) sb.Append("<ol type=\"A\">\n");    
+                    if      (linetype == 1) sb.Append("&lt;ul&gt;\n");
+                    else if (linetype == 2) sb.Append("&lt;ol&gt;\n");                    
+                    else if (linetype == 3) sb.Append("&lt;ol type=\"a\"&gt;\n");                    
+                    else if (linetype == 4) sb.Append("&lt;ol type=\"A\"&gt;\n");    
                 }
                 mode=linetype;
-                if (linetype == 0) sb.Append("<p>" + s.Trim() + "</p>\n");
-                else               sb.Append("<li>" + TrimLine(s, linetype) + "</li>\n");
+                if (linetype == 0) sb.Append("&lt;p&gt;" + s.Trim() + "&lt;/p&gt;\n");
+                else               sb.Append("&lt;li&gt;" + TrimLine(s, linetype) + "&lt;/li&gt;\n");
             }
 
             if (mode > 0)
             {
                 /* We have an open list, which needs to be closed */
-                if (mode == 1) sb.Append("</ul>\n");
-                else           sb.Append("</ol>\n");                    
+                if (mode == 1) sb.Append("&lt;/ul&gt;\n");
+                else           sb.Append("&lt;/ol&gt;\n");                    
             }
             //sb.Append("\n]]>\n");
 
