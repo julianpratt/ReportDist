@@ -55,8 +55,8 @@ namespace ReportDist.Data
             AddElement(sb, "DateIssued",    this.DateIssued.ToString("yyyy-MM-dd"));
             AddElement(sb, "ReportYear",    this.ReportYear.ToString());
             AddElement(sb, "Title",         EscapeXML(this.Title));
-            //AddElement(sb, "Abstract",      ToHTML(ToTextList(EscapeXML(this.Abstract))));
-            AddElement(sb, "Abstract",      EscapeXML(this.Abstract));
+            AddElement(sb, "Abstract",      ToHTML(ToTextList(EscapeXML(this.Abstract))));
+            //AddElement(sb, "Abstract",      EscapeXML(this.Abstract));
             foreach (string author in this.Authors) AddElement(sb, "Author", EscapeXML(author));
             AddElement(sb, "SecurityLevel", this.SecurityLevel.ToString());
             AddElement(sb, "Software",      EscapeXML(this.Software));
