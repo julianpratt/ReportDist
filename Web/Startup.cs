@@ -87,7 +87,7 @@ namespace ReportDist
         public void AzureADConfig(AzureADOptions opts)
         {
             opts.Instance     = Config.Get("AAD_Instance");
-            opts.Domain       = Config.Get("AAD_Domain");
+            opts.Domain       = Config.Get("AAD_Domain").ToLower();
             opts.TenantId     = Config.Get("AAD_TenantId");
             opts.ClientId     = Config.Get("AAD_ClientId");
             opts.CallbackPath = Config.Get("AAD_CallbackPath");
@@ -209,13 +209,10 @@ namespace ReportDist
             if (appName.HasValue())
             {
               int i = appName.IndexOf('.');
-              if (i > 0) appName = appName.Left(i - 1);
+              if (i > 0) appName = appName.Left(i);
             }
             else appName = "ReportDistDev";
-            
-            Config.Set("NewAppName", appName);
-
-            appName = "ReportDistTest";
+           
             Config.AppName = appName;
 
             string conn = Config.Get("AzureConnection");
@@ -234,7 +231,6 @@ namespace ReportDist
 
         public bool DebugFileSystemConfig()
         {
-            string appName = Config.Get("NewAppName");
             string conn    = Config.Get("AzureConnection");
      		string cont    = Config.Get("AzureContainer");
             string root    = Config.Get("LocalFilesRoot");
@@ -255,7 +251,6 @@ namespace ReportDist
             Log.Me.Debug("OutboxDirectory:     " + (outbox  ?? ""));
             Log.Me.Debug("FileSizeLimit:       " + (maxlen  ?? ""));
             Log.Me.Debug("AttachmentSizeLimit: " + (maxmail ?? ""));
-            Log.Me.Debug("AppName: "             + (appName ?? ""));
             bool ok = root.HasValue() || (conn.HasValue() && cont.HasValue());
             ok = ok && logs.HasValue()   && upload.HasValue() && outbox.HasValue();
             ok = ok && maxlen.HasValue() && maxmail.HasValue();
