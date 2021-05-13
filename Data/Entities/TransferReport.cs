@@ -241,7 +241,10 @@ namespace ReportDist.Data
             if (valid==null) return null;
 
             string t = s.Trim();
-            for (int i=0; i < 10; i++)
+            int l = t.Length;
+            if (l>10) l = 10;
+
+            for (int i=0; i < l; i++)
             {
                 char c = t[i]; 
                 if      (valid.IndexOf(c) > -1) continue;
