@@ -241,6 +241,12 @@ namespace ReportDist.Data
             if (valid==null) return null;
 
             string t = s.Trim();
+
+            if (linetype == 1)
+            {
+                return t.Mid(1, t.Length-1).Trim();                
+            }
+
             int l = t.Length;
             if (l>10) l = 10;
 
